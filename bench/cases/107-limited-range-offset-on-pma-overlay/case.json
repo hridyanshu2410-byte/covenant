@@ -1,0 +1,12 @@
+{
+ "id": 107,
+ "title": "Limited-range conversion adds its +16/255 offset to premultiplied-alpha overlay texels, which the ONE / ONE_MINUS_SRC_ALPHA blend adds to the video",
+ "upstream": "https://github.com/xbmc/xbmc/issues/22383",
+ "fix": "https://github.com/xbmc/xbmc/pull/28386",
+ "bug_id": 159,
+ "category": "meaning",
+ "expect": [
+  "meaning.color-mismatch"
+ ],
+ "expected_finding": "the overlay texture holds premultiplied colour and is blended with srcColor = ONE, but fragMain applies the straight-alpha limited-range mapping rgb * 219/255 + 16/255; transparent texels (rgb = 0, a = 0) output 16/255 and that is added to the video under the whole subtitle rectangle (the offset should be scaled by alpha for premultiplied input)"
+}

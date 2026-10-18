@@ -1,0 +1,2172 @@
+{
+ "format": "covenant-elide-plan/1",
+ "trace": "particles.jsonl",
+ "trace_sha1": "64992cb7d3d9739ca25a59911cf10616acbe6bdd",
+ "id_scheme": {
+  "strict": "(rec, idx): rec = 0-based vkBeginCommandBuffer ordinal in the process; idx = 0-based barrier-call index within that recording (sync1, sync2 and 2KHR all count)",
+  "chain": "FNV-1a 64 over the signatures of the recording's barrier calls so far (state continues from the previous barrier's chain value; recording start = 0xcbf29ce484222325)",
+  "sig": "FNV-1a 64 of the canonical content string; the layer never touches a call whose sig differs",
+  "sig_format": "<1|2>|<depFlags> then |M:ss:sa:ds:da, |B:ss:sa:ds:da:sfam:dfam:off:size, |I:ss:sa:ds:da:sfam:dfam:old:new:aspect:baseMip:levels:baseLayer:layers, |E:ss:ds; decimal"
+ },
+ "proof": {
+  "oracle": "covenant.timing.check (vector-clock happens-before over all queues; every schedule the recorded synchronization allows)",
+  "obligation": "the planned frame reports no diagnostic the recorded frame does not; layout transitions and ownership transfers are never removed",
+  "strengthening": [
+   "layout transitions modelled as writes between the src and dst scopes",
+   "a layout transition must reach later accesses through its own dst scope (or a chain from it), not by a later barrier capturing it",
+   "write-after-write requires the later write in the dst access scope",
+   "attachment load/store operations modelled as accesses"
+  ],
+  "baseline_diagnostics": 0,
+  "baseline": [],
+  "new_diagnostics_with_plan": 0,
+  "plain_timing_check": {
+   "baseline": 0,
+   "with_plan": 0,
+   "new": 0
+  },
+  "oracle_runs": 47,
+  "oracle_source_sha1": "9c04d6e0260c4c12bfeb2745a7d498d3bc94f0ff",
+  "seconds": 0.08
+ },
+ "summary": {
+  "calls": 38,
+  "decisions": {
+   "narrow": 10,
+   "remove": 27,
+   "required": 1
+  },
+  "structs": {
+   "total": 39,
+   "removed": 28,
+   "narrowed": 10,
+   "kept": 1
+  },
+  "chain_entries": 13,
+  "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace"
+ },
+ "barriers": [
+  {
+   "rec": 0,
+   "idx": 0,
+   "seq": 103,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "ed80c08c2982bbd5",
+   "chain": "ed80c08c2982bbd5",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "particles_out",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x40"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 1,
+   "seq": 105,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "frame_cb",
+   "sig": "f7cbbae632f781a0",
+   "chain": "31be8bd5e12dbeb0",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 2,
+   "seq": 110,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "5f17849a8b8d130a",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 3,
+   "seq": 114,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "789303a9a1b02e9c",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 4,
+   "seq": 118,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "835b662e8300059e",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 5,
+   "seq": 122,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "333c987b421bb918",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 6,
+   "seq": 126,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "cfb159c7a4c1adb2",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 7,
+   "seq": 130,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "15a087fbae9be3a4",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 8,
+   "seq": 134,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "10c64fafff7c1f86",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 9,
+   "seq": 138,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "578d33190c0a8b40",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER",
+       "TRANSFER"
+      ],
+      "src_access": [
+       "SHADER_WRITE",
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x1800",
+     "src_access_mask": "0x1040",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 142 (frame_cb, submitted @seq 150 on graphics0): set 0 binding 0",
+    "message": "'particles0' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 10,
+   "seq": 143,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "4eea70fe3a485dba",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 146 (frame_cb, submitted @seq 150 on graphics0): set 0 binding 0",
+    "message": "'histogram' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 11,
+   "seq": 147,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "bdf1867248fd752c",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 0,
+   "seq": 158,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "ed80c08c2982bbd5",
+   "chain": "ed80c08c2982bbd5",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "particles_out",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x40"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 1,
+   "seq": 160,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "frame_cb",
+   "sig": "f7cbbae632f781a0",
+   "chain": "31be8bd5e12dbeb0",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 2,
+   "seq": 165,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "5f17849a8b8d130a",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 3,
+   "seq": 169,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "789303a9a1b02e9c",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 4,
+   "seq": 173,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "835b662e8300059e",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 5,
+   "seq": 177,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "333c987b421bb918",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 6,
+   "seq": 181,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "cfb159c7a4c1adb2",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 7,
+   "seq": 185,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "15a087fbae9be3a4",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 8,
+   "seq": 189,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "10c64fafff7c1f86",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 9,
+   "seq": 193,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "578d33190c0a8b40",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER",
+       "TRANSFER"
+      ],
+      "src_access": [
+       "SHADER_WRITE",
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x1800",
+     "src_access_mask": "0x1040",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 197 (frame_cb, submitted @seq 205 on graphics0): set 0 binding 0",
+    "message": "'particles0' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 10,
+   "seq": 198,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "4eea70fe3a485dba",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 201 (frame_cb, submitted @seq 205 on graphics0): set 0 binding 0",
+    "message": "'histogram' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 11,
+   "seq": 202,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "bdf1867248fd752c",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 0,
+   "seq": 213,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "ed80c08c2982bbd5",
+   "chain": "ed80c08c2982bbd5",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "particles_out",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x40"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 1,
+   "seq": 215,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "frame_cb",
+   "sig": "f7cbbae632f781a0",
+   "chain": "31be8bd5e12dbeb0",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 2,
+   "seq": 220,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "5f17849a8b8d130a",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 3,
+   "seq": 224,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "789303a9a1b02e9c",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 4,
+   "seq": 228,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "835b662e8300059e",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 5,
+   "seq": 232,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "333c987b421bb918",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 6,
+   "seq": 236,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "cfb159c7a4c1adb2",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 7,
+   "seq": 240,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "15a087fbae9be3a4",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 8,
+   "seq": 244,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "10c64fafff7c1f86",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 9,
+   "seq": 248,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "578d33190c0a8b40",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER",
+       "TRANSFER"
+      ],
+      "src_access": [
+       "SHADER_WRITE",
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x1800",
+     "src_access_mask": "0x1040",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 252 (frame_cb, submitted @seq 260 on graphics0): set 0 binding 0",
+    "message": "'particles0' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 10,
+   "seq": 253,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "4eea70fe3a485dba",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 256 (frame_cb, submitted @seq 260 on graphics0): set 0 binding 0",
+    "message": "'histogram' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 11,
+   "seq": 257,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "bdf1867248fd752c",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 3,
+   "idx": 0,
+   "seq": 316,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "ad4e01adbc8fe2b7",
+   "chain": "ad4e01adbc8fe2b7",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "action": "remove"
+    },
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "particles_out",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    }
+   ],
+   "why": {
+    "memory[0]": "removed: no new hazard with it gone",
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 3,
+   "idx": 1,
+   "seq": 327,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "a65ec39c57878844",
+   "chain": "64e6c23fc6c7acf6",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "HOST"
+      ],
+      "dst_access": [
+       "HOST_READ"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "memory[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  }
+ ],
+ "chain": [
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "ed80c08c2982bbd5",
+   "chain": "ed80c08c2982bbd5",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "particles_out",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x40"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "f7cbbae632f781a0",
+   "chain": "31be8bd5e12dbeb0",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "5f17849a8b8d130a",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "789303a9a1b02e9c",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "835b662e8300059e",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "333c987b421bb918",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "cfb159c7a4c1adb2",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "15a087fbae9be3a4",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "10c64fafff7c1f86",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "578d33190c0a8b40",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER",
+       "TRANSFER"
+      ],
+      "src_access": [
+       "SHADER_WRITE",
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x1800",
+     "src_access_mask": "0x1040",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "4eea70fe3a485dba",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "bdf1867248fd752c",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "ad4e01adbc8fe2b7",
+   "chain": "ad4e01adbc8fe2b7",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "action": "remove"
+    },
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "particles_out",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    }
+   ],
+   "instances": 1
+  }
+ ]
+}

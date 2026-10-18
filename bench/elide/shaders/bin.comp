@@ -1,0 +1,23 @@
+#version 450
+// histogram every system's particles into a 64x64 grid
+layout(local_size_x = 64) in;
+layout(set = 0, binding = 0) readonly buffer P0 { vec4 p[]; } s0;
+layout(set = 0, binding = 1) readonly buffer P1 { vec4 p[]; } s1;
+layout(set = 0, binding = 2) readonly buffer P2 { vec4 p[]; } s2;
+layout(set = 0, binding = 3) readonly buffer P3 { vec4 p[]; } s3;
+layout(set = 0, binding = 4) readonly buffer P4 { vec4 p[]; } s4;
+layout(set = 0, binding = 5) readonly buffer P5 { vec4 p[]; } s5;
+layout(set = 0, binding = 6) readonly buffer P6 { vec4 p[]; } s6;
+layout(set = 0, binding = 7) readonly buffer P7 { vec4 p[]; } s7;
+layout(set = 0, binding = 8) buffer Hist { uint h[]; } hist;
+layout(push_constant) uniform PC { uint n; } pc;
+void add(vec4 v) {
+  uvec2 b = uvec2(clamp(v.xy, 0.0, 0.999999) * 64.0);
+  atomicAdd(hist.h[b.y * 64u + b.x], 1u);
+}
+void main() {
+  uint i = gl_GlobalInvocationID.x;
+  if (i >= pc.n) return;
+  add(s0.p[i]); add(s1.p[i]); add(s2.p[i]); add(s3.p[i]);
+  add(s4.p[i]); add(s5.p[i]); add(s6.p[i]); add(s7.p[i]);
+}

@@ -1,0 +1,1 @@
+{"id": 27, "title": "Texture upload barrier targets only the fragment stage; a vertex shader samples the texture", "upstream": "https://github.com/flutter/flutter/issues/193371", "category": "timing", "expect": ["timing.barrier-scope"]}

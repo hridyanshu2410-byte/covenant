@@ -1,0 +1,11 @@
+{
+ "id": 47,
+ "title": "Image-acquired semaphore of a frame slot is re-signalled by vkAcquireNextImageKHR before waiting for the slot's fence",
+ "upstream": "https://github.com/bkaradzic/bgfx/issues/3302",
+ "bug_id": 32,
+ "category": "timing",
+ "expect": [],
+ "expect_note": "no existing diagnostic code covers an acquire semaphore that may still have a pending wait",
+ "fix_note": "no upstream fix (issue open; workaround kick(true) idles the queue after each submit); the fixed variant follows the issue's analysis: wait for the slot's fence before acquiring with its semaphore",
+ "expected_finding": "frame N+2 calls vkAcquireNextImageKHR with m_presentDoneSemaphore[k] before vkWaitForFences(m_completedFence[k]); frame N's submission, which waits on that semaphore, may still be pending (VUID-vkAcquireNextImageKHR-semaphore-01779)"
+}

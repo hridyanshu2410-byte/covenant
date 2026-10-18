@@ -1,0 +1,12 @@
+{
+ "id": 82,
+ "title": "CPU vertex decode computes the bitangent sign with the triple-product operands swapped",
+ "upstream": "https://github.com/matiaszanolli/ByroRedux/issues/1516",
+ "fix": "https://github.com/matiaszanolli/ByroRedux/pull/1517",
+ "bug_id": 134,
+ "category": "meaning",
+ "expect": [
+  "meaning.convention-mismatch"
+ ],
+ "expected_finding": "bitangent_sign computes sign(dot(dP/dU, cross(N, dP/dV))) = +1 for this quad, where the canonical sign(dot(dP/dV, cross(N, dP/dU))) is -1; the shader's B = tangent.w * cross(N, T) then points along -V (world +Y) instead of +V (world -Y), so the normal map's green channel is applied inverted (the surface leans away from the light)"
+}

@@ -1,0 +1,1 @@
+{"id": 26, "title": "One vkCmdPushConstants with VERTEX|FRAGMENT over ranges declared per stage", "upstream": "https://github.com/RPCS3/rpcs3/pull/13573", "fix": "https://github.com/RPCS3/rpcs3/pull/13573", "category": "structure", "expect": ["structure.push-constant-range"]}

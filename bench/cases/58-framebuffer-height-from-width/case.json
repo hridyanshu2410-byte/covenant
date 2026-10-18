@@ -1,0 +1,11 @@
+{
+ "id": 58,
+ "title": "Swapchain framebuffers created with height = width",
+ "upstream": "https://github.com/slint-ui/slint/issues/7850",
+ "bug_id": 111,
+ "category": "structure",
+ "expect": [],
+ "expect_note": "no existing diagnostic code covers framebuffer or render area extent versus attachment extent",
+ "fix_note": "fixed upstream by correcting the typo (no PR linked in the issue); the fixed variant takes height from size.height",
+ "expected_finding": "skia_framebuffer[i] is 875x875 (and the render area 875x875) while its attachment, the swapchain image view, is 875x700 (VUID-VkFramebufferCreateInfo-flags-04534)"
+}

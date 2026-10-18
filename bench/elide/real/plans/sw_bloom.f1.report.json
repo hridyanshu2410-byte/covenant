@@ -1,0 +1,46 @@
+{
+ "per_frame": {
+  "calls": 0,
+  "remove": 0,
+  "narrow": 0,
+  "required": 0,
+  "structs": {},
+  "struct_kinds": {},
+  "keep_reasons": {},
+  "pinned_structs": 0,
+  "pinned_fraction": 0.0,
+  "tried_and_needed_structs": 0
+ },
+ "one_time": {
+  "calls": 8,
+  "remove": 0,
+  "narrow": 8,
+  "required": 0,
+  "structs": {
+   "narrow": 8
+  },
+  "struct_kinds": {
+   "transition": 8
+  },
+  "keep_reasons": {}
+ },
+ "per_frame_detail": [],
+ "proof": {
+  "baseline_diagnostics": 0,
+  "plain_timing_check": {
+   "baseline": 0,
+   "with_plan": 0,
+   "new": 0
+  },
+  "pairwise_recheck": {
+   "baseline": 0,
+   "with_plan": 0,
+   "new": 0
+  },
+  "pinned_for_baseline_hazards": 0,
+  "oracle_runs": 13,
+  "seconds": 2.54
+ },
+ "chain_entries": 4,
+ "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace"
+}

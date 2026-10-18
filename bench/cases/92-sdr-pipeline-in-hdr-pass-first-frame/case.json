@@ -1,0 +1,11 @@
+{
+ "id": 92,
+ "title": "First frame draws the menu with SDR-format pipelines inside the HDR10 swapchain pass",
+ "upstream": "https://github.com/libretro/RetroArch/pull/18743",
+ "fix": "https://github.com/libretro/RetroArch/pull/18743",
+ "bug_id": 144,
+ "category": "structure",
+ "expect": [],
+ "expect_note": "no existing code covers a draw whose pipeline was built for different attachment formats than the active rendering pass (B8G8R8A8_UNORM menu pipeline inside the A2B10G10R10 swapchain pass); the frame-0 output is also SDR sRGB written to an HDR10 PQ target (closest: meaning.color-mismatch)",
+ "expected_finding": "on frame 0 the offscreen buffer does not exist yet, so menu_pipeline_sdr (colour format B8G8R8A8_UNORM) is bound and drawn in the rendering pass on the A2B10G10R10_UNORM HDR10 swapchain image; the offscreen buffer is only created at the end of that frame"
+}

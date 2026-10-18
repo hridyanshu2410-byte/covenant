@@ -1,0 +1,5 @@
+{"id": 43, "title": "Frame pass's outgoing dependency covers fragment-shader reads only; the readback copy races it, and the next frame's pass races the copy",
+ "upstream": "https://github.com/aether-lang-dev/ae3d/issues/458",
+ "fix": "https://github.com/aether-lang-dev/ae3d/pull/497",
+ "bug_id": 17, "category": "timing", "expect": ["timing.barrier-scope"],
+ "expected_finding": "vkCmdCopyImageToBuffer reads frame_color, but the barrier after the pass makes its writes available only to FRAGMENT_SHADER reads (read-after-write); the next frame's transition of frame_color is not ordered after that copy (write-after-read)"}

@@ -1,0 +1,1 @@
+{"id": 10, "title": "Descriptor set 1 left unbound on one draw path", "upstream": "https://github.com/themuffinator/FnQ3/pull/19", "category": "structure", "expect": ["structure.missing-binding"]}

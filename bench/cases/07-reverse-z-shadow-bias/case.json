@@ -1,0 +1,1 @@
+{"id": 7, "title": "Shadow bias sign left from forward-Z under reverse-Z", "upstream": "https://github.com/aantropov/sailor/pull/199", "category": "meaning", "expect": [], "known_miss": "no rule relates comparison direction or bias sign to the depth convention"}

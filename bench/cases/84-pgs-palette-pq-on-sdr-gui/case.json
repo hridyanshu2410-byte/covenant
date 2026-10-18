@@ -1,0 +1,12 @@
+{
+ "id": 84,
+ "title": "HDR10 PGS subtitle palette (PQ, BT.2020) uploaded unconverted to an SDR (sRGB, BT.709) GUI",
+ "upstream": "https://github.com/xbmc/xbmc/pull/28996",
+ "fix": "https://github.com/xbmc/xbmc/pull/28996",
+ "bug_id": 136,
+ "category": "meaning",
+ "expect": [
+  "meaning.color-mismatch"
+ ],
+ "expected_finding": "the PGS palette entries are PQ-encoded BT.2020 values (converted with the HDR10 video's colour space), and the host expands them unchanged into pgs_overlay_texture, which fsMain writes into the SDR B8G8R8A8_UNORM GUI surface that expects sRGB-encoded BT.709: no PQ decode, white-point scaling, BT.2020 -> BT.709 conversion or sRGB encode (dull, hue-shifted subtitles)"
+}

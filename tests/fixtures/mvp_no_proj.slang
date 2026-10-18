@@ -1,0 +1,7 @@
+import covenant;
+struct Camera { [Maps("object","world")] float4x4 model; [Maps("world","view")] float4x4 view; [Maps("view","clip")] float4x4 proj; };
+ConstantBuffer<Camera> camera;
+[shader("vertex")]
+float4 vsMain(float3 p : POSITION) : SV_Position {
+    return mul(camera.view, mul(camera.model, float4(p, 1)));
+}

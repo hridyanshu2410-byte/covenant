@@ -1,0 +1,12 @@
+{
+ "id": 60,
+ "title": "Swapchain image rendered and presented while still in VK_IMAGE_LAYOUT_UNDEFINED",
+ "upstream": "https://github.com/Pikachuxxxx/Razix/issues/83",
+ "bug_id": 23,
+ "category": "timing",
+ "expect": [
+  "timing.wrong-layout"
+ ],
+ "fix_note": "no upstream fix linked (issue open); the fixed variant follows the issue's proposal: transition UNDEFINED -> COLOR_ATTACHMENT_OPTIMAL before rendering and COLOR_ATTACHMENT_OPTIMAL -> PRESENT_SRC_KHR before presenting",
+ "expected_finding": "the swapchain image is never transitioned: it is rendered as COLOR_ATTACHMENT_OPTIMAL while its layout is UNDEFINED, and vkQueuePresentKHR presents it in UNDEFINED instead of PRESENT_SRC_KHR (VUID-VkPresentInfoKHR-pImageIndices-01296)"
+}

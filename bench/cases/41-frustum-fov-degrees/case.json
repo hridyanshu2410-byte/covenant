@@ -1,0 +1,14 @@
+{
+ "id": 41,
+ "title": "Culling frustum passes the field of view in degrees to tan(); the projection converts it to radians",
+ "upstream": "https://github.com/amodhakal/linterra/issues/127",
+ "fix": "https://github.com/amodhakal/linterra/pull/182",
+ "bug_id": 116,
+ "category": "meaning",
+ "expect": [
+  "meaning.unit-mismatch"
+ ],
+ "expect_note": "no existing diagnostic code covers an angle unit mismatch in host code (round 3: new code meaning.unit-mismatch added after the held-out run; original label kept in heldout_label)",
+ "expected_finding": "Frustum::Frustum computes tan(m_Fov * 0.5) with m_Fov in degrees, while getProjection uses glm::radians(m_Fov): the culling cone and the rendered cone disagree, so visible chunks are dropped from the instance buffer",
+ "heldout_label": []
+}

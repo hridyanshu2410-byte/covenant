@@ -1,0 +1,1 @@
+{"id": 22, "title": "GLM_FORCE_DEPTH_ZERO_TO_ONE defined after the GLM include, so projections use OpenGL's [-1,1] depth range", "upstream": "https://github.com/SharkFinPro/VulkanRenderer/pull/204", "fix": "https://github.com/SharkFinPro/VulkanRenderer/pull/204", "category": "meaning", "expect": ["meaning.convention-mismatch"]}

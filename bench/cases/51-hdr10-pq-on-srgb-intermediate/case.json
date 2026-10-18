@@ -1,0 +1,12 @@
+{
+ "id": 51,
+ "title": "HDR10 output pass applies exposure, tone map and PQ to an intermediate that holds sRGB-encoded BT.709 values",
+ "upstream": "https://github.com/brianmk/coin/pull/48",
+ "fix": "https://github.com/brianmk/coin/pull/48",
+ "bug_id": 114,
+ "category": "meaning",
+ "expect": [
+  "meaning.color-mismatch"
+ ],
+ "expected_finding": "fsVisual writes the sRGB-encoded material colour into scene_intermediate; fsOutput's HDR branch treats it as linear radiance and PQ-encodes it for the A2B10G10R10 / HDR10_ST2084 swapchain without sRGB decode or BT.709 -> BT.2020 conversion (washed-out midtones)"
+}

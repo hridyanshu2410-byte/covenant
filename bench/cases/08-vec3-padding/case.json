@@ -1,0 +1,1 @@
+{"id": 8, "title": "Host struct ignores vec3 alignment of a uniform block", "upstream": "https://github.com/flutter/flutter/pull/181340", "category": "structure", "expect": ["structure.host-layout"]}

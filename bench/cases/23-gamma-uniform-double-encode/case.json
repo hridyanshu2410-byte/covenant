@@ -1,0 +1,1 @@
+{"id": 23, "title": "Composite shader gamma-encodes with a uniform gamma of 2.2 before an sRGB surface encodes again", "upstream": "https://github.com/MatthewLacerda2/rusty/issues/415", "fix": "https://github.com/MatthewLacerda2/rusty/pull/534", "category": "meaning", "expect": ["meaning.color-mismatch"]}

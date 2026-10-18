@@ -1,0 +1,11 @@
+{
+    "file_format_version": "1.2.0",
+    "layer": {
+        "name": "VK_LAYER_COVENANT_elide",
+        "type": "GLOBAL",
+        "library_path": "@LIB@",
+        "api_version": "1.3.275",
+        "implementation_version": "1",
+        "description": "COVENANT proof-licensed barrier elision (applies a covenant-elide-plan/1 file)"
+    }
+}

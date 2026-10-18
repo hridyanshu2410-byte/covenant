@@ -1,0 +1,1 @@
+{"id": 14, "title": "Mip generation barrier uses the read access mask instead of the write", "upstream": "https://github.com/techrote/ShadeDoomVK/issues/83", "category": "timing", "expect": ["timing.barrier-scope"]}

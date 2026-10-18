@@ -1,0 +1,5 @@
+{"id": 33, "title": "View-position reconstruction maps depth to [-1,1] (WebGL) although the reversed-depth projection writes [0,1]",
+ "upstream": "https://github.com/mrdoob/three.js/issues/34723",
+ "fix": "https://github.com/mrdoob/three.js/pull/34724",
+ "bug_id": 113, "category": "meaning", "expect": ["meaning.convention-mismatch"],
+ "expected_finding": "getViewPosition feeds depth*2-1 to the inverse of a [0,1] reversed-depth projection, so reconstructed view positions are wrong"}

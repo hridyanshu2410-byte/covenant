@@ -1,0 +1,12 @@
+{
+ "id": 101,
+ "title": "Cursor-cell text colour loaded sRGB-encoded in the vertex shader, then re-encoded by the fragment shader that expects linear input",
+ "upstream": "https://github.com/ghostty-org/ghostty/pull/9695",
+ "fix": "https://github.com/ghostty-org/ghostty/pull/9695",
+ "bug_id": 153,
+ "category": "meaning",
+ "expect": [
+  "meaning.color-mismatch"
+ ],
+ "expected_finding": "for the text glyph under the cursor, cell_text_vertex sets out.color from load_color(uniforms.cursor_color, ..., linear=false), which returns an sRGB-encoded value; every other path writes a linear colour to out.color, and cell_text_fragment applies unlinearize() to it (use_linear_blending = 0), so the cursor text colour is sRGB-encoded twice"
+}

@@ -1,0 +1,56 @@
+Model-driver knobs needed by bench/elide/real/run_real.py (its "trace" step runs the
+samples on a private copy of the model driver with this patch applied; the default
+driver is unchanged). Apply from the repository root:
+
+    git apply bench/elide/real/driver-elide-real.diff
+
+  COVVK_QUEUE_FAMILIES=1       offer only queue family 0 (graphics+compute+transfer), like
+                               lavapipe; default 2 (family 1 = a dedicated compute family)
+  COVVK_SURFACE_MIN_IMAGES=N   surface minImageCount to report (default 2; lavapipe on X11
+                               reports 3)
+
+--- a/model_driver/covvk.cpp
++++ b/model_driver/covvk.cpp
+@@ -757,21 +757,27 @@
+   }
+ }
+ 
++// COVVK_QUEUE_FAMILIES=1: offer only family 0 (graphics+compute+transfer), like
++// lavapipe; default 2 (family 1 = dedicated compute, like discrete NVIDIA/AMD GPUs).
++static uint32_t covvk_families() {
++  static uint32_t n = [] { const char* e = getenv("COVVK_QUEUE_FAMILIES"); return (e && *e == '1') ? 1u : 2u; }();
++  return n;
++}
+ VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceQueueFamilyProperties(VkPhysicalDevice, uint32_t* n, VkQueueFamilyProperties* p) {
+-  if (!p) { *n = 2; return; }
++  if (!p) { *n = covvk_families(); return; }
+   VkQueueFamilyProperties f[2] = {};
+   f[0].queueFlags = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT;
+   f[0].queueCount = 2; f[0].timestampValidBits = 64; f[0].minImageTransferGranularity = {1, 1, 1};
+   f[1].queueFlags = VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT;
+   f[1].queueCount = 1; f[1].timestampValidBits = 64; f[1].minImageTransferGranularity = {1, 1, 1};
+-  *n = std::min(*n, 2u);
++  *n = std::min(*n, covvk_families());
+   for (uint32_t i = 0; i < *n; i++) p[i] = f[i];
+ }
+ VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceQueueFamilyProperties2(VkPhysicalDevice pd, uint32_t* n, VkQueueFamilyProperties2* p) {
+-  if (!p) { *n = 2; return; }
++  if (!p) { *n = covvk_families(); return; }
+   VkQueueFamilyProperties f[2]; uint32_t m = 2;
+   vkGetPhysicalDeviceQueueFamilyProperties(pd, &m, f);
+-  *n = std::min(*n, 2u);
++  *n = std::min(*n, m);
+   for (uint32_t i = 0; i < *n; i++) p[i].queueFamilyProperties = f[i];
+ }
+ 
+@@ -943,7 +949,9 @@
+ }
+ VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceCapabilitiesKHR(VkPhysicalDevice, VkSurfaceKHR, VkSurfaceCapabilitiesKHR* c) {
+   auto e = surface_extent();
+-  c->minImageCount = 2; c->maxImageCount = 8;
++  // COVVK_SURFACE_MIN_IMAGES: minImageCount to report (default 2; lavapipe on X11 reports 3)
++  static uint32_t min_images = [] { const char* e = getenv("COVVK_SURFACE_MIN_IMAGES"); return e && *e ? (uint32_t)atoi(e) : 2u; }();
++  c->minImageCount = min_images; c->maxImageCount = 8;
+   c->currentExtent = {e.first, e.second};
+   c->minImageExtent = {1, 1}; c->maxImageExtent = {16384, 16384};
+   c->maxImageArrayLayers = 1;

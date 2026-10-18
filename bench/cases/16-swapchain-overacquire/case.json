@@ -1,0 +1,1 @@
+{"id": 16, "title": "Acquired swapchain images not given back on a skipped frame (freeze)", "upstream": "https://github.com/iveevi/rcgp-samples", "category": "timing", "expect": ["timing.swapchain-overacquire"], "distilled": "root cause from the validation message; the skip path is our stand-in"}

@@ -1,0 +1,12 @@
+{
+ "id": 97,
+ "title": "Async tensor copy on the transfer queue is not ordered after the producer graph the consumer backend waited for (event wait applied to the compute context only)",
+ "upstream": "https://github.com/ggml-org/llama.cpp/pull/25229",
+ "fix": "https://github.com/ggml-org/llama.cpp/pull/25229",
+ "bug_id": 149,
+ "category": "timing",
+ "expect": [
+  "timing.cross-queue-race"
+ ],
+ "expected_finding": "the transfer-queue submission that copies tensor_a into tensor_b waits on nothing, so its TRANSFER read of tensor_a is unordered against backend A's scale_f32 dispatch writing tensor_a on the compute (graphics) queue; only backend B's compute submission waits on the event semaphore"
+}

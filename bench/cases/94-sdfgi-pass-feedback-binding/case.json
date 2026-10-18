@@ -1,0 +1,12 @@
+{
+ "id": 94,
+ "title": "SDFGI render-pass uniform set provides the material feedback buffer at binding 37 instead of 38",
+ "upstream": "https://github.com/godotengine/godot/issues/123626",
+ "fix": "https://github.com/godotengine/godot/pull/123656",
+ "bug_id": 146,
+ "category": "structure",
+ "expect": [
+  "structure.binding-not-in-layout"
+ ],
+ "expected_finding": "the MODE_RENDER_SDF shader writes MaterialFeedbackBuffer at set 1 binding 38, but _setup_sdfgi_render_pass_uniform_set (and so the set-1 layout) provides the feedback storage buffer at binding 37; binding 38 is not in the layout"
+}

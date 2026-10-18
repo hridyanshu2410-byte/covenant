@@ -1,0 +1,12 @@
+{
+ "id": 68,
+ "title": "Linear glTF baseColorFactor stored as an sRGB colour, then linearized again in the PBR shader",
+ "upstream": "https://github.com/agutierreza/BRITE-Engine/issues/15",
+ "bug_id": 76,
+ "category": "meaning",
+ "expect": [
+  "meaning.color-mismatch"
+ ],
+ "fix_note": "issue closed by the maintainer, fix commit not linked; the fixed variant applies the fix stated in the issue (convert the loaded factor linear -> sRGB once at load, 0.5 -> 186)",
+ "expected_finding": "the host copies glTF's linear base_color_factor into colDiffuse as code values (x * 255 / 255) while the shader declares and treats colDiffuse as sRGB (pow 2.2 decode): the linear colour is decoded a second time and every glTF material draws too dark"
+}

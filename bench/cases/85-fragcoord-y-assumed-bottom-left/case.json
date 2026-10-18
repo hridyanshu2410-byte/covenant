@@ -1,0 +1,12 @@
+{
+ "id": 85,
+ "title": "WebGL shader addresses a screen-sized texture by gl_FragCoord, assuming a bottom-left origin, on a top-left-origin backend",
+ "upstream": "https://github.com/BabylonJS/BabylonNative/pull/1840",
+ "fix": "https://github.com/BabylonJS/BabylonNative/pull/1840",
+ "bug_id": 137,
+ "category": "meaning",
+ "expect": [
+  "meaning.convention-mismatch"
+ ],
+ "expected_finding": "fsMain computes uv = FragCoord.xy / screenSize, treating FragCoord.y as measured from the bottom (WebGL), but Vulkan's FragCoord origin is the upper left; screen_texture is stored with row 0 at the bottom of the screen, so the lookup is vertically mirrored (top shows blue, bottom red)"
+}

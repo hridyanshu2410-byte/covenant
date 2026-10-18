@@ -1,0 +1,177 @@
+{
+ "per_frame": {
+  "calls": 32,
+  "remove": 0,
+  "narrow": 0,
+  "required": 32,
+  "structs": {
+   "keep": 32
+  },
+  "struct_kinds": {
+   "transition": 32
+  },
+  "keep_reasons": {
+   "a hazard the program already has": 32
+  },
+  "pinned_structs": 32,
+  "pinned_fraction": 1.0,
+  "tried_and_needed_structs": 0
+ },
+ "one_time": {
+  "calls": 60,
+  "remove": 0,
+  "narrow": 26,
+  "required": 34,
+  "structs": {
+   "keep": 34,
+   "narrow": 26
+  },
+  "struct_kinds": {
+   "transition": 60
+  },
+  "keep_reasons": {
+   "it synchronizes with the host, which the trace does not observe": 26,
+   "a hazard the program already has": 8
+  }
+ },
+ "per_frame_detail": [
+  {
+   "chain": "bb28cda2f2773e4f",
+   "instances": 4,
+   "decisions": {
+    "required": 4
+   },
+   "sync": 1,
+   "what": "image[0] swapchain[1] undefined -> color_attachment",
+   "recorded": "BOTTOM_OF_PIPE/- -> TOP_OF_PIPE/-",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "ccb5cff2eb08320d",
+   "instances": 4,
+   "decisions": {
+    "required": 4
+   },
+   "sync": 1,
+   "what": "image[0] image#8 undefined -> color_attachment",
+   "recorded": "BOTTOM_OF_PIPE/- -> TOP_OF_PIPE/-",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "91b2394c6b3301f7",
+   "instances": 4,
+   "decisions": {
+    "required": 4
+   },
+   "sync": 1,
+   "what": "image[0] image#9 undefined -> color_attachment",
+   "recorded": "BOTTOM_OF_PIPE/- -> TOP_OF_PIPE/-",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "e161efd0839f0603",
+   "instances": 4,
+   "decisions": {
+    "required": 4
+   },
+   "sync": 1,
+   "what": "image[0] image#7 undefined -> depth_stencil_attachment",
+   "recorded": "BOTTOM_OF_PIPE/- -> TOP_OF_PIPE/-",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "e4db1b3999a8c3bf",
+   "instances": 4,
+   "decisions": {
+    "required": 4
+   },
+   "sync": 1,
+   "what": "image[0] image#7 depth_stencil_attachment -> depth_stencil_read",
+   "recorded": "BOTTOM_OF_PIPE/- -> TOP_OF_PIPE/-",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "3f931193a18b60d2",
+   "instances": 4,
+   "decisions": {
+    "required": 4
+   },
+   "sync": 1,
+   "what": "image[0] image#8 color_attachment -> shader_read",
+   "recorded": "BOTTOM_OF_PIPE/- -> TOP_OF_PIPE/-",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "07880b24899746b3",
+   "instances": 4,
+   "decisions": {
+    "required": 4
+   },
+   "sync": 1,
+   "what": "image[0] image#9 color_attachment -> shader_read",
+   "recorded": "BOTTOM_OF_PIPE/- -> TOP_OF_PIPE/-",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "fcbcf7d2a82d7e66",
+   "instances": 4,
+   "decisions": {
+    "required": 4
+   },
+   "sync": 1,
+   "what": "image[0] swapchain[1] color_attachment -> present",
+   "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> BOTTOM_OF_PIPE/-",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  }
+ ],
+ "proof": {
+  "baseline_diagnostics": 1095,
+  "plain_timing_check": {
+   "baseline": 600,
+   "with_plan": 600,
+   "new": 0
+  },
+  "pairwise_recheck": {
+   "baseline": 1635,
+   "with_plan": 1635,
+   "new": 0
+  },
+  "pinned_for_baseline_hazards": 40,
+  "oracle_runs": 31,
+  "seconds": 18.53
+ },
+ "chain_entries": 26,
+ "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace"
+}

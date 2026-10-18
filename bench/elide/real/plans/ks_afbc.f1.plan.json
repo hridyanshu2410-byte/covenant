@@ -1,0 +1,4274 @@
+{
+ "format": "covenant-elide-plan/1",
+ "trace": "trace.jsonl",
+ "trace_sha1": "2941a97d4fc2a6fd7be5618bcf9b6f14bd953a90",
+ "id_scheme": {
+  "strict": "(rec, idx): rec = 0-based vkBeginCommandBuffer ordinal in the process; idx = 0-based barrier-call index within that recording (sync1, sync2 and 2KHR all count)",
+  "chain": "FNV-1a 64 over the signatures of the recording's barrier calls so far (state continues from the previous barrier's chain value; recording start = 0xcbf29ce484222325)",
+  "sig": "FNV-1a 64 of the canonical content string; the layer never touches a call whose sig differs",
+  "sig_format": "<1|2>|<depFlags> then |M:ss:sa:ds:da, |B:ss:sa:ds:da:sfam:dfam:off:size, |I:ss:sa:ds:da:sfam:dfam:old:new:aspect:baseMip:levels:baseLayer:layers, |E:ss:ds; decimal"
+ },
+ "proof": {
+  "oracle": "covenant.timing.check (vector-clock happens-before over all queues; every schedule the recorded synchronization allows)",
+  "obligation": "the planned frame reports no diagnostic the recorded frame does not; layout transitions and ownership transfers are never removed",
+  "strengthening": [
+   "layout transitions modelled as writes between the src and dst scopes",
+   "a layout transition must reach later accesses through its own dst scope (or a chain from it), not by a later barrier capturing it",
+   "write-after-write requires the later write in the dst access scope",
+   "attachment load/store operations modelled as accesses",
+   "the presentation engine reads a swapchain image before every acquire signal"
+  ],
+  "baseline_diagnostics": 0,
+  "baseline": [],
+  "new_diagnostics_with_plan": 0,
+  "plain_timing_check": {
+   "baseline": 0,
+   "with_plan": 0,
+   "new": 0
+  },
+  "pairwise_recheck": {
+   "baseline": 0,
+   "with_plan": 0,
+   "new": 0
+  },
+  "pinned_for_baseline_hazards": 0,
+  "oracle_runs": 41,
+  "oracle_source_sha1": "3c45c1ff92a557af1359c0c7e7d4784b97e5eac7",
+  "seconds": 19.37
+ },
+ "summary": {
+  "calls": 67,
+  "decisions": {
+   "required": 41,
+   "narrow": 26
+  },
+  "structs": {
+   "total": 67,
+   "removed": 0,
+   "narrowed": 26,
+   "kept": 41
+  },
+  "chain_entries": 26,
+  "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace"
+ },
+ "barriers": [
+  {
+   "rec": 0,
+   "idx": 0,
+   "seq": 125,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "ac4a97ed7ee19b10",
+   "chain": "ac4a97ed7ee19b10",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#13",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "HOST"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 1,
+   "seq": 127,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "6f2053bd1b90c019",
+   "chain": "55c9813182eb64a2",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#13",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 2,
+   "seq": 165,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "ac4a97ed7ee19b10",
+   "chain": "2c1fe84e30d93ceb",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#31",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "HOST"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 3,
+   "seq": 190,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "6f2053bd1b90c019",
+   "chain": "f42024f047638f0f",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#31",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 4,
+   "seq": 200,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "ac4a97ed7ee19b10",
+   "chain": "bb5ed16a34723502",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#17",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "HOST"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 5,
+   "seq": 202,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "6f2053bd1b90c019",
+   "chain": "54ef7609f8752df4",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#17",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 6,
+   "seq": 206,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "1cd5f204adf94ba3",
+   "chain": "f05cc385eb76c532",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#29",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "HOST"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 7,
+   "seq": 208,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "268f8d8f8fc03786",
+   "chain": "c46fe238f3f78397",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#29",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 8,
+   "seq": 212,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "ac4a97ed7ee19b10",
+   "chain": "239f60e56396fdda",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#18",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "HOST"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 9,
+   "seq": 214,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "6f2053bd1b90c019",
+   "chain": "6ed35ce3d4898d0c",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#18",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 10,
+   "seq": 218,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "ac4a97ed7ee19b10",
+   "chain": "32c93bcf537a4aed",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#20",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "HOST"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 11,
+   "seq": 220,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "6f2053bd1b90c019",
+   "chain": "5a7ae1b9063b7f61",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#20",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 12,
+   "seq": 224,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "ac4a97ed7ee19b10",
+   "chain": "cc7501af8f7ab564",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#22",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "HOST"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 13,
+   "seq": 226,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "6f2053bd1b90c019",
+   "chain": "336cdbf925ccb5ce",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#22",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 14,
+   "seq": 230,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "ac4a97ed7ee19b10",
+   "chain": "bfc473cd028c037f",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#24",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "HOST"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 15,
+   "seq": 232,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "6f2053bd1b90c019",
+   "chain": "40fa79b613ce66db",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#24",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 16,
+   "seq": 236,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "ac4a97ed7ee19b10",
+   "chain": "3b59ed6479013426",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#37",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "HOST"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 17,
+   "seq": 238,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "6f2053bd1b90c019",
+   "chain": "8e24a1a36aae9130",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#37",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 18,
+   "seq": 242,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "ac4a97ed7ee19b10",
+   "chain": "537c2185ed96dc69",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#25",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "HOST"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 19,
+   "seq": 244,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "6f2053bd1b90c019",
+   "chain": "677d92d6829f6955",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#25",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 20,
+   "seq": 248,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "ac4a97ed7ee19b10",
+   "chain": "f602bd5be08be4e0",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#28",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "HOST"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 21,
+   "seq": 250,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "6f2053bd1b90c019",
+   "chain": "8702690d29036e12",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#28",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 22,
+   "seq": 254,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "ac4a97ed7ee19b10",
+   "chain": "9dd17ce7c0988b7b",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#35",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "HOST"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 23,
+   "seq": 256,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "6f2053bd1b90c019",
+   "chain": "f92fa17f9f52ad3f",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#35",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 24,
+   "seq": 260,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "ac4a97ed7ee19b10",
+   "chain": "4100369d0fa428d2",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#19",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "HOST"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 25,
+   "seq": 262,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "6f2053bd1b90c019",
+   "chain": "91d2d86a438fd464",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#19",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 26,
+   "seq": 266,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "ac4a97ed7ee19b10",
+   "chain": "aa29bce562bb68f5",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#33",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "HOST"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 27,
+   "seq": 268,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "6f2053bd1b90c019",
+   "chain": "bb2eb432b51c1c89",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#33",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 28,
+   "seq": 272,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "ac4a97ed7ee19b10",
+   "chain": "d752ce60ee14d81c",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#21",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "HOST"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 29,
+   "seq": 274,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "6f2053bd1b90c019",
+   "chain": "c4b6eeaf1433e646",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#21",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 30,
+   "seq": 278,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "ac4a97ed7ee19b10",
+   "chain": "ec69048b987c2ba7",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#23",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "HOST"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 31,
+   "seq": 280,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "6f2053bd1b90c019",
+   "chain": "3c65e5c506a1a123",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#23",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 32,
+   "seq": 284,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "ac4a97ed7ee19b10",
+   "chain": "97cdf2a43a6ab6be",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#26",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "HOST"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 33,
+   "seq": 286,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "6f2053bd1b90c019",
+   "chain": "c505afc40ed18008",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#26",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 34,
+   "seq": 290,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "ac4a97ed7ee19b10",
+   "chain": "1a4c93b782cdc931",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#27",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "HOST"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 35,
+   "seq": 292,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "6f2053bd1b90c019",
+   "chain": "2a2c297fc5968bbd",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#27",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 36,
+   "seq": 296,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "a20f7e2225015c09",
+   "chain": "f107224447112631",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#36",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "HOST"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 37,
+   "seq": 298,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "76b171b3904f47a0",
+   "chain": "e6658829b5913ea4",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#36",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 38,
+   "seq": 302,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "a20f7e2225015c09",
+   "chain": "c1eafa58c2e48e9c",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#32",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "HOST"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 39,
+   "seq": 304,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "76b171b3904f47a0",
+   "chain": "ab50ae2278dbd5f3",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#32",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 40,
+   "seq": 308,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "a20f7e2225015c09",
+   "chain": "166e30e11dc0161b",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#34",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "HOST"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 41,
+   "seq": 310,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "76b171b3904f47a0",
+   "chain": "2c56f0a00bbef052",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#34",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 42,
+   "seq": 314,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "ac4a97ed7ee19b10",
+   "chain": "c5cea23679e4b63b",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#15",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "HOST"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 43,
+   "seq": 316,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "6f2053bd1b90c019",
+   "chain": "c9c4449644c12cff",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#15",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 44,
+   "seq": 320,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "ac4a97ed7ee19b10",
+   "chain": "8446b48194d2d812",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#14",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "HOST"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 45,
+   "seq": 322,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "6f2053bd1b90c019",
+   "chain": "01ba70ed127d0aa4",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#14",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 46,
+   "seq": 326,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "ac4a97ed7ee19b10",
+   "chain": "60f63121bce126b5",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#30",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "HOST"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 47,
+   "seq": 328,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "6f2053bd1b90c019",
+   "chain": "924a2c4ac0e3cc49",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#30",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 48,
+   "seq": 332,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "ac4a97ed7ee19b10",
+   "chain": "079725b4d066a05c",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#16",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "HOST"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 49,
+   "seq": 334,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "6f2053bd1b90c019",
+   "chain": "e93a7937fcc19786",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#16",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 0,
+   "seq": 884,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "506e177b215c5453",
+   "chain": "506e177b215c5453",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#38",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "HOST"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 1,
+   "seq": 886,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#1",
+   "sig": "9084690ba5e26de0",
+   "chain": "c9ff674dc8b8064a",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#38",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 0,
+   "seq": 902,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#2",
+   "sig": "78023e639b5bcd11",
+   "chain": "78023e639b5bcd11",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "swapchain#2[0]",
+     "layout": "undefined -> color_attachment",
+     "recorded": {
+      "src_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "dst_access": [
+       "COLOR_ATTACHMENT_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: layout transition, no narrower mask verified"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 1,
+   "seq": 903,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#2",
+   "sig": "0049423ebb10eb6d",
+   "chain": "59587b18208ae7e9",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#10",
+     "layout": "undefined -> depth_stencil_attachment",
+     "recorded": {
+      "src_stage": [
+       "TOP_OF_PIPE"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "EARLY_FRAGMENT_TESTS",
+       "LATE_FRAGMENT_TESTS"
+      ],
+      "dst_access": [
+       "DEPTH_STENCIL_ATTACHMENT_READ",
+       "DEPTH_STENCIL_ATTACHMENT_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: layout transition, no narrower mask verified"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 2,
+   "seq": 1493,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#2",
+   "sig": "2d4fd583a03b885c",
+   "chain": "6ebb3f09ba5ed1a8",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "swapchain#2[0]",
+     "layout": "color_attachment -> present",
+     "recorded": {
+      "src_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "src_access": [
+       "COLOR_ATTACHMENT_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: layout transition, no narrower mask verified"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 3,
+   "idx": 0,
+   "seq": 1504,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#3",
+   "sig": "78023e639b5bcd11",
+   "chain": "78023e639b5bcd11",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "swapchain#2[1]",
+     "layout": "undefined -> color_attachment",
+     "recorded": {
+      "src_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "dst_access": [
+       "COLOR_ATTACHMENT_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: layout transition, no narrower mask verified"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 3,
+   "idx": 1,
+   "seq": 1505,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#3",
+   "sig": "0049423ebb10eb6d",
+   "chain": "59587b18208ae7e9",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#11",
+     "layout": "undefined -> depth_stencil_attachment",
+     "recorded": {
+      "src_stage": [
+       "TOP_OF_PIPE"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "EARLY_FRAGMENT_TESTS",
+       "LATE_FRAGMENT_TESTS"
+      ],
+      "dst_access": [
+       "DEPTH_STENCIL_ATTACHMENT_READ",
+       "DEPTH_STENCIL_ATTACHMENT_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: layout transition, no narrower mask verified"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 3,
+   "idx": 2,
+   "seq": 2045,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#3",
+   "sig": "2d4fd583a03b885c",
+   "chain": "6ebb3f09ba5ed1a8",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "swapchain#2[1]",
+     "layout": "color_attachment -> present",
+     "recorded": {
+      "src_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "src_access": [
+       "COLOR_ATTACHMENT_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: layout transition, no narrower mask verified"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 4,
+   "idx": 0,
+   "seq": 2056,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#4",
+   "sig": "78023e639b5bcd11",
+   "chain": "78023e639b5bcd11",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "swapchain#2[2]",
+     "layout": "undefined -> color_attachment",
+     "recorded": {
+      "src_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "dst_access": [
+       "COLOR_ATTACHMENT_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: layout transition, no narrower mask verified"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 4,
+   "idx": 1,
+   "seq": 2057,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#4",
+   "sig": "0049423ebb10eb6d",
+   "chain": "59587b18208ae7e9",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#12",
+     "layout": "undefined -> depth_stencil_attachment",
+     "recorded": {
+      "src_stage": [
+       "TOP_OF_PIPE"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "EARLY_FRAGMENT_TESTS",
+       "LATE_FRAGMENT_TESTS"
+      ],
+      "dst_access": [
+       "DEPTH_STENCIL_ATTACHMENT_READ",
+       "DEPTH_STENCIL_ATTACHMENT_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: layout transition, no narrower mask verified"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 4,
+   "idx": 2,
+   "seq": 2420,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#4",
+   "sig": "2d4fd583a03b885c",
+   "chain": "6ebb3f09ba5ed1a8",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "swapchain#2[2]",
+     "layout": "color_attachment -> present",
+     "recorded": {
+      "src_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "src_access": [
+       "COLOR_ATTACHMENT_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: layout transition, no narrower mask verified"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 5,
+   "idx": 0,
+   "seq": 2432,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#2",
+   "sig": "78023e639b5bcd11",
+   "chain": "78023e639b5bcd11",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "swapchain#2[0]",
+     "layout": "undefined -> color_attachment",
+     "recorded": {
+      "src_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "dst_access": [
+       "COLOR_ATTACHMENT_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: layout transition, no narrower mask verified"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 5,
+   "idx": 1,
+   "seq": 2433,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#2",
+   "sig": "0049423ebb10eb6d",
+   "chain": "59587b18208ae7e9",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#10",
+     "layout": "undefined -> depth_stencil_attachment",
+     "recorded": {
+      "src_stage": [
+       "TOP_OF_PIPE"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "EARLY_FRAGMENT_TESTS",
+       "LATE_FRAGMENT_TESTS"
+      ],
+      "dst_access": [
+       "DEPTH_STENCIL_ATTACHMENT_READ",
+       "DEPTH_STENCIL_ATTACHMENT_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: layout transition, no narrower mask verified"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 5,
+   "idx": 2,
+   "seq": 2719,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#2",
+   "sig": "2d4fd583a03b885c",
+   "chain": "6ebb3f09ba5ed1a8",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "swapchain#2[0]",
+     "layout": "color_attachment -> present",
+     "recorded": {
+      "src_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "src_access": [
+       "COLOR_ATTACHMENT_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: layout transition, no narrower mask verified"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 6,
+   "idx": 0,
+   "seq": 2728,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#3",
+   "sig": "78023e639b5bcd11",
+   "chain": "78023e639b5bcd11",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "swapchain#2[1]",
+     "layout": "undefined -> color_attachment",
+     "recorded": {
+      "src_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "dst_access": [
+       "COLOR_ATTACHMENT_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: layout transition, no narrower mask verified"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 6,
+   "idx": 1,
+   "seq": 2729,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#3",
+   "sig": "0049423ebb10eb6d",
+   "chain": "59587b18208ae7e9",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#11",
+     "layout": "undefined -> depth_stencil_attachment",
+     "recorded": {
+      "src_stage": [
+       "TOP_OF_PIPE"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "EARLY_FRAGMENT_TESTS",
+       "LATE_FRAGMENT_TESTS"
+      ],
+      "dst_access": [
+       "DEPTH_STENCIL_ATTACHMENT_READ",
+       "DEPTH_STENCIL_ATTACHMENT_WRITE"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: layout transition, no narrower mask verified"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 6,
+   "idx": 2,
+   "seq": 3014,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#3",
+   "sig": "2d4fd583a03b885c",
+   "chain": "6ebb3f09ba5ed1a8",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "swapchain#2[1]",
+     "layout": "color_attachment -> present",
+     "recorded": {
+      "src_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "src_access": [
+       "COLOR_ATTACHMENT_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "image[0]": "kept: layout transition, no narrower mask verified"
+   },
+   "occurrences": 1
+  }
+ ],
+ "chain": [
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "6f2053bd1b90c019",
+   "chain": "55c9813182eb64a2",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#13",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 1
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "6f2053bd1b90c019",
+   "chain": "f42024f047638f0f",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#31",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 1
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "6f2053bd1b90c019",
+   "chain": "54ef7609f8752df4",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#17",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 1
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "268f8d8f8fc03786",
+   "chain": "c46fe238f3f78397",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#29",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 1
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "6f2053bd1b90c019",
+   "chain": "6ed35ce3d4898d0c",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#18",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 1
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "6f2053bd1b90c019",
+   "chain": "5a7ae1b9063b7f61",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#20",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 1
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "6f2053bd1b90c019",
+   "chain": "336cdbf925ccb5ce",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#22",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 1
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "6f2053bd1b90c019",
+   "chain": "40fa79b613ce66db",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#24",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 1
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "6f2053bd1b90c019",
+   "chain": "8e24a1a36aae9130",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#37",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 1
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "6f2053bd1b90c019",
+   "chain": "677d92d6829f6955",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#25",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 1
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "6f2053bd1b90c019",
+   "chain": "8702690d29036e12",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#28",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 1
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "6f2053bd1b90c019",
+   "chain": "f92fa17f9f52ad3f",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#35",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 1
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "6f2053bd1b90c019",
+   "chain": "91d2d86a438fd464",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#19",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 1
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "6f2053bd1b90c019",
+   "chain": "bb2eb432b51c1c89",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#33",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 1
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "6f2053bd1b90c019",
+   "chain": "c4b6eeaf1433e646",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#21",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 1
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "6f2053bd1b90c019",
+   "chain": "3c65e5c506a1a123",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#23",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 1
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "6f2053bd1b90c019",
+   "chain": "c505afc40ed18008",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#26",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 1
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "6f2053bd1b90c019",
+   "chain": "2a2c297fc5968bbd",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#27",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 1
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "76b171b3904f47a0",
+   "chain": "e6658829b5913ea4",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#36",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 1
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "76b171b3904f47a0",
+   "chain": "ab50ae2278dbd5f3",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#32",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 1
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "76b171b3904f47a0",
+   "chain": "2c56f0a00bbef052",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#34",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 1
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "6f2053bd1b90c019",
+   "chain": "c9c4449644c12cff",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#15",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 1
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "6f2053bd1b90c019",
+   "chain": "01ba70ed127d0aa4",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#14",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 1
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "6f2053bd1b90c019",
+   "chain": "924a2c4ac0e3cc49",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#30",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 1
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "6f2053bd1b90c019",
+   "chain": "e93a7937fcc19786",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#16",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 1
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "9084690ba5e26de0",
+   "chain": "c9ff674dc8b8064a",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#38",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 1
+  }
+ ]
+}

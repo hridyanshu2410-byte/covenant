@@ -1,0 +1,11 @@
+{
+ "id": 73,
+ "title": "Render pipeline cache key ignores the vertex buffer layout: a stride-16 pipeline is reused for a stride-12 geometry",
+ "upstream": "https://github.com/mrdoob/three.js/issues/34722",
+ "fix": "https://github.com/mrdoob/three.js/pull/34726",
+ "bug_id": 66,
+ "category": "structure",
+ "expect": [],
+ "expect_note": "no existing diagnostic code covers a pipeline vertex-binding stride that does not match the bound vertex data",
+ "expected_finding": "after the geometry swap, render_pipeline<storage_geometry> (vertex binding 0 stride 16) draws 6 vertices from BufferAttribute.position, a 72-byte buffer packed at 12 bytes per vertex: the draw needs 96 bytes and reads every vertex after the first at the wrong offset"
+}

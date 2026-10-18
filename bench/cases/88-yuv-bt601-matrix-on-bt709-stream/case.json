@@ -1,0 +1,12 @@
+{
+ "id": 88,
+ "title": "GPU YUV->RGB shader hard-codes BT.601 for a BT.709 video stream",
+ "upstream": "https://github.com/labelle-toolkit/labelle-bgfx/issues/155",
+ "fix": "https://github.com/labelle-toolkit/labelle-bgfx/pull/156",
+ "bug_id": 140,
+ "category": "meaning",
+ "expect": [
+  "meaning.color-mismatch"
+ ],
+ "expected_finding": "the decoder reports the stream as BT.709 limited range, but fsMain decodes the Y/U/V planes with BT.601 limited-range coefficients (1.596 Cr, -0.392 Cb, -0.813 Cr, 2.017 Cb instead of 1.793, -0.213, -0.533, 2.112): chroma is shifted"
+}

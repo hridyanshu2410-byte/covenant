@@ -1,0 +1,5 @@
+{"id": 40, "title": "Compositor's Normal blend multiplies a premultiplied layer's RGB by its alpha again",
+ "upstream": "https://github.com/kevinraymond/fosfora/issues/94",
+ "fix": "https://github.com/kevinraymond/fosfora/pull/194",
+ "bug_id": 57, "category": "meaning", "expect": ["meaning.convention-mismatch"],
+ "expected_finding": "layer colour is already premultiplied by alpha; fg.rgb * opacity * fg.a applies alpha a second time (darkened antialiased edges)"}

@@ -1,0 +1,5 @@
+{"id": 35, "title": "Scene-graph matrix stack pushes projection/modelview to a fullscreen pipeline whose layout only declares a fragment push-constant block",
+ "upstream": "https://github.com/vsg-dev/VulkanSceneGraph/issues/1223",
+ "bug_id": 61, "category": "structure", "expect": ["structure.push-constant-range"],
+ "fix_note": "no upstream fix; the fixed variant follows the fix proposed in the issue (a per-PipelineLayout trait saying whether it takes the matrix push constants, checked by MatrixStack::record)",
+ "expected_finding": "vkCmdPushConstants of the two mat4s (bytes 0..127, stage flags taken from the bound layout: FRAGMENT) on fullscreen_tonemap's layout, which declares only {FRAGMENT, 0, 16} (VUID-vkCmdPushConstants-offset-01795)"}

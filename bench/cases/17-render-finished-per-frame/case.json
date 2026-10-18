@@ -1,0 +1,1 @@
+{"id": 17, "title": "Render-finished semaphore indexed by frame in flight instead of by swapchain image", "upstream": "https://github.com/Overv/VulkanTutorial/issues/407", "category": "timing", "expect": ["timing.present-semaphore-reuse"]}

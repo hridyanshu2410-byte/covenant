@@ -1,0 +1,17 @@
+#version 450
+// source image of a post chain, from the frame parameters
+layout(local_size_x = 8, local_size_y = 8) in;
+layout(set = 0, binding = 0) uniform Params { vec4 p; } params;
+layout(set = 0, binding = 1, rgba16f) uniform writeonly image2D dst;
+layout(push_constant) uniform PC { uint mode; uint iters; } pc;
+void main() {
+  ivec2 q = ivec2(gl_GlobalInvocationID.xy);
+  ivec2 sz = imageSize(dst);
+  if (q.x >= sz.x || q.y >= sz.y) return;
+  vec2 uv = (vec2(q) + 0.5) / vec2(sz);
+  float v = 0.0;
+  for (uint k = 0u; k < pc.iters; k++)
+    v += sin(uv.x * (13.0 + float(k)) + params.p.x) * cos(uv.y * (7.0 + float(k)) + params.p.y);
+  v = v / float(max(pc.iters, 1u));
+  imageStore(dst, q, pc.mode == 0u ? vec4(max(v, 0.0) * 4.0, uv, 1.0) : vec4(abs(v), v * v, 0.5, 1.0));
+}

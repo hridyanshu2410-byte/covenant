@@ -1,0 +1,12 @@
+{
+ "id": 61,
+ "title": "Present-wait semaphore indexed by the frame number instead of the acquired swapchain image",
+ "upstream": "https://github.com/JasonPhone/vrtr/commit/c459d8829458da8d9bd4c3ea78cb1ee5de8f3922",
+ "fix": "https://github.com/JasonPhone/vrtr/commit/c459d8829458da8d9bd4c3ea78cb1ee5de8f3922",
+ "bug_id": 35,
+ "category": "timing",
+ "expect": [
+  "timing.present-semaphore-reuse"
+ ],
+ "expected_finding": "the submit signals and vkQueuePresentKHR waits on m_frames[m_frame_number].present_ready_semaphore; the frame's render_fence does not cover the present's wait, so a later frame using the same slot may re-signal the semaphore before the earlier present has consumed it, and the frame number is not tied to the acquired image index (VUID-vkQueueSubmit-pSignalSemaphores-00067)"
+}

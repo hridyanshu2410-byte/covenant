@@ -1,0 +1,1 @@
+{"id": 15, "title": "Compute-written vertex buffer read by a draw with the wrong barrier scope", "upstream": "https://github.com/gfx-rs/wgpu/issues/6344", "category": "timing", "expect": ["timing.barrier-scope"]}

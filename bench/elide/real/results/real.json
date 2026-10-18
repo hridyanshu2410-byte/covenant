@@ -1,0 +1,7101 @@
+{
+ "sw/computecloth": {
+  "trace": {
+   "1": {
+    "rc": 0,
+    "records": 1178,
+    "seconds": 0.1,
+    "dir": "build/elide-real/trace/sw_computecloth-f1"
+   },
+   "2": {
+    "rc": 0,
+    "records": 1195,
+    "seconds": 0.1,
+    "dir": "build/elide-real/trace/sw_computecloth-f2"
+   }
+  },
+  "prove": {
+   "1": {
+    "per_frame": {
+     "calls": 189,
+     "remove": 0,
+     "narrow": 0,
+     "required": 189,
+     "structs": {
+      "keep": 189
+     },
+     "struct_kinds": {
+      "plain": 189
+     },
+     "keep_reasons": {
+      "a hazard the program already has": 189
+     },
+     "pinned_structs": 189,
+     "pinned_fraction": 1.0,
+     "tried_and_needed_structs": 0
+    },
+    "one_time": {
+     "calls": 67,
+     "remove": 0,
+     "narrow": 4,
+     "required": 63,
+     "structs": {
+      "narrow": 4,
+      "keep": 63
+     },
+     "struct_kinds": {
+      "transition": 4,
+      "plain": 63
+     },
+     "keep_reasons": {
+      "a hazard the program already has": 63
+     }
+    },
+    "per_frame_detail": [
+     {
+      "chain": "8302612546d546f0",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "2ed4855fc1e52949",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "063e8bfcd8521744",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "7ef057fd1502600d",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "200519f148454958",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "63faa64f04c536b1",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "51f0527e4c108cac",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "297d4fa36c11d315",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "01b3b983aa5eaf80",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "f43385cacaf718b9",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "392a4f1131886554",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "f2e897026789e37d",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "04b6baf571803468",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "dbf6cd6dc6410521",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "08c8027d766c983c",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "a912d2ee3adb8005",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "84a6ffa715964890",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "cb1cdc5049a5eda9",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "c61fab48b831af64",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "259f0485ebf1e8ed",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "0167604dbd868478",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "f283fe7458f70711",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "0fdc667e6e5813cc",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "f51f93c111311b75",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "688b977610ed2020",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "acfae0d414cae819",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "069d74d343244474",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "53c4ca23a92e195d",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "ecc4f2b15a496688",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "c4266c1d72d4bc01",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "659d20d744cf005c",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "37ec6bb63fe63fe5",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "101fb69221d7f130",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "47bd75287afef809",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "1ffd4f282fe64384",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "ed8aae0d894419cd",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "6820cf0fd914ac98",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "c41639ec0356bf71",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "16615d720c654aec",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "808fc5afef3273d5",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "77238b4e61005ec0",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "58222b782c343979",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "00467d8630ba9494",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "4f60f18d8289653d",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "96e85889658d58a8",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "3fe5582022fb2fe1",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "95b722e04c5b487c",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "4d4bc8fb40d7aac5",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "a4720ec0df4dc4d0",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "5b90831ce918ab69",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "b2c48e0ab6ba3ba4",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "c7bb4d92d9446ead",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "8445a203a0547ab8",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "3c7e32ed063b4ed1",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "32893034bd67ba0c",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "4515fdbbe120e435",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "1dca5430dc4bbc60",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "13e4422665b891d9",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "58d35b06626c9cb4",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "c34307632c24131d",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "2efba5e7dc6fc2c8",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "f565ef12027e0cc1",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "aa0ebd3fe994df9c",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     }
+    ],
+    "proof": {
+     "baseline_diagnostics": 248,
+     "plain_timing_check": {
+      "baseline": 248,
+      "with_plan": 248,
+      "new": 0
+     },
+     "pairwise_recheck": {
+      "baseline": 248,
+      "with_plan": 248,
+      "new": 0
+     },
+     "pinned_for_baseline_hazards": 252,
+     "oracle_runs": 9,
+     "seconds": 1.06
+    },
+    "chain_entries": 4,
+    "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace",
+    "seconds": 1.6
+   },
+   "2": {
+    "per_frame": {
+     "calls": 201,
+     "remove": 0,
+     "narrow": 0,
+     "required": 201,
+     "structs": {
+      "keep": 213
+     },
+     "struct_kinds": {
+      "plain": 213
+     },
+     "keep_reasons": {
+      "a hazard the program already has": 189,
+      "it is a queue family ownership transfer": 24
+     },
+     "pinned_structs": 213,
+     "pinned_fraction": 1.0,
+     "tried_and_needed_structs": 0
+    },
+    "one_time": {
+     "calls": 72,
+     "remove": 0,
+     "narrow": 4,
+     "required": 68,
+     "structs": {
+      "narrow": 4,
+      "keep": 73
+     },
+     "struct_kinds": {
+      "transition": 4,
+      "plain": 73
+     },
+     "keep_reasons": {
+      "a hazard the program already has": 63,
+      "it is a queue family ownership transfer": 10
+     }
+    },
+    "per_frame_detail": [
+     {
+      "chain": "936f4bf2deb89a68",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "TOP_OF_PIPE/- -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "it is a queue family ownership transfer"
+      ]
+     },
+     {
+      "chain": "936f4bf2deb89a68",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[1] buffer#10",
+      "recorded": "TOP_OF_PIPE/- -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "it is a queue family ownership transfer"
+      ]
+     },
+     {
+      "chain": "2496b28515915b21",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "904781200ed25e3c",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "d83a9d8f9cf03605",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "5ac7db392bef6e90",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "b496cf38c83503a9",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "b86358ade2a43564",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "5ea1f7aedb115eed",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "97840455fb986a78",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "a2f1c8ac6d1cdd11",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "a7509cf2aeef59cc",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "ad0fc675d5335175",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "6687f064184fc620",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "d0883481bfdf7e19",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "70ded0fef0f84a74",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "4a6e104154eb0f5d",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "2fcc5d714f94cc88",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "0f2827bbb1301201",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "02ce8102e9f7c65c",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "9ee2b4661135f5e5",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "f4c411870ca41730",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "32f0e020a3f90e09",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "e6a0c04ce97bc984",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "bd6f07e448fe8fcd",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "fcff239a03f99298",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "57953f9b29479571",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "3eabd795ea7f90ec",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "95f125f9512fa9d5",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "f4c2095db99604c0",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "0da74a207c73cf79",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "585780e496719a94",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "1afe8c4385a15b3d",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "973d8dbbdc6bbea8",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "be5da94645e185e1",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "0154775e4fc70e7c",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "2f9576e98ee260c5",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "d867728cc80cead0",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "eb73f2d161fdc169",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "09f7967780f2c1a4",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "3ff92e262719e4ad",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "684fc06e118c60b8",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "8cb5ab81937724d1",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "b77e72d5ea85000c",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "746331fd4e991a35",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "611f10900f946260",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "c8eb41cf60a327d9",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "336610f06186a2b4",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "bd40139fa417091d",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "abc33f318e6128c8",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "6e90acf3bf6f62c1",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "333969fa5cc3a59c",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "acb38abb2812a7a5",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "fbd5de1499f07f70",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "eb4ae4816a4735c9",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "fde77214d9fc17c4",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "3d360c7af9a2748d",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "957ffa52de3e91d8",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "62fc23ab5777d331",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "d9fa0120c7619d2c",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "d8de41b4ed337795",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "2a1e1bfd8fd80800",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "0abc96aae5ec4539",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "e3b5b670ca4285d4",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "270e8de2573f17fd",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "e9545b7fd6977fdc",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> BOTTOM_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "it is a queue family ownership transfer"
+      ]
+     },
+     {
+      "chain": "e9545b7fd6977fdc",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[1] buffer#10",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> BOTTOM_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "it is a queue family ownership transfer"
+      ]
+     },
+     {
+      "chain": "1ad4876824b07c3a",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "TOP_OF_PIPE/- -> VERTEX_INPUT/VERTEX_ATTRIBUTE_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "it is a queue family ownership transfer"
+      ]
+     },
+     {
+      "chain": "1ad4876824b07c3a",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[1] buffer#10",
+      "recorded": "TOP_OF_PIPE/- -> VERTEX_INPUT/VERTEX_ATTRIBUTE_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "it is a queue family ownership transfer"
+      ]
+     },
+     {
+      "chain": "df6308597c592979",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#9",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> BOTTOM_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "it is a queue family ownership transfer"
+      ]
+     },
+     {
+      "chain": "df6308597c592979",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[1] buffer#10",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> BOTTOM_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "it is a queue family ownership transfer"
+      ]
+     }
+    ],
+    "proof": {
+     "baseline_diagnostics": 248,
+     "plain_timing_check": {
+      "baseline": 248,
+      "with_plan": 248,
+      "new": 0
+     },
+     "pairwise_recheck": {
+      "baseline": 248,
+      "with_plan": 248,
+      "new": 0
+     },
+     "pinned_for_baseline_hazards": 252,
+     "oracle_runs": 9,
+     "seconds": 1.01
+    },
+    "chain_entries": 4,
+    "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace",
+    "seconds": 1.4
+   }
+  },
+  "check": {
+   "1": {
+    "ops": 1587,
+    "base": {
+     "checker_epoch": 248,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 248,
+     "checker_pairwise_new": 0,
+     "reference": 3968,
+     "reference_new": 0,
+     "seconds": 0.95
+    },
+    "strict": {
+     "checker_epoch": 248,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 248,
+     "checker_pairwise_new": 0,
+     "reference": 3968,
+     "reference_new": 0,
+     "seconds": 0.9
+    },
+    "chain": {
+     "checker_epoch": 248,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 248,
+     "checker_pairwise_new": 0,
+     "reference": 3968,
+     "reference_new": 0,
+     "seconds": 0.91
+    }
+   },
+   "2": {
+    "ops": 1623,
+    "base": {
+     "checker_epoch": 248,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 248,
+     "checker_pairwise_new": 0,
+     "reference": 3968,
+     "reference_new": 0,
+     "seconds": 0.86
+    },
+    "strict": {
+     "checker_epoch": 248,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 248,
+     "checker_pairwise_new": 0,
+     "reference": 3968,
+     "reference_new": 0,
+     "seconds": 0.87
+    },
+    "chain": {
+     "checker_epoch": 248,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 248,
+     "checker_pairwise_new": 0,
+     "reference": 3968,
+     "reference_new": 0,
+     "seconds": 0.86
+    }
+   }
+  },
+  "lavapipe": {
+   "base_noval": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "475279d453eb63c9",
+     "bb1db061e1a658ca",
+     "19c0a279e0ce22d4",
+     "930c1c06df6b1186"
+    ],
+    "layer": null,
+    "validation": null,
+    "seconds": 0.3
+   },
+   "base": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "475279d453eb63c9",
+     "bb1db061e1a658ca",
+     "19c0a279e0ce22d4",
+     "930c1c06df6b1186"
+    ],
+    "layer": null,
+    "validation": {
+     "total": 0,
+     "sync": 0,
+     "groups": {}
+    },
+    "seconds": 0.3
+   },
+   "disabled": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "475279d453eb63c9",
+     "bb1db061e1a658ca",
+     "19c0a279e0ce22d4",
+     "930c1c06df6b1186"
+    ],
+    "layer": {
+     "plan": "bench/elide/real/plans/sw_computecloth.f1.plan.json",
+     "mode": "strict",
+     "active": false,
+     "recordings": 13,
+     "barrier_calls": 256,
+     "matched": 0,
+     "sig_mismatch": 0,
+     "removed_calls": 0,
+     "narrowed_calls": 0,
+     "structs_removed": 0,
+     "structs_narrowed": 0
+    },
+    "validation": {
+     "total": 0,
+     "sync": 0,
+     "groups": {}
+    },
+    "seconds": 0.3
+   },
+   "strict": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "475279d453eb63c9",
+     "bb1db061e1a658ca",
+     "19c0a279e0ce22d4",
+     "930c1c06df6b1186"
+    ],
+    "layer": {
+     "plan": "bench/elide/real/plans/sw_computecloth.f1.plan.json",
+     "mode": "strict",
+     "active": true,
+     "recordings": 13,
+     "barrier_calls": 256,
+     "matched": 4,
+     "sig_mismatch": 0,
+     "removed_calls": 0,
+     "narrowed_calls": 4,
+     "structs_removed": 0,
+     "structs_narrowed": 4
+    },
+    "validation": {
+     "total": 0,
+     "sync": 0,
+     "groups": {}
+    },
+    "seconds": 0.3
+   },
+   "base_long": {
+    "rc": 0,
+    "frames": 10,
+    "hashes": [
+     "475279d453eb63c9",
+     "bb1db061e1a658ca",
+     "19c0a279e0ce22d4",
+     "930c1c06df6b1186",
+     "63f9d042feadf987",
+     "c3dbc716169ddc19",
+     "cee6b82bb44abed4",
+     "d2bded0a0f4c62ef",
+     "490bc6e3ade23e99",
+     "0a0c276d77658542"
+    ],
+    "layer": null,
+    "validation": {
+     "total": 0,
+     "sync": 0,
+     "groups": {}
+    },
+    "seconds": 0.4
+   },
+   "chain": {
+    "rc": 0,
+    "frames": 10,
+    "hashes": [
+     "475279d453eb63c9",
+     "bb1db061e1a658ca",
+     "19c0a279e0ce22d4",
+     "930c1c06df6b1186",
+     "63f9d042feadf987",
+     "c3dbc716169ddc19",
+     "cee6b82bb44abed4",
+     "d2bded0a0f4c62ef",
+     "490bc6e3ade23e99",
+     "0a0c276d77658542"
+    ],
+    "layer": {
+     "plan": "bench/elide/real/plans/sw_computecloth.f1.plan.json",
+     "mode": "chain",
+     "active": true,
+     "recordings": 25,
+     "barrier_calls": 634,
+     "matched": 4,
+     "sig_mismatch": 0,
+     "removed_calls": 0,
+     "narrowed_calls": 4,
+     "structs_removed": 0,
+     "structs_narrowed": 4
+    },
+    "validation": {
+     "total": 0,
+     "sync": 0,
+     "groups": {}
+    },
+    "seconds": 0.4
+   }
+  }
+ },
+ "sw/computenbody": {
+  "trace": {
+   "1": {
+    "rc": 0,
+    "records": 327,
+    "seconds": 0.1,
+    "dir": "build/elide-real/trace/sw_computenbody-f1"
+   },
+   "2": {
+    "rc": 0,
+    "records": 344,
+    "seconds": 0.1,
+    "dir": "build/elide-real/trace/sw_computenbody-f2"
+   }
+  },
+  "prove": {
+   "1": {
+    "per_frame": {
+     "calls": 3,
+     "remove": 0,
+     "narrow": 0,
+     "required": 3,
+     "structs": {
+      "keep": 3
+     },
+     "struct_kinds": {
+      "plain": 3
+     },
+     "keep_reasons": {
+      "a hazard the program already has": 3
+     },
+     "pinned_structs": 3,
+     "pinned_fraction": 1.0,
+     "tried_and_needed_structs": 0
+    },
+    "one_time": {
+     "calls": 5,
+     "remove": 0,
+     "narrow": 4,
+     "required": 1,
+     "structs": {
+      "narrow": 4,
+      "keep": 1
+     },
+     "struct_kinds": {
+      "transition": 4,
+      "plain": 1
+     },
+     "keep_reasons": {
+      "a hazard the program already has": 1
+     }
+    },
+    "per_frame_detail": [
+     {
+      "chain": "8302612546d546f0",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#4",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     }
+    ],
+    "proof": {
+     "baseline_diagnostics": 4,
+     "plain_timing_check": {
+      "baseline": 4,
+      "with_plan": 4,
+      "new": 0
+     },
+     "pairwise_recheck": {
+      "baseline": 4,
+      "with_plan": 4,
+      "new": 0
+     },
+     "pinned_for_baseline_hazards": 4,
+     "oracle_runs": 9,
+     "seconds": 0.04
+    },
+    "chain_entries": 2,
+    "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace",
+    "seconds": 0.2
+   },
+   "2": {
+    "per_frame": {
+     "calls": 15,
+     "remove": 0,
+     "narrow": 0,
+     "required": 15,
+     "structs": {
+      "keep": 15
+     },
+     "struct_kinds": {
+      "plain": 15
+     },
+     "keep_reasons": {
+      "it is a queue family ownership transfer": 12,
+      "a hazard the program already has": 3
+     },
+     "pinned_structs": 15,
+     "pinned_fraction": 1.0,
+     "tried_and_needed_structs": 0
+    },
+    "one_time": {
+     "calls": 10,
+     "remove": 0,
+     "narrow": 4,
+     "required": 6,
+     "structs": {
+      "narrow": 4,
+      "keep": 6
+     },
+     "struct_kinds": {
+      "transition": 4,
+      "plain": 6
+     },
+     "keep_reasons": {
+      "it is a queue family ownership transfer": 5,
+      "a hazard the program already has": 1
+     }
+    },
+    "per_frame_detail": [
+     {
+      "chain": "880eb788a6b48926",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#4",
+      "recorded": "TOP_OF_PIPE/- -> COMPUTE_SHADER/SHADER_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "it is a queue family ownership transfer"
+      ]
+     },
+     {
+      "chain": "11390fc6c3e033f7",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#4",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "f5d61046859d46f5",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#4",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> BOTTOM_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "it is a queue family ownership transfer"
+      ]
+     },
+     {
+      "chain": "3cba30dfbab79b96",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#4",
+      "recorded": "TOP_OF_PIPE/- -> VERTEX_INPUT/VERTEX_ATTRIBUTE_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "it is a queue family ownership transfer"
+      ]
+     },
+     {
+      "chain": "38aa24bb22e65356",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#4",
+      "recorded": "VERTEX_INPUT/VERTEX_ATTRIBUTE_READ -> BOTTOM_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "it is a queue family ownership transfer"
+      ]
+     }
+    ],
+    "proof": {
+     "baseline_diagnostics": 4,
+     "plain_timing_check": {
+      "baseline": 4,
+      "with_plan": 4,
+      "new": 0
+     },
+     "pairwise_recheck": {
+      "baseline": 4,
+      "with_plan": 4,
+      "new": 0
+     },
+     "pinned_for_baseline_hazards": 4,
+     "oracle_runs": 9,
+     "seconds": 0.05
+    },
+    "chain_entries": 2,
+    "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace",
+    "seconds": 0.2
+   }
+  },
+  "check": {
+   "1": {
+    "ops": 229,
+    "base": {
+     "checker_epoch": 4,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 4,
+     "checker_pairwise_new": 0,
+     "reference": 4,
+     "reference_new": 0,
+     "seconds": 0.01
+    },
+    "strict": {
+     "checker_epoch": 4,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 4,
+     "checker_pairwise_new": 0,
+     "reference": 4,
+     "reference_new": 0,
+     "seconds": 0.01
+    },
+    "chain": {
+     "checker_epoch": 4,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 4,
+     "checker_pairwise_new": 0,
+     "reference": 4,
+     "reference_new": 0,
+     "seconds": 0.01
+    }
+   },
+   "2": {
+    "ops": 248,
+    "base": {
+     "checker_epoch": 4,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 4,
+     "checker_pairwise_new": 0,
+     "reference": 4,
+     "reference_new": 0,
+     "seconds": 0.02
+    },
+    "strict": {
+     "checker_epoch": 4,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 4,
+     "checker_pairwise_new": 0,
+     "reference": 4,
+     "reference_new": 0,
+     "seconds": 0.01
+    },
+    "chain": {
+     "checker_epoch": 4,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 4,
+     "checker_pairwise_new": 0,
+     "reference": 4,
+     "reference_new": 0,
+     "seconds": 0.01
+    }
+   }
+  },
+  "lavapipe": {
+   "base_noval": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "63e3bcc68fcbab93",
+     "c733427f9d9bcb97",
+     "2f249b1237634618",
+     "113744454df5b834"
+    ],
+    "layer": null,
+    "validation": null,
+    "seconds": 1.1
+   },
+   "base": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "63e3bcc68fcbab93",
+     "c733427f9d9bcb97",
+     "2f249b1237634618",
+     "113744454df5b834"
+    ],
+    "layer": null,
+    "validation": {
+     "total": 4,
+     "sync": 4,
+     "groups": {
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdDispatch(): WRITE_AFTER_WRITE hazard detected. Shader stage VK_SHADER_STAGE_COMPUTE_BIT writes to VkBuffer H, which was previously written by another vkCmdDispatch command. ": 4
+     }
+    },
+    "seconds": 1.1
+   },
+   "disabled": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "63e3bcc68fcbab93",
+     "c733427f9d9bcb97",
+     "2f249b1237634618",
+     "113744454df5b834"
+    ],
+    "layer": {
+     "plan": "bench/elide/real/plans/sw_computenbody.f1.plan.json",
+     "mode": "strict",
+     "active": false,
+     "recordings": 11,
+     "barrier_calls": 8,
+     "matched": 0,
+     "sig_mismatch": 0,
+     "removed_calls": 0,
+     "narrowed_calls": 0,
+     "structs_removed": 0,
+     "structs_narrowed": 0
+    },
+    "validation": {
+     "total": 4,
+     "sync": 4,
+     "groups": {
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdDispatch(): WRITE_AFTER_WRITE hazard detected. Shader stage VK_SHADER_STAGE_COMPUTE_BIT writes to VkBuffer H, which was previously written by another vkCmdDispatch command. ": 4
+     }
+    },
+    "seconds": 1.3
+   },
+   "strict": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "63e3bcc68fcbab93",
+     "c733427f9d9bcb97",
+     "2f249b1237634618",
+     "113744454df5b834"
+    ],
+    "layer": {
+     "plan": "bench/elide/real/plans/sw_computenbody.f1.plan.json",
+     "mode": "strict",
+     "active": true,
+     "recordings": 11,
+     "barrier_calls": 8,
+     "matched": 4,
+     "sig_mismatch": 0,
+     "removed_calls": 0,
+     "narrowed_calls": 4,
+     "structs_removed": 0,
+     "structs_narrowed": 4
+    },
+    "validation": {
+     "total": 4,
+     "sync": 4,
+     "groups": {
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdDispatch(): WRITE_AFTER_WRITE hazard detected. Shader stage VK_SHADER_STAGE_COMPUTE_BIT writes to VkBuffer H, which was previously written by another vkCmdDispatch command. ": 4
+     }
+    },
+    "seconds": 1.3
+   },
+   "base_long": {
+    "rc": 0,
+    "frames": 10,
+    "hashes": [
+     "63e3bcc68fcbab93",
+     "c733427f9d9bcb97",
+     "2f249b1237634618",
+     "113744454df5b834",
+     "5c1ea879b12786f8",
+     "d9414ae38d9f3e88",
+     "cb3270686330c898",
+     "6241a96b28d18eaa",
+     "c5476a5481ad665d",
+     "8bd325ce65895316"
+    ],
+    "layer": null,
+    "validation": {
+     "total": 10,
+     "sync": 10,
+     "groups": {
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdDispatch(): WRITE_AFTER_WRITE hazard detected. Shader stage VK_SHADER_STAGE_COMPUTE_BIT writes to VkBuffer H, which was previously written by another vkCmdDispatch command. ": 10
+     }
+    },
+    "seconds": 2.5
+   },
+   "chain": {
+    "rc": 0,
+    "frames": 10,
+    "hashes": [
+     "63e3bcc68fcbab93",
+     "c733427f9d9bcb97",
+     "2f249b1237634618",
+     "113744454df5b834",
+     "5c1ea879b12786f8",
+     "d9414ae38d9f3e88",
+     "cb3270686330c898",
+     "6241a96b28d18eaa",
+     "c5476a5481ad665d",
+     "8bd325ce65895316"
+    ],
+    "layer": {
+     "plan": "bench/elide/real/plans/sw_computenbody.f1.plan.json",
+     "mode": "chain",
+     "active": true,
+     "recordings": 23,
+     "barrier_calls": 14,
+     "matched": 4,
+     "sig_mismatch": 0,
+     "removed_calls": 0,
+     "narrowed_calls": 4,
+     "structs_removed": 0,
+     "structs_narrowed": 4
+    },
+    "validation": {
+     "total": 10,
+     "sync": 10,
+     "groups": {
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdDispatch(): WRITE_AFTER_WRITE hazard detected. Shader stage VK_SHADER_STAGE_COMPUTE_BIT writes to VkBuffer H, which was previously written by another vkCmdDispatch command. ": 10
+     }
+    },
+    "seconds": 2.7
+   }
+  }
+ },
+ "sw/bloom": {
+  "trace": {
+   "1": {
+    "rc": 0,
+    "records": 3001,
+    "seconds": 0.2,
+    "dir": "build/elide-real/trace/sw_bloom-f1"
+   },
+   "2": {
+    "rc": 0,
+    "records": 3001,
+    "seconds": 0.3,
+    "dir": "build/elide-real/trace/sw_bloom-f2"
+   }
+  },
+  "prove": {
+   "1": {
+    "per_frame": {
+     "calls": 0,
+     "remove": 0,
+     "narrow": 0,
+     "required": 0,
+     "structs": {},
+     "struct_kinds": {},
+     "keep_reasons": {},
+     "pinned_structs": 0,
+     "pinned_fraction": 0.0,
+     "tried_and_needed_structs": 0
+    },
+    "one_time": {
+     "calls": 8,
+     "remove": 0,
+     "narrow": 8,
+     "required": 0,
+     "structs": {
+      "narrow": 8
+     },
+     "struct_kinds": {
+      "transition": 8
+     },
+     "keep_reasons": {}
+    },
+    "per_frame_detail": [],
+    "proof": {
+     "baseline_diagnostics": 0,
+     "plain_timing_check": {
+      "baseline": 0,
+      "with_plan": 0,
+      "new": 0
+     },
+     "pairwise_recheck": {
+      "baseline": 0,
+      "with_plan": 0,
+      "new": 0
+     },
+     "pinned_for_baseline_hazards": 0,
+     "oracle_runs": 13,
+     "seconds": 2.54
+    },
+    "chain_entries": 4,
+    "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace",
+    "seconds": 3.0
+   },
+   "2": {
+    "per_frame": {
+     "calls": 0,
+     "remove": 0,
+     "narrow": 0,
+     "required": 0,
+     "structs": {},
+     "struct_kinds": {},
+     "keep_reasons": {},
+     "pinned_structs": 0,
+     "pinned_fraction": 0.0,
+     "tried_and_needed_structs": 0
+    },
+    "one_time": {
+     "calls": 8,
+     "remove": 0,
+     "narrow": 8,
+     "required": 0,
+     "structs": {
+      "narrow": 8
+     },
+     "struct_kinds": {
+      "transition": 8
+     },
+     "keep_reasons": {}
+    },
+    "per_frame_detail": [],
+    "proof": {
+     "baseline_diagnostics": 0,
+     "plain_timing_check": {
+      "baseline": 0,
+      "with_plan": 0,
+      "new": 0
+     },
+     "pairwise_recheck": {
+      "baseline": 0,
+      "with_plan": 0,
+      "new": 0
+     },
+     "pinned_for_baseline_hazards": 0,
+     "oracle_runs": 13,
+     "seconds": 2.48
+    },
+    "chain_entries": 4,
+    "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace",
+    "seconds": 2.8
+   }
+  },
+  "check": {
+   "1": {
+    "ops": 4127,
+    "base": {
+     "checker_epoch": 0,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 0,
+     "checker_pairwise_new": 0,
+     "reference": 0,
+     "reference_new": 0,
+     "seconds": 1.24
+    },
+    "strict": {
+     "checker_epoch": 0,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 0,
+     "checker_pairwise_new": 0,
+     "reference": 0,
+     "reference_new": 0,
+     "seconds": 1.19
+    },
+    "chain": {
+     "checker_epoch": 0,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 0,
+     "checker_pairwise_new": 0,
+     "reference": 0,
+     "reference_new": 0,
+     "seconds": 1.14
+    }
+   },
+   "2": {
+    "ops": 4127,
+    "base": {
+     "checker_epoch": 0,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 0,
+     "checker_pairwise_new": 0,
+     "reference": 0,
+     "reference_new": 0,
+     "seconds": 1.13
+    },
+    "strict": {
+     "checker_epoch": 0,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 0,
+     "checker_pairwise_new": 0,
+     "reference": 0,
+     "reference_new": 0,
+     "seconds": 1.08
+    },
+    "chain": {
+     "checker_epoch": 0,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 0,
+     "checker_pairwise_new": 0,
+     "reference": 0,
+     "reference_new": 0,
+     "seconds": 1.06
+    }
+   }
+  },
+  "lavapipe": {
+   "base_noval": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56"
+    ],
+    "layer": null,
+    "validation": null,
+    "seconds": 0.3
+   },
+   "base": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56"
+    ],
+    "layer": null,
+    "validation": {
+     "total": 0,
+     "sync": 0,
+     "groups": {}
+    },
+    "seconds": 0.4
+   },
+   "disabled": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56"
+    ],
+    "layer": {
+     "plan": "bench/elide/real/plans/sw_bloom.f1.plan.json",
+     "mode": "strict",
+     "active": false,
+     "recordings": 11,
+     "barrier_calls": 8,
+     "matched": 0,
+     "sig_mismatch": 0,
+     "removed_calls": 0,
+     "narrowed_calls": 0,
+     "structs_removed": 0,
+     "structs_narrowed": 0
+    },
+    "validation": {
+     "total": 0,
+     "sync": 0,
+     "groups": {}
+    },
+    "seconds": 0.4
+   },
+   "strict": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56"
+    ],
+    "layer": {
+     "plan": "bench/elide/real/plans/sw_bloom.f1.plan.json",
+     "mode": "strict",
+     "active": true,
+     "recordings": 11,
+     "barrier_calls": 8,
+     "matched": 8,
+     "sig_mismatch": 0,
+     "removed_calls": 0,
+     "narrowed_calls": 8,
+     "structs_removed": 0,
+     "structs_narrowed": 8
+    },
+    "validation": {
+     "total": 0,
+     "sync": 0,
+     "groups": {}
+    },
+    "seconds": 0.4
+   },
+   "base_long": {
+    "rc": 0,
+    "frames": 10,
+    "hashes": [
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56"
+    ],
+    "layer": null,
+    "validation": {
+     "total": 0,
+     "sync": 0,
+     "groups": {}
+    },
+    "seconds": 0.5
+   },
+   "chain": {
+    "rc": 0,
+    "frames": 10,
+    "hashes": [
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56",
+     "1db625e3d0e34e56"
+    ],
+    "layer": {
+     "plan": "bench/elide/real/plans/sw_bloom.f1.plan.json",
+     "mode": "chain",
+     "active": true,
+     "recordings": 17,
+     "barrier_calls": 8,
+     "matched": 8,
+     "sig_mismatch": 0,
+     "removed_calls": 0,
+     "narrowed_calls": 8,
+     "structs_removed": 0,
+     "structs_narrowed": 8
+    },
+    "validation": {
+     "total": 0,
+     "sync": 0,
+     "groups": {}
+    },
+    "seconds": 0.5
+   }
+  }
+ },
+ "ks/afbc": {
+  "trace": {
+   "1": {
+    "rc": 0,
+    "records": 3429,
+    "seconds": 1.5,
+    "dir": "build/elide-real/trace/ks_afbc-f1"
+   },
+   "2": {
+    "rc": 0,
+    "records": 3427,
+    "seconds": 1.3,
+    "dir": "build/elide-real/trace/ks_afbc-f2"
+   }
+  },
+  "prove": {
+   "1": {
+    "per_frame": {
+     "calls": 12,
+     "remove": 0,
+     "narrow": 0,
+     "required": 12,
+     "structs": {
+      "keep": 12
+     },
+     "struct_kinds": {
+      "transition": 12
+     },
+     "keep_reasons": {
+      "layout transition, no narrower mask verified": 12
+     },
+     "pinned_structs": 0,
+     "pinned_fraction": 0.0,
+     "tried_and_needed_structs": 12
+    },
+    "one_time": {
+     "calls": 55,
+     "remove": 0,
+     "narrow": 26,
+     "required": 29,
+     "structs": {
+      "keep": 29,
+      "narrow": 26
+     },
+     "struct_kinds": {
+      "transition": 55
+     },
+     "keep_reasons": {
+      "it synchronizes with the host, which the trace does not observe": 26,
+      "layout transition, no narrower mask verified": 3
+     }
+    },
+    "per_frame_detail": [
+     {
+      "chain": "78023e639b5bcd11",
+      "instances": 4,
+      "decisions": {
+       "required": 4
+      },
+      "sync": 1,
+      "what": "image[0] swapchain#2[1] undefined -> color_attachment",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/- -> COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "59587b18208ae7e9",
+      "instances": 4,
+      "decisions": {
+       "required": 4
+      },
+      "sync": 1,
+      "what": "image[0] image#11 undefined -> depth_stencil_attachment",
+      "recorded": "TOP_OF_PIPE/- -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "6ebb3f09ba5ed1a8",
+      "instances": 4,
+      "decisions": {
+       "required": 4
+      },
+      "sync": 1,
+      "what": "image[0] swapchain#2[1] color_attachment -> present",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> BOTTOM_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     }
+    ],
+    "proof": {
+     "baseline_diagnostics": 0,
+     "plain_timing_check": {
+      "baseline": 0,
+      "with_plan": 0,
+      "new": 0
+     },
+     "pairwise_recheck": {
+      "baseline": 0,
+      "with_plan": 0,
+      "new": 0
+     },
+     "pinned_for_baseline_hazards": 0,
+     "oracle_runs": 41,
+     "seconds": 19.37
+    },
+    "chain_entries": 26,
+    "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace",
+    "seconds": 20.5
+   },
+   "2": {
+    "per_frame": {
+     "calls": 12,
+     "remove": 0,
+     "narrow": 0,
+     "required": 12,
+     "structs": {
+      "keep": 12
+     },
+     "struct_kinds": {
+      "transition": 12
+     },
+     "keep_reasons": {
+      "layout transition, no narrower mask verified": 12
+     },
+     "pinned_structs": 0,
+     "pinned_fraction": 0.0,
+     "tried_and_needed_structs": 12
+    },
+    "one_time": {
+     "calls": 55,
+     "remove": 0,
+     "narrow": 26,
+     "required": 29,
+     "structs": {
+      "keep": 29,
+      "narrow": 26
+     },
+     "struct_kinds": {
+      "transition": 55
+     },
+     "keep_reasons": {
+      "it synchronizes with the host, which the trace does not observe": 26,
+      "layout transition, no narrower mask verified": 3
+     }
+    },
+    "per_frame_detail": [
+     {
+      "chain": "78023e639b5bcd11",
+      "instances": 4,
+      "decisions": {
+       "required": 4
+      },
+      "sync": 1,
+      "what": "image[0] swapchain#2[1] undefined -> color_attachment",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/- -> COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "59587b18208ae7e9",
+      "instances": 4,
+      "decisions": {
+       "required": 4
+      },
+      "sync": 1,
+      "what": "image[0] image#11 undefined -> depth_stencil_attachment",
+      "recorded": "TOP_OF_PIPE/- -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "6ebb3f09ba5ed1a8",
+      "instances": 4,
+      "decisions": {
+       "required": 4
+      },
+      "sync": 1,
+      "what": "image[0] swapchain#2[1] color_attachment -> present",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> BOTTOM_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     }
+    ],
+    "proof": {
+     "baseline_diagnostics": 0,
+     "plain_timing_check": {
+      "baseline": 0,
+      "with_plan": 0,
+      "new": 0
+     },
+     "pairwise_recheck": {
+      "baseline": 0,
+      "with_plan": 0,
+      "new": 0
+     },
+     "pinned_for_baseline_hazards": 0,
+     "oracle_runs": 41,
+     "seconds": 19.37
+    },
+    "chain_entries": 26,
+    "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace",
+    "seconds": 20.4
+   }
+  },
+  "check": {
+   "1": {
+    "ops": 3930,
+    "base": {
+     "checker_epoch": 0,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 0,
+     "checker_pairwise_new": 0,
+     "reference": 0,
+     "reference_new": 0,
+     "seconds": 2.5
+    },
+    "strict": {
+     "checker_epoch": 0,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 0,
+     "checker_pairwise_new": 0,
+     "reference": 0,
+     "reference_new": 0,
+     "seconds": 1.48
+    },
+    "chain": {
+     "checker_epoch": 0,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 0,
+     "checker_pairwise_new": 0,
+     "reference": 0,
+     "reference_new": 0,
+     "seconds": 1.49
+    }
+   },
+   "2": {
+    "ops": 3927,
+    "base": {
+     "checker_epoch": 0,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 0,
+     "checker_pairwise_new": 0,
+     "reference": 0,
+     "reference_new": 0,
+     "seconds": 2.43
+    },
+    "strict": {
+     "checker_epoch": 0,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 0,
+     "checker_pairwise_new": 0,
+     "reference": 0,
+     "reference_new": 0,
+     "seconds": 1.48
+    },
+    "chain": {
+     "checker_epoch": 0,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 0,
+     "checker_pairwise_new": 0,
+     "reference": 0,
+     "reference_new": 0,
+     "seconds": 1.45
+    }
+   }
+  },
+  "lavapipe": {
+   "base_noval": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "e4923ba5546725fb",
+     "f8431c966a517b3b",
+     "42ba532a64056d58",
+     "431abfb1d739c58b",
+     "5abd67412fb1ebe9"
+    ],
+    "layer": null,
+    "validation": null,
+    "seconds": 1.2
+   },
+   "base": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "e4923ba5546725fb",
+     "f8431c966a517b3b",
+     "42ba532a64056d58",
+     "431abfb1d739c58b",
+     "5abd67412fb1ebe9"
+    ],
+    "layer": null,
+    "validation": {
+     "total": 0,
+     "sync": 0,
+     "groups": {}
+    },
+    "seconds": 1.3
+   },
+   "disabled": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "e4923ba5546725fb",
+     "f8431c966a517b3b",
+     "42ba532a64056d58",
+     "431abfb1d739c58b",
+     "5abd67412fb1ebe9"
+    ],
+    "layer": {
+     "plan": "bench/elide/real/plans/ks_afbc.f1.plan.json",
+     "mode": "strict",
+     "active": false,
+     "recordings": 9,
+     "barrier_calls": 67,
+     "matched": 0,
+     "sig_mismatch": 0,
+     "removed_calls": 0,
+     "narrowed_calls": 0,
+     "structs_removed": 0,
+     "structs_narrowed": 0
+    },
+    "validation": {
+     "total": 0,
+     "sync": 0,
+     "groups": {}
+    },
+    "seconds": 1.3
+   },
+   "strict": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "e4923ba5546725fb",
+     "f8431c966a517b3b",
+     "42ba532a64056d58",
+     "431abfb1d739c58b",
+     "5abd67412fb1ebe9"
+    ],
+    "layer": {
+     "plan": "bench/elide/real/plans/ks_afbc.f1.plan.json",
+     "mode": "strict",
+     "active": true,
+     "recordings": 9,
+     "barrier_calls": 67,
+     "matched": 0,
+     "sig_mismatch": 14,
+     "removed_calls": 0,
+     "narrowed_calls": 0,
+     "structs_removed": 0,
+     "structs_narrowed": 0
+    },
+    "validation": {
+     "total": 0,
+     "sync": 0,
+     "groups": {}
+    },
+    "seconds": 1.3
+   },
+   "base_long": {
+    "rc": 0,
+    "frames": 10,
+    "hashes": [
+     "e4923ba5546725fb",
+     "f8431c966a517b3b",
+     "42ba532a64056d58",
+     "431abfb1d739c58b",
+     "5abd67412fb1ebe9",
+     "592a511e1fcf9238",
+     "1d33ef142ef2dbd8",
+     "ad00d26a6ba7586b",
+     "91a24c535499e027",
+     "a8682681e9798958",
+     "0aa1654370a15f5f"
+    ],
+    "layer": null,
+    "validation": {
+     "total": 0,
+     "sync": 0,
+     "groups": {}
+    },
+    "seconds": 1.6
+   },
+   "chain": {
+    "rc": 0,
+    "frames": 10,
+    "hashes": [
+     "e4923ba5546725fb",
+     "f8431c966a517b3b",
+     "42ba532a64056d58",
+     "431abfb1d739c58b",
+     "5abd67412fb1ebe9",
+     "592a511e1fcf9238",
+     "1d33ef142ef2dbd8",
+     "ad00d26a6ba7586b",
+     "91a24c535499e027",
+     "a8682681e9798958",
+     "0aa1654370a15f5f"
+    ],
+    "layer": {
+     "plan": "bench/elide/real/plans/ks_afbc.f1.plan.json",
+     "mode": "chain",
+     "active": true,
+     "recordings": 15,
+     "barrier_calls": 85,
+     "matched": 2,
+     "sig_mismatch": 0,
+     "removed_calls": 0,
+     "narrowed_calls": 2,
+     "structs_removed": 0,
+     "structs_narrowed": 2
+    },
+    "validation": {
+     "total": 0,
+     "sync": 0,
+     "groups": {}
+    },
+    "seconds": 1.7
+   }
+  }
+ },
+ "ks/pipeline_barriers": {
+  "trace": {
+   "1": {
+    "rc": 0,
+    "records": 3741,
+    "seconds": 1.5,
+    "dir": "build/elide-real/trace/ks_pipeline_barriers-f1"
+   },
+   "2": {
+    "rc": 0,
+    "records": 3742,
+    "seconds": 1.3,
+    "dir": "build/elide-real/trace/ks_pipeline_barriers-f2"
+   }
+  },
+  "prove": {
+   "1": {
+    "per_frame": {
+     "calls": 32,
+     "remove": 0,
+     "narrow": 0,
+     "required": 32,
+     "structs": {
+      "keep": 32
+     },
+     "struct_kinds": {
+      "transition": 32
+     },
+     "keep_reasons": {
+      "a hazard the program already has": 32
+     },
+     "pinned_structs": 32,
+     "pinned_fraction": 1.0,
+     "tried_and_needed_structs": 0
+    },
+    "one_time": {
+     "calls": 60,
+     "remove": 0,
+     "narrow": 26,
+     "required": 34,
+     "structs": {
+      "keep": 34,
+      "narrow": 26
+     },
+     "struct_kinds": {
+      "transition": 60
+     },
+     "keep_reasons": {
+      "it synchronizes with the host, which the trace does not observe": 26,
+      "a hazard the program already has": 8
+     }
+    },
+    "per_frame_detail": [
+     {
+      "chain": "bb28cda2f2773e4f",
+      "instances": 4,
+      "decisions": {
+       "required": 4
+      },
+      "sync": 1,
+      "what": "image[0] swapchain[1] undefined -> color_attachment",
+      "recorded": "BOTTOM_OF_PIPE/- -> TOP_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "ccb5cff2eb08320d",
+      "instances": 4,
+      "decisions": {
+       "required": 4
+      },
+      "sync": 1,
+      "what": "image[0] image#8 undefined -> color_attachment",
+      "recorded": "BOTTOM_OF_PIPE/- -> TOP_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "91b2394c6b3301f7",
+      "instances": 4,
+      "decisions": {
+       "required": 4
+      },
+      "sync": 1,
+      "what": "image[0] image#9 undefined -> color_attachment",
+      "recorded": "BOTTOM_OF_PIPE/- -> TOP_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "e161efd0839f0603",
+      "instances": 4,
+      "decisions": {
+       "required": 4
+      },
+      "sync": 1,
+      "what": "image[0] image#7 undefined -> depth_stencil_attachment",
+      "recorded": "BOTTOM_OF_PIPE/- -> TOP_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "e4db1b3999a8c3bf",
+      "instances": 4,
+      "decisions": {
+       "required": 4
+      },
+      "sync": 1,
+      "what": "image[0] image#7 depth_stencil_attachment -> depth_stencil_read",
+      "recorded": "BOTTOM_OF_PIPE/- -> TOP_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "3f931193a18b60d2",
+      "instances": 4,
+      "decisions": {
+       "required": 4
+      },
+      "sync": 1,
+      "what": "image[0] image#8 color_attachment -> shader_read",
+      "recorded": "BOTTOM_OF_PIPE/- -> TOP_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "07880b24899746b3",
+      "instances": 4,
+      "decisions": {
+       "required": 4
+      },
+      "sync": 1,
+      "what": "image[0] image#9 color_attachment -> shader_read",
+      "recorded": "BOTTOM_OF_PIPE/- -> TOP_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "fcbcf7d2a82d7e66",
+      "instances": 4,
+      "decisions": {
+       "required": 4
+      },
+      "sync": 1,
+      "what": "image[0] swapchain[1] color_attachment -> present",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> BOTTOM_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     }
+    ],
+    "proof": {
+     "baseline_diagnostics": 1095,
+     "plain_timing_check": {
+      "baseline": 600,
+      "with_plan": 600,
+      "new": 0
+     },
+     "pairwise_recheck": {
+      "baseline": 1635,
+      "with_plan": 1635,
+      "new": 0
+     },
+     "pinned_for_baseline_hazards": 40,
+     "oracle_runs": 31,
+     "seconds": 18.53
+    },
+    "chain_entries": 26,
+    "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace",
+    "seconds": 19.5
+   },
+   "2": {
+    "per_frame": {
+     "calls": 32,
+     "remove": 0,
+     "narrow": 0,
+     "required": 32,
+     "structs": {
+      "keep": 32
+     },
+     "struct_kinds": {
+      "transition": 32
+     },
+     "keep_reasons": {
+      "a hazard the program already has": 32
+     },
+     "pinned_structs": 32,
+     "pinned_fraction": 1.0,
+     "tried_and_needed_structs": 0
+    },
+    "one_time": {
+     "calls": 60,
+     "remove": 0,
+     "narrow": 26,
+     "required": 34,
+     "structs": {
+      "keep": 34,
+      "narrow": 26
+     },
+     "struct_kinds": {
+      "transition": 60
+     },
+     "keep_reasons": {
+      "it synchronizes with the host, which the trace does not observe": 26,
+      "a hazard the program already has": 8
+     }
+    },
+    "per_frame_detail": [
+     {
+      "chain": "bb28cda2f2773e4f",
+      "instances": 4,
+      "decisions": {
+       "required": 4
+      },
+      "sync": 1,
+      "what": "image[0] swapchain[1] undefined -> color_attachment",
+      "recorded": "BOTTOM_OF_PIPE/- -> TOP_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "ccb5cff2eb08320d",
+      "instances": 4,
+      "decisions": {
+       "required": 4
+      },
+      "sync": 1,
+      "what": "image[0] image#8 undefined -> color_attachment",
+      "recorded": "BOTTOM_OF_PIPE/- -> TOP_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "91b2394c6b3301f7",
+      "instances": 4,
+      "decisions": {
+       "required": 4
+      },
+      "sync": 1,
+      "what": "image[0] image#9 undefined -> color_attachment",
+      "recorded": "BOTTOM_OF_PIPE/- -> TOP_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "e161efd0839f0603",
+      "instances": 4,
+      "decisions": {
+       "required": 4
+      },
+      "sync": 1,
+      "what": "image[0] image#7 undefined -> depth_stencil_attachment",
+      "recorded": "BOTTOM_OF_PIPE/- -> TOP_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "e4db1b3999a8c3bf",
+      "instances": 4,
+      "decisions": {
+       "required": 4
+      },
+      "sync": 1,
+      "what": "image[0] image#7 depth_stencil_attachment -> depth_stencil_read",
+      "recorded": "BOTTOM_OF_PIPE/- -> TOP_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "3f931193a18b60d2",
+      "instances": 4,
+      "decisions": {
+       "required": 4
+      },
+      "sync": 1,
+      "what": "image[0] image#8 color_attachment -> shader_read",
+      "recorded": "BOTTOM_OF_PIPE/- -> TOP_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "07880b24899746b3",
+      "instances": 4,
+      "decisions": {
+       "required": 4
+      },
+      "sync": 1,
+      "what": "image[0] image#9 color_attachment -> shader_read",
+      "recorded": "BOTTOM_OF_PIPE/- -> TOP_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "fcbcf7d2a82d7e66",
+      "instances": 4,
+      "decisions": {
+       "required": 4
+      },
+      "sync": 1,
+      "what": "image[0] swapchain[1] color_attachment -> present",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> BOTTOM_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     }
+    ],
+    "proof": {
+     "baseline_diagnostics": 1095,
+     "plain_timing_check": {
+      "baseline": 600,
+      "with_plan": 600,
+      "new": 0
+     },
+     "pairwise_recheck": {
+      "baseline": 1635,
+      "with_plan": 1635,
+      "new": 0
+     },
+     "pinned_for_baseline_hazards": 40,
+     "oracle_runs": 31,
+     "seconds": 18.53
+    },
+    "chain_entries": 26,
+    "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace",
+    "seconds": 19.6
+   }
+  },
+  "check": {
+   "1": {
+    "ops": 4085,
+    "base": {
+     "checker_epoch": 600,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 660,
+     "checker_pairwise_new": 0,
+     "reference": 2585,
+     "reference_new": 0,
+     "seconds": 2.31
+    },
+    "strict": {
+     "checker_epoch": 600,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 660,
+     "checker_pairwise_new": 0,
+     "reference": 2585,
+     "reference_new": 0,
+     "seconds": 1.57
+    },
+    "chain": {
+     "checker_epoch": 600,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 660,
+     "checker_pairwise_new": 0,
+     "reference": 2585,
+     "reference_new": 0,
+     "seconds": 1.65
+    }
+   },
+   "2": {
+    "ops": 4085,
+    "base": {
+     "checker_epoch": 600,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 660,
+     "checker_pairwise_new": 0,
+     "reference": 2585,
+     "reference_new": 0,
+     "seconds": 2.22
+    },
+    "strict": {
+     "checker_epoch": 600,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 660,
+     "checker_pairwise_new": 0,
+     "reference": 2585,
+     "reference_new": 0,
+     "seconds": 1.58
+    },
+    "chain": {
+     "checker_epoch": 600,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 660,
+     "checker_pairwise_new": 0,
+     "reference": 2585,
+     "reference_new": 0,
+     "seconds": 1.62
+    }
+   }
+  },
+  "lavapipe": {
+   "base_noval": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633"
+    ],
+    "layer": null,
+    "validation": null,
+    "seconds": 1.2
+   },
+   "base": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633"
+    ],
+    "layer": null,
+    "validation": {
+     "total": 50,
+     "sync": 50,
+     "groups": {
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdPipelineBarrier(): WRITE_AFTER_WRITE hazard detected. vkCmdPipelineBarrier performs image layout transition on the VkImage H, which was previously written at the end of subpass N (vkCmdEndRenderP": 15,
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdBeginRenderPass(): WRITE_AFTER_WRITE hazard detected. vkCmdBeginRenderPass clears the color aspect of attachment N (VkImageView H) in subpass N of VkRenderPass H (loadOp VK_ATTACHMENT_LOAD_OP_CLE": 10,
+      "SYNC-HAZARD-READ-AFTER-WRITE | vkCmdBeginRenderPass(): READ_AFTER_WRITE hazard detected. vkCmdBeginRenderPass reads the color aspect of attachment N (VkImageView H) in subpass N of VkRenderPass H (loadOp VK_ATTACHMENT_LOAD_OP_LOAD)": 10,
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdBeginRenderPass(): WRITE_AFTER_WRITE hazard detected. vkCmdBeginRenderPass clears the depth aspect of attachment N (VkImageView H) in subpass N of VkRenderPass H (loadOp VK_ATTACHMENT_LOAD_OP_CLE": 5,
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdBeginRenderPass(): WRITE_AFTER_WRITE hazard detected. vkCmdBeginRenderPass potentially modifies the color aspect of attachment N (VkImageView H) in subpass N of VkRenderPass H (loadOp VK_ATTACHME": 5,
+      "SYNC-HAZARD-READ-AFTER-WRITE | vkCmdBeginRenderPass(): READ_AFTER_WRITE hazard detected. vkCmdBeginRenderPass reads the depth aspect of attachment N (VkImageView H) in subpass N of VkRenderPass H (loadOp VK_ATTACHMENT_LOAD_OP_LOAD)": 5
+     }
+    },
+    "seconds": 1.2
+   },
+   "disabled": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633"
+    ],
+    "layer": {
+     "plan": "bench/elide/real/plans/ks_pipeline_barriers.f1.plan.json",
+     "mode": "strict",
+     "active": false,
+     "recordings": 9,
+     "barrier_calls": 92,
+     "matched": 0,
+     "sig_mismatch": 0,
+     "removed_calls": 0,
+     "narrowed_calls": 0,
+     "structs_removed": 0,
+     "structs_narrowed": 0
+    },
+    "validation": {
+     "total": 50,
+     "sync": 50,
+     "groups": {
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdPipelineBarrier(): WRITE_AFTER_WRITE hazard detected. vkCmdPipelineBarrier performs image layout transition on the VkImage H, which was previously written at the end of subpass N (vkCmdEndRenderP": 15,
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdBeginRenderPass(): WRITE_AFTER_WRITE hazard detected. vkCmdBeginRenderPass clears the color aspect of attachment N (VkImageView H) in subpass N of VkRenderPass H (loadOp VK_ATTACHMENT_LOAD_OP_CLE": 10,
+      "SYNC-HAZARD-READ-AFTER-WRITE | vkCmdBeginRenderPass(): READ_AFTER_WRITE hazard detected. vkCmdBeginRenderPass reads the color aspect of attachment N (VkImageView H) in subpass N of VkRenderPass H (loadOp VK_ATTACHMENT_LOAD_OP_LOAD)": 10,
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdBeginRenderPass(): WRITE_AFTER_WRITE hazard detected. vkCmdBeginRenderPass clears the depth aspect of attachment N (VkImageView H) in subpass N of VkRenderPass H (loadOp VK_ATTACHMENT_LOAD_OP_CLE": 5,
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdBeginRenderPass(): WRITE_AFTER_WRITE hazard detected. vkCmdBeginRenderPass potentially modifies the color aspect of attachment N (VkImageView H) in subpass N of VkRenderPass H (loadOp VK_ATTACHME": 5,
+      "SYNC-HAZARD-READ-AFTER-WRITE | vkCmdBeginRenderPass(): READ_AFTER_WRITE hazard detected. vkCmdBeginRenderPass reads the depth aspect of attachment N (VkImageView H) in subpass N of VkRenderPass H (loadOp VK_ATTACHMENT_LOAD_OP_LOAD)": 5
+     }
+    },
+    "seconds": 1.3
+   },
+   "strict": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633"
+    ],
+    "layer": {
+     "plan": "bench/elide/real/plans/ks_pipeline_barriers.f1.plan.json",
+     "mode": "strict",
+     "active": true,
+     "recordings": 9,
+     "barrier_calls": 92,
+     "matched": 0,
+     "sig_mismatch": 14,
+     "removed_calls": 0,
+     "narrowed_calls": 0,
+     "structs_removed": 0,
+     "structs_narrowed": 0
+    },
+    "validation": {
+     "total": 50,
+     "sync": 50,
+     "groups": {
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdPipelineBarrier(): WRITE_AFTER_WRITE hazard detected. vkCmdPipelineBarrier performs image layout transition on the VkImage H, which was previously written at the end of subpass N (vkCmdEndRenderP": 15,
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdBeginRenderPass(): WRITE_AFTER_WRITE hazard detected. vkCmdBeginRenderPass clears the color aspect of attachment N (VkImageView H) in subpass N of VkRenderPass H (loadOp VK_ATTACHMENT_LOAD_OP_CLE": 10,
+      "SYNC-HAZARD-READ-AFTER-WRITE | vkCmdBeginRenderPass(): READ_AFTER_WRITE hazard detected. vkCmdBeginRenderPass reads the color aspect of attachment N (VkImageView H) in subpass N of VkRenderPass H (loadOp VK_ATTACHMENT_LOAD_OP_LOAD)": 10,
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdBeginRenderPass(): WRITE_AFTER_WRITE hazard detected. vkCmdBeginRenderPass clears the depth aspect of attachment N (VkImageView H) in subpass N of VkRenderPass H (loadOp VK_ATTACHMENT_LOAD_OP_CLE": 5,
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdBeginRenderPass(): WRITE_AFTER_WRITE hazard detected. vkCmdBeginRenderPass potentially modifies the color aspect of attachment N (VkImageView H) in subpass N of VkRenderPass H (loadOp VK_ATTACHME": 5,
+      "SYNC-HAZARD-READ-AFTER-WRITE | vkCmdBeginRenderPass(): READ_AFTER_WRITE hazard detected. vkCmdBeginRenderPass reads the depth aspect of attachment N (VkImageView H) in subpass N of VkRenderPass H (loadOp VK_ATTACHMENT_LOAD_OP_LOAD)": 5
+     }
+    },
+    "seconds": 1.6
+   },
+   "base_long": {
+    "rc": 0,
+    "frames": 10,
+    "hashes": [
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633"
+    ],
+    "layer": null,
+    "validation": {
+     "total": 110,
+     "sync": 110,
+     "groups": {
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdPipelineBarrier(): WRITE_AFTER_WRITE hazard detected. vkCmdPipelineBarrier performs image layout transition on the VkImage H, which was previously written at the end of subpass N (vkCmdEndRenderP": 33,
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdBeginRenderPass(): WRITE_AFTER_WRITE hazard detected. vkCmdBeginRenderPass clears the color aspect of attachment N (VkImageView H) in subpass N of VkRenderPass H (loadOp VK_ATTACHMENT_LOAD_OP_CLE": 22,
+      "SYNC-HAZARD-READ-AFTER-WRITE | vkCmdBeginRenderPass(): READ_AFTER_WRITE hazard detected. vkCmdBeginRenderPass reads the color aspect of attachment N (VkImageView H) in subpass N of VkRenderPass H (loadOp VK_ATTACHMENT_LOAD_OP_LOAD)": 22,
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdBeginRenderPass(): WRITE_AFTER_WRITE hazard detected. vkCmdBeginRenderPass clears the depth aspect of attachment N (VkImageView H) in subpass N of VkRenderPass H (loadOp VK_ATTACHMENT_LOAD_OP_CLE": 11,
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdBeginRenderPass(): WRITE_AFTER_WRITE hazard detected. vkCmdBeginRenderPass potentially modifies the color aspect of attachment N (VkImageView H) in subpass N of VkRenderPass H (loadOp VK_ATTACHME": 11,
+      "SYNC-HAZARD-READ-AFTER-WRITE | vkCmdBeginRenderPass(): READ_AFTER_WRITE hazard detected. vkCmdBeginRenderPass reads the depth aspect of attachment N (VkImageView H) in subpass N of VkRenderPass H (loadOp VK_ATTACHMENT_LOAD_OP_LOAD)": 11
+     }
+    },
+    "seconds": 1.8
+   },
+   "chain": {
+    "rc": 0,
+    "frames": 10,
+    "hashes": [
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633",
+     "a60d68075d1ca633"
+    ],
+    "layer": {
+     "plan": "bench/elide/real/plans/ks_pipeline_barriers.f1.plan.json",
+     "mode": "chain",
+     "active": true,
+     "recordings": 15,
+     "barrier_calls": 140,
+     "matched": 2,
+     "sig_mismatch": 0,
+     "removed_calls": 0,
+     "narrowed_calls": 2,
+     "structs_removed": 0,
+     "structs_narrowed": 2
+    },
+    "validation": {
+     "total": 110,
+     "sync": 110,
+     "groups": {
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdPipelineBarrier(): WRITE_AFTER_WRITE hazard detected. vkCmdPipelineBarrier performs image layout transition on the VkImage H, which was previously written at the end of subpass N (vkCmdEndRenderP": 33,
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdBeginRenderPass(): WRITE_AFTER_WRITE hazard detected. vkCmdBeginRenderPass clears the color aspect of attachment N (VkImageView H) in subpass N of VkRenderPass H (loadOp VK_ATTACHMENT_LOAD_OP_CLE": 22,
+      "SYNC-HAZARD-READ-AFTER-WRITE | vkCmdBeginRenderPass(): READ_AFTER_WRITE hazard detected. vkCmdBeginRenderPass reads the color aspect of attachment N (VkImageView H) in subpass N of VkRenderPass H (loadOp VK_ATTACHMENT_LOAD_OP_LOAD)": 22,
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdBeginRenderPass(): WRITE_AFTER_WRITE hazard detected. vkCmdBeginRenderPass clears the depth aspect of attachment N (VkImageView H) in subpass N of VkRenderPass H (loadOp VK_ATTACHMENT_LOAD_OP_CLE": 11,
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdBeginRenderPass(): WRITE_AFTER_WRITE hazard detected. vkCmdBeginRenderPass potentially modifies the color aspect of attachment N (VkImageView H) in subpass N of VkRenderPass H (loadOp VK_ATTACHME": 11,
+      "SYNC-HAZARD-READ-AFTER-WRITE | vkCmdBeginRenderPass(): READ_AFTER_WRITE hazard detected. vkCmdBeginRenderPass reads the depth aspect of attachment N (VkImageView H) in subpass N of VkRenderPass H (loadOp VK_ATTACHMENT_LOAD_OP_LOAD)": 11
+     }
+    },
+    "seconds": 1.8
+   }
+  }
+ },
+ "ks/oit_depth_peeling": {
+  "trace": {
+   "1": {
+    "rc": 0,
+    "records": 1030,
+    "seconds": 0.5,
+    "dir": "build/elide-real/trace/ks_oit_depth_peeling-f1"
+   },
+   "2": {
+    "rc": 0,
+    "records": 1031,
+    "seconds": 0.5,
+    "dir": "build/elide-real/trace/ks_oit_depth_peeling-f2"
+   }
+  },
+  "prove": {
+   "1": {
+    "per_frame": {
+     "calls": 93,
+     "remove": 0,
+     "narrow": 0,
+     "required": 93,
+     "structs": {
+      "keep": 93
+     },
+     "struct_kinds": {
+      "transition": 93
+     },
+     "keep_reasons": {
+      "a hazard the program already has": 93
+     },
+     "pinned_structs": 93,
+     "pinned_fraction": 1.0,
+     "tried_and_needed_structs": 0
+    },
+    "one_time": {
+     "calls": 97,
+     "remove": 0,
+     "narrow": 2,
+     "required": 95,
+     "structs": {
+      "keep": 95,
+      "narrow": 2
+     },
+     "struct_kinds": {
+      "transition": 97
+     },
+     "keep_reasons": {
+      "it is never submitted in the trace (no evidence)": 62,
+      "a hazard the program already has": 31,
+      "it synchronizes with the host, which the trace does not observe": 1,
+      "layout transition, no narrower mask verified": 1
+     }
+    },
+    "per_frame_detail": [
+     {
+      "chain": "f846edd720bd6b90",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#18 undefined -> depth_stencil_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "f504bf4cc94efa29",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#10 undefined -> color_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "8722e32fcb2f6e7d",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#10 color_attachment -> shader_read",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "077f5ce10a5e3a38",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#19 undefined -> depth_stencil_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "a68760928aa778ab",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#18 depth_stencil_attachment -> depth_stencil_read",
+      "recorded": "EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "91da3a0c532f8258",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#11 undefined -> color_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "841f153ac8a48516",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#11 color_attachment -> shader_read",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "f5179b03e94b66fd",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#18 depth_stencil_read -> depth_stencil_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "6f5d556f0d87fab0",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#19 depth_stencil_attachment -> depth_stencil_read",
+      "recorded": "EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "bf1952a9b03fd889",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#12 undefined -> color_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "4431e0649eb9029d",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#12 color_attachment -> shader_read",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "8d7e08380b3d114c",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#19 depth_stencil_read -> depth_stencil_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "788ac41c166a0c6f",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#18 depth_stencil_attachment -> depth_stencil_read",
+      "recorded": "EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "4b35ceabb1ad1ebc",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#13 undefined -> color_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "38ce95653b75fa72",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#13 color_attachment -> shader_read",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "543c63864a031179",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#18 depth_stencil_read -> depth_stencil_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "845e8233a39c035c",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#19 depth_stencil_attachment -> depth_stencil_read",
+      "recorded": "EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "b6a97b9fb51c1995",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#14 undefined -> color_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "53507bb9c457f2c1",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#14 color_attachment -> shader_read",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "9f0ad8a425be25f0",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#19 depth_stencil_read -> depth_stencil_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "3a6e1788ebdbaa33",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#18 depth_stencil_attachment -> depth_stencil_read",
+      "recorded": "EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "73ec7983c35cea20",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#15 undefined -> color_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "47abf85c3327683e",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#15 color_attachment -> shader_read",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "755bf3c0dec48ef5",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#18 depth_stencil_read -> depth_stencil_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "56c14394a409a2f8",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#19 depth_stencil_attachment -> depth_stencil_read",
+      "recorded": "EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "8873186f0f5d22b1",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#16 undefined -> color_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "de4f28e14715f8c5",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#16 color_attachment -> shader_read",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "0e60b05af2d19f64",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#19 depth_stencil_read -> depth_stencil_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "7071cabdbb849937",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#18 depth_stencil_attachment -> depth_stencil_read",
+      "recorded": "EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "18d16dbeca2f4f64",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#17 undefined -> color_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "779919a38610369a",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#17 color_attachment -> shader_read",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     }
+    ],
+    "proof": {
+     "baseline_diagnostics": 244,
+     "plain_timing_check": {
+      "baseline": 84,
+      "with_plan": 84,
+      "new": 0
+     },
+     "pairwise_recheck": {
+      "baseline": 414,
+      "with_plan": 414,
+      "new": 0
+     },
+     "pinned_for_baseline_hazards": 124,
+     "oracle_runs": 7,
+     "seconds": 1.88
+    },
+    "chain_entries": 2,
+    "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace",
+    "seconds": 2.4
+   },
+   "2": {
+    "per_frame": {
+     "calls": 93,
+     "remove": 0,
+     "narrow": 0,
+     "required": 93,
+     "structs": {
+      "keep": 93
+     },
+     "struct_kinds": {
+      "transition": 93
+     },
+     "keep_reasons": {
+      "a hazard the program already has": 93
+     },
+     "pinned_structs": 93,
+     "pinned_fraction": 1.0,
+     "tried_and_needed_structs": 0
+    },
+    "one_time": {
+     "calls": 97,
+     "remove": 0,
+     "narrow": 2,
+     "required": 95,
+     "structs": {
+      "keep": 95,
+      "narrow": 2
+     },
+     "struct_kinds": {
+      "transition": 97
+     },
+     "keep_reasons": {
+      "it is never submitted in the trace (no evidence)": 62,
+      "a hazard the program already has": 31,
+      "it synchronizes with the host, which the trace does not observe": 1,
+      "layout transition, no narrower mask verified": 1
+     }
+    },
+    "per_frame_detail": [
+     {
+      "chain": "f846edd720bd6b90",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#18 undefined -> depth_stencil_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "f504bf4cc94efa29",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#10 undefined -> color_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "8722e32fcb2f6e7d",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#10 color_attachment -> shader_read",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "077f5ce10a5e3a38",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#19 undefined -> depth_stencil_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "a68760928aa778ab",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#18 depth_stencil_attachment -> depth_stencil_read",
+      "recorded": "EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "91da3a0c532f8258",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#11 undefined -> color_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "841f153ac8a48516",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#11 color_attachment -> shader_read",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "f5179b03e94b66fd",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#18 depth_stencil_read -> depth_stencil_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "6f5d556f0d87fab0",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#19 depth_stencil_attachment -> depth_stencil_read",
+      "recorded": "EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "bf1952a9b03fd889",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#12 undefined -> color_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "4431e0649eb9029d",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#12 color_attachment -> shader_read",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "8d7e08380b3d114c",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#19 depth_stencil_read -> depth_stencil_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "788ac41c166a0c6f",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#18 depth_stencil_attachment -> depth_stencil_read",
+      "recorded": "EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "4b35ceabb1ad1ebc",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#13 undefined -> color_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "38ce95653b75fa72",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#13 color_attachment -> shader_read",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "543c63864a031179",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#18 depth_stencil_read -> depth_stencil_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "845e8233a39c035c",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#19 depth_stencil_attachment -> depth_stencil_read",
+      "recorded": "EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "b6a97b9fb51c1995",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#14 undefined -> color_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "53507bb9c457f2c1",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#14 color_attachment -> shader_read",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "9f0ad8a425be25f0",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#19 depth_stencil_read -> depth_stencil_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "3a6e1788ebdbaa33",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#18 depth_stencil_attachment -> depth_stencil_read",
+      "recorded": "EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "73ec7983c35cea20",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#15 undefined -> color_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "47abf85c3327683e",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#15 color_attachment -> shader_read",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "755bf3c0dec48ef5",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#18 depth_stencil_read -> depth_stencil_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "56c14394a409a2f8",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#19 depth_stencil_attachment -> depth_stencil_read",
+      "recorded": "EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "8873186f0f5d22b1",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#16 undefined -> color_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "de4f28e14715f8c5",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#16 color_attachment -> shader_read",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "0e60b05af2d19f64",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#19 depth_stencil_read -> depth_stencil_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "7071cabdbb849937",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#18 depth_stencil_attachment -> depth_stencil_read",
+      "recorded": "EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "18d16dbeca2f4f64",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#17 undefined -> color_attachment",
+      "recorded": "FRAGMENT_SHADER/SHADER_READ -> COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "779919a38610369a",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#17 color_attachment -> shader_read",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     }
+    ],
+    "proof": {
+     "baseline_diagnostics": 244,
+     "plain_timing_check": {
+      "baseline": 84,
+      "with_plan": 84,
+      "new": 0
+     },
+     "pairwise_recheck": {
+      "baseline": 414,
+      "with_plan": 414,
+      "new": 0
+     },
+     "pinned_for_baseline_hazards": 124,
+     "oracle_runs": 7,
+     "seconds": 1.79
+    },
+    "chain_entries": 2,
+    "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace",
+    "seconds": 2.3
+   }
+  },
+  "check": {
+   "1": {
+    "ops": 1064,
+    "base": {
+     "checker_epoch": 84,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 174,
+     "checker_pairwise_new": 0,
+     "reference": 500,
+     "reference_new": 0,
+     "seconds": 0.85
+    },
+    "strict": {
+     "checker_epoch": 84,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 174,
+     "checker_pairwise_new": 0,
+     "reference": 500,
+     "reference_new": 0,
+     "seconds": 0.84
+    },
+    "chain": {
+     "checker_epoch": 84,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 174,
+     "checker_pairwise_new": 0,
+     "reference": 500,
+     "reference_new": 0,
+     "seconds": 0.89
+    }
+   },
+   "2": {
+    "ops": 1064,
+    "base": {
+     "checker_epoch": 84,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 174,
+     "checker_pairwise_new": 0,
+     "reference": 500,
+     "reference_new": 0,
+     "seconds": 0.82
+    },
+    "strict": {
+     "checker_epoch": 84,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 174,
+     "checker_pairwise_new": 0,
+     "reference": 500,
+     "reference_new": 0,
+     "seconds": 0.81
+    },
+    "chain": {
+     "checker_epoch": 84,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 174,
+     "checker_pairwise_new": 0,
+     "reference": 500,
+     "reference_new": 0,
+     "seconds": 0.83
+    }
+   }
+  },
+  "lavapipe": {
+   "base_noval": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344"
+    ],
+    "layer": null,
+    "validation": null,
+    "seconds": 0.7
+   },
+   "base": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344"
+    ],
+    "layer": null,
+    "validation": {
+     "total": 0,
+     "sync": 0,
+     "groups": {}
+    },
+    "seconds": 0.7
+   },
+   "disabled": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344"
+    ],
+    "layer": {
+     "plan": "bench/elide/real/plans/ks_oit_depth_peeling.f1.plan.json",
+     "mode": "strict",
+     "active": false,
+     "recordings": 11,
+     "barrier_calls": 252,
+     "matched": 0,
+     "sig_mismatch": 0,
+     "removed_calls": 0,
+     "narrowed_calls": 0,
+     "structs_removed": 0,
+     "structs_narrowed": 0
+    },
+    "validation": {
+     "total": 0,
+     "sync": 0,
+     "groups": {}
+    },
+    "seconds": 0.7
+   },
+   "strict": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344"
+    ],
+    "layer": {
+     "plan": "bench/elide/real/plans/ks_oit_depth_peeling.f1.plan.json",
+     "mode": "strict",
+     "active": true,
+     "recordings": 11,
+     "barrier_calls": 252,
+     "matched": 2,
+     "sig_mismatch": 0,
+     "removed_calls": 0,
+     "narrowed_calls": 2,
+     "structs_removed": 0,
+     "structs_narrowed": 2
+    },
+    "validation": {
+     "total": 0,
+     "sync": 0,
+     "groups": {}
+    },
+    "seconds": 0.8
+   },
+   "base_long": {
+    "rc": 0,
+    "frames": 10,
+    "hashes": [
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344"
+    ],
+    "layer": null,
+    "validation": {
+     "total": 0,
+     "sync": 0,
+     "groups": {}
+    },
+    "seconds": 1.1
+   },
+   "chain": {
+    "rc": 0,
+    "frames": 10,
+    "hashes": [
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344",
+     "43343b14302cb344"
+    ],
+    "layer": {
+     "plan": "bench/elide/real/plans/ks_oit_depth_peeling.f1.plan.json",
+     "mode": "chain",
+     "active": true,
+     "recordings": 11,
+     "barrier_calls": 252,
+     "matched": 2,
+     "sig_mismatch": 0,
+     "removed_calls": 0,
+     "narrowed_calls": 2,
+     "structs_removed": 0,
+     "structs_narrowed": 2
+    },
+    "validation": {
+     "total": 0,
+     "sync": 0,
+     "groups": {}
+    },
+    "seconds": 1.1
+   }
+  }
+ },
+ "ks/compute_nbody": {
+  "trace": {
+   "1": {
+    "rc": 0,
+    "records": 380,
+    "seconds": 0.2,
+    "dir": "build/elide-real/trace/ks_compute_nbody-f1"
+   },
+   "2": {
+    "rc": 0,
+    "records": 406,
+    "seconds": 0.2,
+    "dir": "build/elide-real/trace/ks_compute_nbody-f2"
+   }
+  },
+  "prove": {
+   "1": {
+    "per_frame": {
+     "calls": 1,
+     "remove": 0,
+     "narrow": 0,
+     "required": 1,
+     "structs": {
+      "keep": 1
+     },
+     "struct_kinds": {
+      "plain": 1
+     },
+     "keep_reasons": {
+      "a hazard the program already has": 1
+     },
+     "pinned_structs": 1,
+     "pinned_fraction": 1.0,
+     "tried_and_needed_structs": 0
+    },
+    "one_time": {
+     "calls": 6,
+     "remove": 0,
+     "narrow": 3,
+     "required": 3,
+     "structs": {
+      "keep": 3,
+      "narrow": 3
+     },
+     "struct_kinds": {
+      "transition": 6
+     },
+     "keep_reasons": {
+      "layout transition, no narrower mask verified": 2,
+      "it synchronizes with the host, which the trace does not observe": 1
+     }
+    },
+    "per_frame_detail": [
+     {
+      "chain": "3a44e9acf26cd175",
+      "instances": 1,
+      "decisions": {
+       "required": 1
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#7",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     }
+    ],
+    "proof": {
+     "baseline_diagnostics": 9,
+     "plain_timing_check": {
+      "baseline": 9,
+      "with_plan": 9,
+      "new": 0
+     },
+     "pairwise_recheck": {
+      "baseline": 9,
+      "with_plan": 9,
+      "new": 0
+     },
+     "pinned_for_baseline_hazards": 1,
+     "oracle_runs": 8,
+     "seconds": 0.05
+    },
+    "chain_entries": 2,
+    "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace",
+    "seconds": 0.5
+   },
+   "2": {
+    "per_frame": {
+     "calls": 9,
+     "remove": 0,
+     "narrow": 0,
+     "required": 9,
+     "structs": {
+      "keep": 9
+     },
+     "struct_kinds": {
+      "plain": 9
+     },
+     "keep_reasons": {
+      "it is a queue family ownership transfer": 8,
+      "a hazard the program already has": 1
+     },
+     "pinned_structs": 9,
+     "pinned_fraction": 1.0,
+     "tried_and_needed_structs": 0
+    },
+    "one_time": {
+     "calls": 15,
+     "remove": 0,
+     "narrow": 3,
+     "required": 12,
+     "structs": {
+      "keep": 12,
+      "narrow": 3
+     },
+     "struct_kinds": {
+      "transition": 6,
+      "plain": 9
+     },
+     "keep_reasons": {
+      "it is a queue family ownership transfer": 5,
+      "it is never submitted in the trace (no evidence)": 4,
+      "layout transition, no narrower mask verified": 2,
+      "it synchronizes with the host, which the trace does not observe": 1
+     }
+    },
+    "per_frame_detail": [
+     {
+      "chain": "a4ff8e95c25521e6",
+      "instances": 1,
+      "decisions": {
+       "required": 1
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#7",
+      "recorded": "TRANSFER/- -> COMPUTE_SHADER/SHADER_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "it is a queue family ownership transfer"
+      ]
+     },
+     {
+      "chain": "c8b24b3d5b41e65e",
+      "instances": 1,
+      "decisions": {
+       "required": 1
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#7",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "a hazard the program already has"
+      ]
+     },
+     {
+      "chain": "30f18b1d965088e3",
+      "instances": 1,
+      "decisions": {
+       "required": 1
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#7",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> TRANSFER/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "it is a queue family ownership transfer"
+      ]
+     },
+     {
+      "chain": "1129f0d2d41373c5",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#7",
+      "recorded": "COMPUTE_SHADER/- -> VERTEX_INPUT/VERTEX_ATTRIBUTE_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "it is a queue family ownership transfer"
+      ]
+     },
+     {
+      "chain": "d798bf82b90adfe9",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "buffer[0] buffer#7",
+      "recorded": "VERTEX_INPUT/VERTEX_ATTRIBUTE_READ -> COMPUTE_SHADER/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "it is a queue family ownership transfer"
+      ]
+     }
+    ],
+    "proof": {
+     "baseline_diagnostics": 9,
+     "plain_timing_check": {
+      "baseline": 9,
+      "with_plan": 9,
+      "new": 0
+     },
+     "pairwise_recheck": {
+      "baseline": 9,
+      "with_plan": 9,
+      "new": 0
+     },
+     "pinned_for_baseline_hazards": 1,
+     "oracle_runs": 8,
+     "seconds": 0.05
+    },
+    "chain_entries": 2,
+    "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace",
+    "seconds": 0.2
+   }
+  },
+  "check": {
+   "1": {
+    "ops": 298,
+    "base": {
+     "checker_epoch": 9,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 9,
+     "checker_pairwise_new": 0,
+     "reference": 5,
+     "reference_new": 0,
+     "seconds": 0.03
+    },
+    "strict": {
+     "checker_epoch": 9,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 9,
+     "checker_pairwise_new": 0,
+     "reference": 5,
+     "reference_new": 0,
+     "seconds": 0.03
+    },
+    "chain": {
+     "checker_epoch": 9,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 9,
+     "checker_pairwise_new": 0,
+     "reference": 5,
+     "reference_new": 0,
+     "seconds": 0.03
+    }
+   },
+   "2": {
+    "ops": 331,
+    "base": {
+     "checker_epoch": 9,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 9,
+     "checker_pairwise_new": 0,
+     "reference": 5,
+     "reference_new": 0,
+     "seconds": 0.04
+    },
+    "strict": {
+     "checker_epoch": 9,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 9,
+     "checker_pairwise_new": 0,
+     "reference": 5,
+     "reference_new": 0,
+     "seconds": 0.03
+    },
+    "chain": {
+     "checker_epoch": 9,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 9,
+     "checker_pairwise_new": 0,
+     "reference": 5,
+     "reference_new": 0,
+     "seconds": 0.03
+    }
+   }
+  },
+  "lavapipe": {
+   "base_noval": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "f2fda8179ff3db67",
+     "999642dfdf8c9fc7",
+     "4cfd2c52b646dc11",
+     "3871afb92406251a",
+     "4db1567c3328745f"
+    ],
+    "layer": null,
+    "validation": null,
+    "seconds": 1.5
+   },
+   "base": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "f2fda8179ff3db67",
+     "999642dfdf8c9fc7",
+     "4cfd2c52b646dc11",
+     "3871afb92406251a",
+     "4db1567c3328745f"
+    ],
+    "layer": null,
+    "validation": {
+     "total": 1,
+     "sync": 1,
+     "groups": {
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdDispatch(): WRITE_AFTER_WRITE hazard detected. Shader stage VK_SHADER_STAGE_COMPUTE_BIT writes to VkBuffer H, which was previously written by another vkCmdDispatch command. ": 1
+     }
+    },
+    "seconds": 1.5
+   },
+   "disabled": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "f2fda8179ff3db67",
+     "999642dfdf8c9fc7",
+     "4cfd2c52b646dc11",
+     "3871afb92406251a",
+     "4db1567c3328745f"
+    ],
+    "layer": {
+     "plan": "bench/elide/real/plans/ks_compute_nbody.f1.plan.json",
+     "mode": "strict",
+     "active": false,
+     "recordings": 13,
+     "barrier_calls": 7,
+     "matched": 0,
+     "sig_mismatch": 0,
+     "removed_calls": 0,
+     "narrowed_calls": 0,
+     "structs_removed": 0,
+     "structs_narrowed": 0
+    },
+    "validation": {
+     "total": 1,
+     "sync": 1,
+     "groups": {
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdDispatch(): WRITE_AFTER_WRITE hazard detected. Shader stage VK_SHADER_STAGE_COMPUTE_BIT writes to VkBuffer H, which was previously written by another vkCmdDispatch command. ": 1
+     }
+    },
+    "seconds": 1.4
+   },
+   "strict": {
+    "rc": 0,
+    "frames": 4,
+    "hashes": [
+     "f2fda8179ff3db67",
+     "999642dfdf8c9fc7",
+     "4cfd2c52b646dc11",
+     "3871afb92406251a",
+     "4db1567c3328745f"
+    ],
+    "layer": {
+     "plan": "bench/elide/real/plans/ks_compute_nbody.f1.plan.json",
+     "mode": "strict",
+     "active": true,
+     "recordings": 13,
+     "barrier_calls": 7,
+     "matched": 3,
+     "sig_mismatch": 0,
+     "removed_calls": 0,
+     "narrowed_calls": 3,
+     "structs_removed": 0,
+     "structs_narrowed": 3
+    },
+    "validation": {
+     "total": 1,
+     "sync": 1,
+     "groups": {
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdDispatch(): WRITE_AFTER_WRITE hazard detected. Shader stage VK_SHADER_STAGE_COMPUTE_BIT writes to VkBuffer H, which was previously written by another vkCmdDispatch command. ": 1
+     }
+    },
+    "seconds": 1.5
+   },
+   "base_long": {
+    "rc": 0,
+    "frames": 10,
+    "hashes": [
+     "f2fda8179ff3db67",
+     "999642dfdf8c9fc7",
+     "4cfd2c52b646dc11",
+     "3871afb92406251a",
+     "4db1567c3328745f",
+     "0b78f52f58f07453",
+     "859f99bb2eb1c2ce",
+     "0945289db18064a4",
+     "595722c589ad01d5",
+     "dcfe8e3eef284eb0",
+     "e215e8aa796b7fe3"
+    ],
+    "layer": null,
+    "validation": {
+     "total": 1,
+     "sync": 1,
+     "groups": {
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdDispatch(): WRITE_AFTER_WRITE hazard detected. Shader stage VK_SHADER_STAGE_COMPUTE_BIT writes to VkBuffer H, which was previously written by another vkCmdDispatch command. ": 1
+     }
+    },
+    "seconds": 3.1
+   },
+   "chain": {
+    "rc": 0,
+    "frames": 10,
+    "hashes": [
+     "f2fda8179ff3db67",
+     "999642dfdf8c9fc7",
+     "4cfd2c52b646dc11",
+     "3871afb92406251a",
+     "4db1567c3328745f",
+     "0b78f52f58f07453",
+     "859f99bb2eb1c2ce",
+     "0945289db18064a4",
+     "595722c589ad01d5",
+     "dcfe8e3eef284eb0",
+     "e215e8aa796b7fe3"
+    ],
+    "layer": {
+     "plan": "bench/elide/real/plans/ks_compute_nbody.f1.plan.json",
+     "mode": "chain",
+     "active": true,
+     "recordings": 13,
+     "barrier_calls": 7,
+     "matched": 3,
+     "sig_mismatch": 0,
+     "removed_calls": 0,
+     "narrowed_calls": 3,
+     "structs_removed": 0,
+     "structs_narrowed": 3
+    },
+    "validation": {
+     "total": 1,
+     "sync": 1,
+     "groups": {
+      "SYNC-HAZARD-WRITE-AFTER-WRITE | vkCmdDispatch(): WRITE_AFTER_WRITE hazard detected. Shader stage VK_SHADER_STAGE_COMPUTE_BIT writes to VkBuffer H, which was previously written by another vkCmdDispatch command. ": 1
+     }
+    },
+    "seconds": 3.2
+   }
+  }
+ },
+ "ks/async_compute": {
+  "prove": {
+   "1": {
+    "per_frame": {
+     "calls": 84,
+     "remove": 0,
+     "narrow": 0,
+     "required": 84,
+     "structs": {
+      "keep": 84
+     },
+     "struct_kinds": {
+      "transition": 84
+     },
+     "keep_reasons": {
+      "layout transition, no narrower mask verified": 84
+     },
+     "pinned_structs": 0,
+     "pinned_fraction": 0.0,
+     "tried_and_needed_structs": 84
+    },
+    "one_time": {
+     "calls": 164,
+     "remove": 0,
+     "narrow": 77,
+     "required": 87,
+     "structs": {
+      "keep": 87,
+      "narrow": 77
+     },
+     "struct_kinds": {
+      "transition": 164
+     },
+     "keep_reasons": {
+      "it synchronizes with the host, which the trace does not observe": 68,
+      "layout transition, no narrower mask verified": 19
+     }
+    },
+    "per_frame_detail": [
+     {
+      "chain": "65a8ceaeaba9751f",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#78 undefined -> depth_stencil_attachment",
+      "recorded": "FRAGMENT_SHADER/- -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "65023812b06bc042",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#78 depth_stencil_attachment -> shader_read",
+      "recorded": "LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "6814d9ecac8ab0e1",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#74 undefined -> color_attachment",
+      "recorded": "FRAGMENT_SHADER/- -> COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "8263d6291f03419b",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#76 undefined -> depth_stencil_attachment",
+      "recorded": "LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_WRITE -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "744dc9b0a68bfaa1",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#74 color_attachment -> shader_read",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> BOTTOM_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "b7200d70acc22437",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#79 undefined -> general",
+      "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "5edee794135a5dd1",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#79 general -> shader_read",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "96cf6f0734983c63",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#80 undefined -> general",
+      "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "c07c31f095b95edd",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#80 general -> shader_read",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "602f1e9c9605452f",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#81 undefined -> general",
+      "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "219fa2fe4599a979",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#81 general -> shader_read",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "1bdf1124a130560b",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#82 undefined -> general",
+      "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "35168a29c4146995",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#82 general -> shader_read",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "7ecfe333a537e047",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#83 undefined -> general",
+      "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "59d1729a3959cd81",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#83 general -> shader_read",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "56ad5624d232a133",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#84 undefined -> general",
+      "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "480bfb2146c798cd",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#84 general -> shader_read",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "303c7328673c99bf",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#83 undefined -> general",
+      "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "eb274d04d267bd29",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#83 general -> shader_read",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "404bbac6403358db",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#82 undefined -> general",
+      "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "bfd73059764aec85",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#82 general -> shader_read",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "e6479307663d37d7",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#81 undefined -> general",
+      "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "755ed9e75f187e31",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#81 general -> shader_read",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "4c67c47f617a5f03",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#80 undefined -> general",
+      "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "27252f3e1c87ae1c",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#80 general -> shader_read",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> BOTTOM_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "78023e639b5bcd11",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] swapchain[1] undefined -> color_attachment",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/- -> COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "59587b18208ae7e9",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#5 undefined -> depth_stencil_attachment",
+      "recorded": "TOP_OF_PIPE/- -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "6ebb3f09ba5ed1a8",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] swapchain[1] color_attachment -> present",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> BOTTOM_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     }
+    ],
+    "proof": {
+     "baseline_diagnostics": 0,
+     "plain_timing_check": {
+      "baseline": 0,
+      "with_plan": 0,
+      "new": 0
+     },
+     "pairwise_recheck": {
+      "baseline": 0,
+      "with_plan": 0,
+      "new": 0
+     },
+     "pinned_for_baseline_hazards": 0,
+     "oracle_runs": 129,
+     "seconds": 564.7
+    },
+    "chain_entries": 64,
+    "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace",
+    "seconds": 570.0
+   },
+   "2": {
+    "per_frame": {
+     "calls": 84,
+     "remove": 0,
+     "narrow": 0,
+     "required": 84,
+     "structs": {
+      "keep": 84
+     },
+     "struct_kinds": {
+      "transition": 84
+     },
+     "keep_reasons": {
+      "layout transition, no narrower mask verified": 84
+     },
+     "pinned_structs": 0,
+     "pinned_fraction": 0.0,
+     "tried_and_needed_structs": 84
+    },
+    "one_time": {
+     "calls": 164,
+     "remove": 0,
+     "narrow": 77,
+     "required": 87,
+     "structs": {
+      "keep": 87,
+      "narrow": 77
+     },
+     "struct_kinds": {
+      "transition": 164
+     },
+     "keep_reasons": {
+      "it synchronizes with the host, which the trace does not observe": 68,
+      "layout transition, no narrower mask verified": 19
+     }
+    },
+    "per_frame_detail": [
+     {
+      "chain": "65a8ceaeaba9751f",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#78 undefined -> depth_stencil_attachment",
+      "recorded": "FRAGMENT_SHADER/- -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "65023812b06bc042",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#78 depth_stencil_attachment -> shader_read",
+      "recorded": "LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "6814d9ecac8ab0e1",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#74 undefined -> color_attachment",
+      "recorded": "FRAGMENT_SHADER/- -> COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "8263d6291f03419b",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#76 undefined -> depth_stencil_attachment",
+      "recorded": "LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_WRITE -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "744dc9b0a68bfaa1",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#74 color_attachment -> shader_read",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> BOTTOM_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "b7200d70acc22437",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#79 undefined -> general",
+      "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "5edee794135a5dd1",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#79 general -> shader_read",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "96cf6f0734983c63",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#80 undefined -> general",
+      "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "c07c31f095b95edd",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#80 general -> shader_read",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "602f1e9c9605452f",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#81 undefined -> general",
+      "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "219fa2fe4599a979",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#81 general -> shader_read",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "1bdf1124a130560b",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#82 undefined -> general",
+      "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "35168a29c4146995",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#82 general -> shader_read",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "7ecfe333a537e047",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#83 undefined -> general",
+      "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "59d1729a3959cd81",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#83 general -> shader_read",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "56ad5624d232a133",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#84 undefined -> general",
+      "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "480bfb2146c798cd",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#84 general -> shader_read",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "303c7328673c99bf",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#83 undefined -> general",
+      "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "eb274d04d267bd29",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#83 general -> shader_read",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "404bbac6403358db",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#82 undefined -> general",
+      "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "bfd73059764aec85",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#82 general -> shader_read",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "e6479307663d37d7",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#81 undefined -> general",
+      "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "755ed9e75f187e31",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#81 general -> shader_read",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "4c67c47f617a5f03",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#80 undefined -> general",
+      "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "27252f3e1c87ae1c",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#80 general -> shader_read",
+      "recorded": "COMPUTE_SHADER/SHADER_WRITE -> BOTTOM_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "78023e639b5bcd11",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] swapchain[1] undefined -> color_attachment",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/- -> COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "59587b18208ae7e9",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] image#5 undefined -> depth_stencil_attachment",
+      "recorded": "TOP_OF_PIPE/- -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     },
+     {
+      "chain": "6ebb3f09ba5ed1a8",
+      "instances": 3,
+      "decisions": {
+       "required": 3
+      },
+      "sync": 1,
+      "what": "image[0] swapchain[1] color_attachment -> present",
+      "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> BOTTOM_OF_PIPE/-",
+      "chain_action": "keep",
+      "chain_new": null,
+      "why": [
+       "layout transition, no narrower mask verified"
+      ]
+     }
+    ],
+    "proof": {
+     "baseline_diagnostics": 0,
+     "plain_timing_check": {
+      "baseline": 0,
+      "with_plan": 0,
+      "new": 0
+     },
+     "pairwise_recheck": {
+      "baseline": 0,
+      "with_plan": 0,
+      "new": 0
+     },
+     "pinned_for_baseline_hazards": 0,
+     "oracle_runs": 129,
+     "seconds": 570.58
+    },
+    "chain_entries": 64,
+    "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace",
+    "seconds": 576.2
+   }
+  },
+  "check": {
+   "1": {
+    "ops": 64078,
+    "base": {
+     "checker_epoch": 0,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 0,
+     "checker_pairwise_new": 0,
+     "reference": 0,
+     "reference_new": 0,
+     "seconds": 160.34
+    },
+    "strict": {
+     "checker_epoch": 0,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 0,
+     "checker_pairwise_new": 0,
+     "reference": 0,
+     "reference_new": 0,
+     "seconds": 106.34
+    },
+    "chain": {
+     "checker_epoch": 0,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 0,
+     "checker_pairwise_new": 0,
+     "reference": 0,
+     "reference_new": 0,
+     "seconds": 108.49
+    }
+   },
+   "2": {
+    "ops": 64076,
+    "base": {
+     "checker_epoch": 0,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 0,
+     "checker_pairwise_new": 0,
+     "reference": 0,
+     "reference_new": 0,
+     "seconds": 155.35
+    },
+    "strict": {
+     "checker_epoch": 0,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 0,
+     "checker_pairwise_new": 0,
+     "reference": 0,
+     "reference_new": 0,
+     "seconds": 110.87
+    },
+    "chain": {
+     "checker_epoch": 0,
+     "checker_epoch_new": 0,
+     "checker_pairwise": 0,
+     "checker_pairwise_new": 0,
+     "reference": 0,
+     "reference_new": 0,
+     "seconds": 110.04
+    }
+   }
+  },
+  "trace": {
+   "2": {
+    "rc": 0,
+    "records": 67379,
+    "seconds": 4.9,
+    "dir": "build/elide-real/trace/ks_async_compute-f2"
+   }
+  },
+  "lavapipe": {
+   "base_noval": {
+    "rc": 0,
+    "frames": 3,
+    "hashes": [
+     "2aeaa9e845831a3c",
+     "02dc8bba14311d0b",
+     "551c8a2a0b66f66c",
+     "77a519b51f10c79c"
+    ],
+    "layer": null,
+    "validation": null,
+    "seconds": 11.3
+   },
+   "base": {
+    "rc": 0,
+    "frames": 3,
+    "hashes": [
+     "2aeaa9e845831a3c",
+     "02dc8bba14311d0b",
+     "551c8a2a0b66f66c",
+     "77a519b51f10c79c"
+    ],
+    "layer": null,
+    "validation": {
+     "total": 0,
+     "sync": 0,
+     "groups": {}
+    },
+    "seconds": 10.1
+   },
+   "disabled": {
+    "rc": 0,
+    "frames": 3,
+    "hashes": [
+     "2aeaa9e845831a3c",
+     "02dc8bba14311d0b",
+     "551c8a2a0b66f66c",
+     "77a519b51f10c79c"
+    ],
+    "layer": {
+     "plan": "bench/elide/real/plans/ks_async_compute.f1.plan.json",
+     "mode": "strict",
+     "active": false,
+     "recordings": 38,
+     "barrier_calls": 248,
+     "matched": 0,
+     "sig_mismatch": 0,
+     "removed_calls": 0,
+     "narrowed_calls": 0,
+     "structs_removed": 0,
+     "structs_narrowed": 0
+    },
+    "validation": {
+     "total": 0,
+     "sync": 0,
+     "groups": {}
+    },
+    "seconds": 10.1
+   },
+   "strict": {
+    "rc": 0,
+    "frames": 3,
+    "hashes": [
+     "2aeaa9e845831a3c",
+     "02dc8bba14311d0b",
+     "551c8a2a0b66f66c",
+     "77a519b51f10c79c"
+    ],
+    "layer": {
+     "plan": "bench/elide/real/plans/ks_async_compute.f1.plan.json",
+     "mode": "strict",
+     "active": true,
+     "recordings": 38,
+     "barrier_calls": 248,
+     "matched": 2,
+     "sig_mismatch": 21,
+     "removed_calls": 0,
+     "narrowed_calls": 2,
+     "structs_removed": 0,
+     "structs_narrowed": 2
+    },
+    "validation": {
+     "total": 0,
+     "sync": 0,
+     "groups": {}
+    },
+    "seconds": 10.8
+   },
+   "base_long": {
+    "rc": 0,
+    "frames": 6,
+    "hashes": [
+     "2aeaa9e845831a3c",
+     "02dc8bba14311d0b",
+     "551c8a2a0b66f66c",
+     "77a519b51f10c79c",
+     "016e2fce01656ccd",
+     "ff1dd11a0bc5a96c",
+     "301234da16cd097d"
+    ],
+    "layer": null,
+    "validation": {
+     "total": 0,
+     "sync": 0,
+     "groups": {}
+    },
+    "seconds": 11.5
+   },
+   "chain": {
+    "rc": 0,
+    "frames": 6,
+    "hashes": [
+     "2aeaa9e845831a3c",
+     "02dc8bba14311d0b",
+     "551c8a2a0b66f66c",
+     "77a519b51f10c79c",
+     "016e2fce01656ccd",
+     "ff1dd11a0bc5a96c",
+     "301234da16cd097d"
+    ],
+    "layer": {
+     "plan": "bench/elide/real/plans/ks_async_compute.f1.plan.json",
+     "mode": "chain",
+     "active": true,
+     "recordings": 50,
+     "barrier_calls": 332,
+     "matched": 8,
+     "sig_mismatch": 0,
+     "removed_calls": 0,
+     "narrowed_calls": 8,
+     "structs_removed": 0,
+     "structs_narrowed": 8
+    },
+    "validation": {
+     "total": 0,
+     "sync": 0,
+     "groups": {}
+    },
+    "seconds": 11.2
+   }
+  }
+ }
+}

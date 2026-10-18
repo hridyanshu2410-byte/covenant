@@ -1,0 +1,12 @@
+{
+ "id": 65,
+ "title": "OPENGL_TO_WGPU_MATRIX written transposed: clip depth is not remapped from [-w, w] to [0, w]",
+ "upstream": "https://github.com/sotrh/learn-wgpu/issues/517",
+ "bug_id": 85,
+ "category": "meaning",
+ "expect": [
+  "meaning.convention-mismatch"
+ ],
+ "fix_note": "no fix PR linked (issue acknowledged); the fixed variant uses the issue's corrected matrix (the pre-#478 constant)",
+ "expected_finding": "camera.view_proj = OPENGL_TO_WGPU_MATRIX * perspective * view, where the column-major constant puts 0.5 in row 3 of column 2 instead of row 2 of column 3: it computes z' = 0.5 z, w' = w + 0.5 z instead of z' = 0.5 z + 0.5 w, so the OpenGL [-1, 1] clip depth is not mapped to Vulkan/WebGPU [0, 1] (far plane at 0.33, field of view shrunk by a third)"
+}

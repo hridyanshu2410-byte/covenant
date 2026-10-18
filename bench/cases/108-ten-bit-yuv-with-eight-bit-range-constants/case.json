@@ -1,0 +1,12 @@
+{
+ "id": 108,
+ "title": "10-bit BT.2020 limited-range video converted with the 8-bit range offsets and matrix scale (16/255, 128/255, 255/219)",
+ "upstream": "https://github.com/moonlight-stream/moonlight-qt/issues/1667",
+ "fix": "https://github.com/moonlight-stream/moonlight-qt/commit/50223dbdb89a95139201d6fdf8b7efb88a35c3cd",
+ "bug_id": 160,
+ "category": "meaning",
+ "expect": [
+  "meaning.unit-mismatch"
+ ],
+ "expected_finding": "videoTex holds 10-bit samples normalized by 1023 (black at 64/1023, chroma midpoint 512/1023), but CSC_CONST_BUF is filled with the 8-bit limited-range constants: offsets 16/255 and 128/255 and a matrix scaled by 255/219 and 255/224 instead of 1023/876 and 1023/896, so black is lifted and neutral greys are tinted"
+}

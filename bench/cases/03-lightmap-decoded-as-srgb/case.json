@@ -1,0 +1,1 @@
+{"id": 3, "title": "Baked linear lightmap read through an sRGB view", "upstream": "https://github.com/godotengine/godot/issues/53388", "category": "meaning", "expect": ["meaning.color-mismatch"]}

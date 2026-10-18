@@ -1,0 +1,13 @@
+{
+ "id": 98,
+ "title": "Direct-rendering frame buffer returned to the decoder pool while its async upload copy is still pending",
+ "upstream": "https://github.com/mpv-player/mpv/issues/13811",
+ "fix": "https://github.com/mpv-player/mpv/commit/7c25b3e47cce3daf86b22dec95231ab3869e1273",
+ "bug_id": 150,
+ "category": "timing",
+ "expect": [
+  "timing.free-while-in-use"
+ ],
+ "expect_note": "the buffer is recycled (rewritten by the CPU decoder), not destroyed: map_frame drops its reference before the GPU copy that reads it has completed, and the next frame's decode memcpy writes the same mapped buffer while the previous frame's command buffer (other fence slot) may still be executing",
+ "expected_finding": "frame f+1's decoder writes dr_buf through its host mapping while frame f's vkCmdCopyBufferToImage from that same buffer is in a submission whose fence has not been waited on"
+}

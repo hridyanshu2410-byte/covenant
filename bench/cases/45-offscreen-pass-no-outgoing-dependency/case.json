@@ -1,0 +1,12 @@
+{
+ "id": 45,
+ "title": "Offscreen render passes declare only an incoming dependency; the final-layout transition and attachment writes are not ordered before the next pass samples them",
+ "upstream": "https://github.com/derekmwright/glyphengine/issues/109",
+ "fix": "https://github.com/derekmwright/glyphengine/pull/123",
+ "bug_id": 18,
+ "category": "timing",
+ "expect": [
+  "timing.barrier-scope"
+ ],
+ "expected_finding": "sky_pass and bloom_pass have no subpass 0 -> EXTERNAL dependency: bloom_downsample samples sky_color and tonemap samples sky_color/bloom_downsample with no ordering after the attachment writes and the final transition to SHADER_READ_ONLY_OPTIMAL (read-after-write); the incoming dependency's first scope (FRAGMENT_SHADER / SHADER_READ) does not cover the previous frame's attachment writes, so the DONT_CARE load races them (write-after-write)"
+}

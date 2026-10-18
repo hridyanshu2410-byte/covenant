@@ -1,0 +1,12 @@
+{
+ "id": 57,
+ "title": "Hand-written float offsets ignore the 16-byte alignment of vec4 slicePlane after a new f32 field",
+ "upstream": "https://github.com/ford442/brain_viz/issues/341",
+ "fix": "https://github.com/ford442/brain_viz/pull/350",
+ "bug_id": 63,
+ "category": "structure",
+ "expect": [
+  "structure.host-layout"
+ ],
+ "expected_finding": "the host writes slicePlane at float 36 and sparkle/growth/aberration/grain at 40-43, but the shader's Uniforms has dopamineTrails at 36, slicePlane at 40 (byte 160) and sparkle.. at 44-47: every field from the clip plane on is four floats low and dopamineTrails is never written"
+}

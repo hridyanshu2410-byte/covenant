@@ -1,0 +1,1 @@
+{"id": 1, "title": "Texture decoded twice (sRGB view plus manual decode)", "upstream": "https://github.com/decentraland/godot-explorer/issues/2900", "fix": "https://github.com/decentraland/godot-explorer/pull/2866", "category": "meaning", "expect": ["meaning.color-mismatch"]}

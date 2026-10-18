@@ -1,0 +1,1 @@
+{"id": 6, "title": "Bake pass keeps forward-Z depth test under a reverse-Z projection", "upstream": "https://github.com/godotengine/godot/issues/90627", "category": "meaning", "expect": ["meaning.convention-mismatch"]}

@@ -1,0 +1,12 @@
+{
+ "id": 55,
+ "title": "Route projection puts east on +x and north on +z in a right-handed world, mirroring the map",
+ "upstream": "https://github.com/openzigs/onyourleft/pull/645",
+ "fix": "https://github.com/openzigs/onyourleft/pull/645",
+ "bug_id": 86,
+ "category": "meaning",
+ "expect": [
+  "meaning.convention-mismatch"
+ ],
+ "expected_finding": "local_ground_position maps east to +x and north to +z with +y up, a left-handed east/north/up frame in a right-handed world: the chase camera sees the route mirrored, and the right-hand bend that the HUD plan shows on the right appears on the left"
+}

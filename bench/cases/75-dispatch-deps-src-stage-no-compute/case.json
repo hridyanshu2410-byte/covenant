@@ -1,0 +1,12 @@
+{
+ "id": 75,
+ "title": "Chained compute dispatches: the per-buffer dependency barrier's source stages omit COMPUTE_SHADER",
+ "upstream": "https://github.com/corporateshark/lightweightvk/pull/83",
+ "fix": "https://github.com/corporateshark/lightweightvk/pull/83",
+ "bug_id": 127,
+ "category": "timing",
+ "expect": [
+  "timing.barrier-scope"
+ ],
+ "expected_finding": "the barrier cmdDispatch records for scan_block_sums (and scan_data) before the addBlockSums dispatch has srcStage VERTEX_SHADER | FRAGMENT_SHADER | TRANSFER, so the scanBlocks dispatch's SHADER_WRITE of scan_block_sums / scan_data is outside its first scope: read-after-write (and write-after-write on scan_data) between the two dispatches in the same command buffer"
+}

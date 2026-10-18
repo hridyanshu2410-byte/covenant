@@ -1,0 +1,11 @@
+{
+ "id": 87,
+ "title": "Gaussian-splat footprint uses the x-axis focal length for both axes; viewport and projection aspect differ",
+ "upstream": "https://github.com/playcanvas/engine/pull/9486",
+ "fix": "https://github.com/playcanvas/engine/pull/9486",
+ "bug_id": 139,
+ "category": "meaning",
+ "expect": [],
+ "expect_note": "no existing code for a projection-scale (pixel aspect) mismatch: the focal length in pixels for the y axis is taken from the x axis (viewport_w * P00) instead of viewport_h * P11; the closest would be meaning.convention-mismatch (projection convention) or meaning.unit-mismatch (pixels per unit along y)",
+ "expected_finding": "vsMain builds the EWA Jacobian with focal = viewport_size.x * proj[0][0] for both rows; with the 16:9 projection drawn into a 320x480 viewport, viewport_w * P00 (~311) != viewport_h * P11 (~831), so every splat's projected covariance is squashed vertically by ~2.7x"
+}

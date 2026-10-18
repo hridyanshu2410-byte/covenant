@@ -1,0 +1,12 @@
+{
+ "id": 113,
+ "title": "Byte-packed C++ per-view constants put ViewInfo at 308 while the shader's ViewData block starts it on the next 16-byte register (320)",
+ "upstream": "https://github.com/FlaxEngine/FlaxEngine/issues/3342",
+ "fix": "https://github.com/FlaxEngine/FlaxEngine/commit/1087bd24451f7b2842b5db5bcb6c7a33cfdc9a31",
+ "bug_id": 165,
+ "category": "structure",
+ "expect": [
+  "structure.host-layout"
+ ],
+ "expected_finding": "in ViewData, ScaledTimeParam opens a new 16-byte slot at 304 and the float4 ViewInfo is placed at 320; the packed host struct MaterialShaderDataPerView has ScaledTimeParam at 304 and ViewInfo at 308, so ViewInfo, ScreenSize, TemporalAAJitter, LargeWorldsChunkIndex and LargeWorldsChunkSize are all read 12 bytes off"
+}

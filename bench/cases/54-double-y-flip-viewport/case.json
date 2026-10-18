@@ -1,0 +1,12 @@
+{
+ "id": 54,
+ "title": "Precompiled SPIR-V flips position.y and the Vulkan backend also sets a negative-height viewport",
+ "upstream": "https://github.com/water-rs/waterui/issues/239",
+ "fix": "https://github.com/water-rs/waterui/pull/249",
+ "bug_id": 52,
+ "category": "meaning",
+ "expect": [
+  "meaning.convention-mismatch"
+ ],
+ "expected_finding": "vsRect negates pos.y (naga ADJUST_COORDINATE_SPACE) while the host flips again with viewport y = 480, height = -480: the two clip-space conventions compose and the title bar renders at the bottom"
+}

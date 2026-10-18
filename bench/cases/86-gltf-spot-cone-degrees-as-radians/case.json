@@ -1,0 +1,12 @@
+{
+ "id": 86,
+ "title": "glTF importer feeds spot cone angles in degrees to a luminance conversion that expects radians",
+ "upstream": "https://github.com/playcanvas/engine/pull/8307",
+ "fix": "https://github.com/playcanvas/engine/pull/8307",
+ "bug_id": 138,
+ "category": "meaning",
+ "expect": [
+  "meaning.unit-mismatch"
+ ],
+ "expected_finding": "create_light passes lightProps.outerConeAngle / innerConeAngle (degrees, 34.4 / 17.2) to getLightUnitConversion, which takes cos() of radians; the Light converts luminance back with the angles in radians, so the uploaded colorLinear (intensity) is not the glTF 100 cd but 100 * conv(34.4 rad, 17.2 rad) / conv(0.6 rad, 0.3 rad)"
+}

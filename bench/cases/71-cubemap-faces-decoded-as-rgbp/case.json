@@ -1,0 +1,12 @@
+{
+ "id": 71,
+ "title": "Cubemap faces loaded from URLs get the env-atlas texture state and are decoded as RGBP instead of sRGB",
+ "upstream": "https://github.com/playcanvas/engine/pull/9607",
+ "fix": "https://github.com/playcanvas/engine/pull/9607",
+ "bug_id": 92,
+ "category": "meaning",
+ "expect": [
+  "meaning.color-mismatch"
+ ],
+ "expected_finding": "the cubemap's faces are plain 8-bit sRGB images, but they are stored in a UNORM image with type 'rgbp', so fsSkybox applies decodeRGBP (rgb * (8 - 7a), squared) to sRGB code values instead of an sRGB decode"
+}
