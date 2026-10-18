@@ -1,0 +1,12 @@
+{
+ "id": 53,
+ "title": "Sprites drawn into a transparent render target with SRC_ALPHA blending for alpha, then layered with SRC_ALPHA again",
+ "upstream": "https://github.com/Forge-Game-Engine/Forge/pull/685",
+ "fix": "https://github.com/Forge-Game-Engine/Forge/pull/685",
+ "bug_id": 55,
+ "category": "meaning",
+ "expect": [
+  "meaning.convention-mismatch"
+ ],
+ "expected_finding": "sprite_batch blends straight-alpha sprites into sprite_layer_target with (SRC_ALPHA, ONE_MINUS_SRC_ALPHA) for alpha too, leaving premultiplied colour with alpha squared; present_layer blends that premultiplied target with SRC_ALPHA, multiplying colour by alpha again (a 50% sprite shows at ~25% or less)"
+}

@@ -1,0 +1,12 @@
+{
+ "id": 64,
+ "title": "Render pass colour dependency with srcAccessMask 0: the shared multisampled target's clear races the previous frame's writes",
+ "upstream": "https://github.com/SaschaWillems/Vulkan/issues/1291",
+ "bug_id": 38,
+ "category": "timing",
+ "expect": [
+  "timing.barrier-scope"
+ ],
+ "fix_note": "no fix merged (issue open); the fixed variant applies the fix identified in the issue: dependencies[1].srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT",
+ "expected_finding": "multisampleTarget.color is cleared by every frame's vkCmdBeginRenderPass, but the EXTERNAL -> 0 colour dependency has srcAccessMask 0, so the previous frame's colour attachment writes / storeOp are not made available before the clear (write-after-write)"
+}

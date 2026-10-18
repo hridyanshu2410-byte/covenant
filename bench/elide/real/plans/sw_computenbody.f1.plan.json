@@ -1,0 +1,539 @@
+{
+ "format": "covenant-elide-plan/1",
+ "trace": "trace.jsonl",
+ "trace_sha1": "548c7189f4973e105328c6db7984ccf2a8dedd7a",
+ "id_scheme": {
+  "strict": "(rec, idx): rec = 0-based vkBeginCommandBuffer ordinal in the process; idx = 0-based barrier-call index within that recording (sync1, sync2 and 2KHR all count)",
+  "chain": "FNV-1a 64 over the signatures of the recording's barrier calls so far (state continues from the previous barrier's chain value; recording start = 0xcbf29ce484222325)",
+  "sig": "FNV-1a 64 of the canonical content string; the layer never touches a call whose sig differs",
+  "sig_format": "<1|2>|<depFlags> then |M:ss:sa:ds:da, |B:ss:sa:ds:da:sfam:dfam:off:size, |I:ss:sa:ds:da:sfam:dfam:old:new:aspect:baseMip:levels:baseLayer:layers, |E:ss:ds; decimal"
+ },
+ "proof": {
+  "oracle": "covenant.timing.check (vector-clock happens-before over all queues; every schedule the recorded synchronization allows)",
+  "obligation": "the planned frame reports no diagnostic the recorded frame does not; layout transitions and ownership transfers are never removed",
+  "strengthening": [
+   "layout transitions modelled as writes between the src and dst scopes",
+   "a layout transition must reach later accesses through its own dst scope (or a chain from it), not by a later barrier capturing it",
+   "write-after-write requires the later write in the dst access scope",
+   "attachment load/store operations modelled as accesses",
+   "the presentation engine reads a swapchain image before every acquire signal"
+  ],
+  "baseline_diagnostics": 4,
+  "baseline": [
+   {
+    "code": "timing.barrier-scope",
+    "at": "vkCmdDispatch @seq 158 (command_buffer#6, submitted @seq 160 on graphics0): set 0 binding 0"
+   },
+   {
+    "code": "timing.barrier-scope",
+    "at": "vkCmdDispatch @seq 186 (command_buffer#7, submitted @seq 188 on graphics0): set 0 binding 0"
+   },
+   {
+    "code": "timing.barrier-scope",
+    "at": "vkCmdDispatch @seq 214 (command_buffer#6, submitted @seq 216 on graphics0): set 0 binding 0"
+   },
+   {
+    "code": "timing.barrier-scope",
+    "at": "vkCmdDispatch @seq 242 (command_buffer#7, submitted @seq 244 on graphics0): set 0 binding 0"
+   }
+  ],
+  "new_diagnostics_with_plan": 0,
+  "plain_timing_check": {
+   "baseline": 4,
+   "with_plan": 4,
+   "new": 0
+  },
+  "pairwise_recheck": {
+   "baseline": 4,
+   "with_plan": 4,
+   "new": 0
+  },
+  "pinned_for_baseline_hazards": 4,
+  "oracle_runs": 9,
+  "oracle_source_sha1": "3c45c1ff92a557af1359c0c7e7d4784b97e5eac7",
+  "seconds": 0.04
+ },
+ "summary": {
+  "calls": 8,
+  "decisions": {
+   "narrow": 4,
+   "required": 4
+  },
+  "structs": {
+   "total": 8,
+   "removed": 0,
+   "narrowed": 4,
+   "kept": 4
+  },
+  "chain_entries": 2,
+  "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace"
+ },
+ "barriers": [
+  {
+   "rec": 0,
+   "idx": 0,
+   "seq": 45,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#3",
+   "sig": "922aace5078567e4",
+   "chain": "922aace5078567e4",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1",
+   "sync1_dst_stage_mask": "0x1000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#6",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TOP_OF_PIPE"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x1",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x1000"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 1,
+   "seq": 47,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#3",
+   "sig": "4cb8133c1adf7050",
+   "chain": "1c132de6443a3583",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#6",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 0,
+   "seq": 69,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#4",
+   "sig": "922aace5078567e4",
+   "chain": "922aace5078567e4",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1",
+   "sync1_dst_stage_mask": "0x1000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#7",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TOP_OF_PIPE"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x1",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x1000"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 1,
+   "seq": 71,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#4",
+   "sig": "4cb8133c1adf7050",
+   "chain": "1c132de6443a3583",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#7",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 3,
+   "idx": 0,
+   "seq": 156,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#6",
+   "sig": "8302612546d546f0",
+   "chain": "8302612546d546f0",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "buffer",
+     "index": 0,
+     "buffer": "buffer#4",
+     "recorded": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "buffer[0]": "kept: a hazard the program already has (timing.barrier-scope at vkCmdDispatch @seq 158 (command_buffer#6, submitted @seq 160 on graphics0): set ) involves the accesses this barrier orders; 'no new hazard' cannot show a change keeps that pair no worse"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 5,
+   "idx": 0,
+   "seq": 184,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#7",
+   "sig": "8302612546d546f0",
+   "chain": "8302612546d546f0",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "buffer",
+     "index": 0,
+     "buffer": "buffer#4",
+     "recorded": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "buffer[0]": "kept: a hazard the program already has (timing.barrier-scope at vkCmdDispatch @seq 186 (command_buffer#7, submitted @seq 188 on graphics0): set ) involves the accesses this barrier orders; 'no new hazard' cannot show a change keeps that pair no worse"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 7,
+   "idx": 0,
+   "seq": 212,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#6",
+   "sig": "8302612546d546f0",
+   "chain": "8302612546d546f0",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "buffer",
+     "index": 0,
+     "buffer": "buffer#4",
+     "recorded": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "buffer[0]": "kept: a hazard the program already has (timing.barrier-scope at vkCmdDispatch @seq 214 (command_buffer#6, submitted @seq 216 on graphics0): set ) involves the accesses this barrier orders; 'no new hazard' cannot show a change keeps that pair no worse"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 9,
+   "idx": 0,
+   "seq": 240,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "command_buffer#7",
+   "sig": "8302612546d546f0",
+   "chain": "8302612546d546f0",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "buffer",
+     "index": 0,
+     "buffer": "buffer#4",
+     "recorded": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "buffer[0]": "kept: a hazard the program already has (timing.barrier-scope at vkCmdDispatch @seq 242 (command_buffer#7, submitted @seq 244 on graphics0): set ) involves the accesses this barrier orders; 'no new hazard' cannot show a change keeps that pair no worse"
+   },
+   "occurrences": 1
+  }
+ ],
+ "chain": [
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "922aace5078567e4",
+   "chain": "922aace5078567e4",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1",
+   "sync1_dst_stage_mask": "0x1000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#6",
+     "layout": "undefined -> transfer_dst",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TOP_OF_PIPE"
+      ],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x1",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x1000"
+    }
+   ],
+   "instances": 2
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "4cb8133c1adf7050",
+   "chain": "1c132de6443a3583",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x2000",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "image#6",
+     "layout": "transfer_dst -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "BOTTOM_OF_PIPE"
+      ],
+      "dst_access": []
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x2000",
+     "dst_access_mask": "0x0"
+    }
+   ],
+   "instances": 2
+  }
+ ]
+}

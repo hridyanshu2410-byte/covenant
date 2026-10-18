@@ -1,0 +1,12 @@
+{
+ "id": 77,
+ "title": "Blit copies into a destination texture left in its sampled state (no transition to COPY_DEST)",
+ "upstream": "https://github.com/bkaradzic/bgfx/issues/3851",
+ "fix": "https://github.com/bkaradzic/bgfx/pull/3852",
+ "bug_id": 129,
+ "category": "timing",
+ "expect": [
+  "timing.wrong-layout"
+ ],
+ "expected_finding": "vkCmdCopyImage writes blit_destination as TRANSFER_DST_OPTIMAL while the image is in SHADER_READ_ONLY_OPTIMAL (submitBlit never transitions the const destination); there is also no dependency between the previous frame's fragment-shader reads of blit_destination and the copy's write (write-after-read), nor between the copy and this frame's sampling (read-after-write)"
+}

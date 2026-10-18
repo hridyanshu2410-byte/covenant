@@ -1,0 +1,13 @@
+{
+ "id": 46,
+ "title": "Offscreen item atlas transitioned to COLOR_ATTACHMENT_OPTIMAL but rendered in GENERAL, and the render transition does not wait for the previous batch's attachment writes",
+ "upstream": "https://github.com/Polyfrost/OneConfig/pull/1102",
+ "fix": "https://github.com/Polyfrost/OneConfig/pull/1102",
+ "bug_id": 22,
+ "category": "timing",
+ "expect": [
+  "timing.wrong-layout",
+  "timing.barrier-scope"
+ ],
+ "expected_finding": "item_atlas is moved GENERAL -> COLOR_ATTACHMENT_OPTIMAL but vkCmdBeginRendering uses it as GENERAL, and later barriers give oldLayout GENERAL / COLOR_ATTACHMENT_OPTIMAL that do not match its layout; the second batch's barrier has srcStage FRAGMENT_SHADER / srcAccess SHADER_READ, so its layout transition and attachment writes are not ordered after the first batch's attachment writes (write-after-write)"
+}

@@ -1,0 +1,12 @@
+{
+ "id": 100,
+ "title": "Oklab gradient path: linear_to_srgb and srgb_to_linear have their exponents swapped",
+ "upstream": "https://github.com/zed-industries/zed/issues/57542",
+ "fix": "https://github.com/zed-industries/zed/pull/57543",
+ "bug_id": 152,
+ "category": "meaning",
+ "expect": [
+  "meaning.color-mismatch"
+ ],
+ "expected_finding": "srgb_to_oklab feeds the sRGB-encoded stop colours (hsla_to_rgba of the [Color(\"srgb\")] stops) through srgb_to_linear, which raises to 1/2.2 (an encode), so the Oklab matrices receive sRGB-encoded rather than linear values; oklab_to_srgb's linear_to_srgb then raises to 2.2 (a decode) before the value is written to the UNORM target that expects sRGB-encoded values"
+}

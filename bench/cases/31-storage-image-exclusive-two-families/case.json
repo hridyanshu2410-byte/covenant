@@ -1,0 +1,5 @@
+{"id": 31, "title": "Storage image written on the compute family and sampled on the graphics family with EXCLUSIVE sharing and no ownership transfer",
+ "upstream": "https://github.com/SaschaWillems/Vulkan/issues/667",
+ "fix": "https://github.com/SaschaWillems/Vulkan/blob/master/examples/computeshader/computeshader.cpp",
+ "bug_id": 122, "category": "timing", "expect": ["timing.ownership-missing"],
+ "expected_finding": "storage_image is VK_SHARING_MODE_EXCLUSIVE but is used by queue families 0 and 1 with no release/acquire pair"}

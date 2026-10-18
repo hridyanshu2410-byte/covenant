@@ -1,0 +1,1 @@
+{"id": 9, "title": "Previous material's descriptor set bound for interleaved draws", "upstream": "https://github.com/etib-corp/evan/issues/110", "fix": "https://github.com/etib-corp/evan/pull/121", "category": "structure", "expect": [], "known_miss": "all sets are valid and compatible; no contract ties a set to a draw"}

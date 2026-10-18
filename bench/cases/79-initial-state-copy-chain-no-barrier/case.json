@@ -1,0 +1,12 @@
+{
+ "id": 79,
+ "title": "Replay restores a buffer through a staging buffer: the copy out of srcBuf is not ordered after the copy that initialised it",
+ "upstream": "https://github.com/baldurk/renderdoc/pull/3896",
+ "fix": "https://github.com/baldurk/renderdoc/pull/3896",
+ "bug_id": 131,
+ "category": "timing",
+ "expect": [
+  "timing.missing-barrier"
+ ],
+ "expected_finding": "vkCmdCopyBuffer(initial_contents -> initial_state_src) writes initial_state_src and the next vkCmdCopyBuffer(initial_state_src -> captured_vertex_buffer) reads it in the same command buffer with no barrier between them (transfer-to-transfer read-after-write)"
+}

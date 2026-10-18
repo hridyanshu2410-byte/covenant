@@ -1,0 +1,1 @@
+{"id": 24, "title": "Albedo textures allocated as RGBA8_UNORM instead of RGBA8_SRGB", "upstream": "https://github.com/TommyRadan/AlphaEngine/issues/194", "fix": "https://github.com/TommyRadan/AlphaEngine/pull/229", "category": "meaning", "expect": ["meaning.color-mismatch"]}

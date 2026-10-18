@@ -1,0 +1,12 @@
+{
+ "id": 62,
+ "title": "Secondary-viewport swapchain transition uses srcStage TOP_OF_PIPE, not the acquire semaphore's wait stage",
+ "upstream": "https://github.com/ocornut/imgui/issues/8176",
+ "fix": "https://github.com/ocornut/imgui/pull/8600",
+ "bug_id": 21,
+ "category": "timing",
+ "expect": [
+  "timing.wait-stage-scope"
+ ],
+ "expected_finding": "ImGui_ImplVulkan_RenderWindow's UNDEFINED -> COLOR_ATTACHMENT_OPTIMAL barrier on the acquired backbuffer has srcStage TOP_OF_PIPE, while the submit waits on ImageAcquiredSemaphore only at COLOR_ATTACHMENT_OUTPUT; the layout transition is not ordered after the semaphore wait, so it races the presentation engine's read (write-after-read)"
+}

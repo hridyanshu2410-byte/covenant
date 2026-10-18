@@ -1,0 +1,12 @@
+{
+ "id": 66,
+ "title": "ImGui orthographic projection assumes a lower-left clip origin on an upper-left (y-down) clip space",
+ "upstream": "https://github.com/ocornut/imgui/pull/3146",
+ "fix": "https://github.com/ocornut/imgui/pull/3146",
+ "bug_id": 83,
+ "category": "meaning",
+ "expect": [
+  "meaning.convention-mismatch"
+ ],
+ "expected_finding": "ProjMtx maps display y = DisplayPos.y (top, y-down display coordinates) to clip y = +1, the convention for a lower-left clip origin; the target's clip space has an upper-left origin (y down), so the whole UI is flipped vertically (T and B must be swapped)"
+}

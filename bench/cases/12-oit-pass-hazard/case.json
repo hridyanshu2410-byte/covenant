@@ -1,0 +1,1 @@
+{"id": 12, "title": "OIT fragment list resolved without a barrier after the append pass", "upstream": "https://github.com/flyinghead/flycast/pull/2507", "category": "timing", "expect": ["timing.missing-barrier"]}

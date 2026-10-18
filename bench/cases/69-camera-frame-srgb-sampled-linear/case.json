@@ -1,0 +1,12 @@
+{
+ "id": 69,
+ "title": "sRGB-encoded camera frames sampled through a UNORM view into a linear rgba16Float document",
+ "upstream": "https://github.com/Fabric-Project/Fabric/issues/381",
+ "bug_id": 25,
+ "category": "meaning",
+ "expect": [
+  "meaning.color-mismatch"
+ ],
+ "fix_note": "no fix merged (issue open); the fixed variant applies the issue's first proposal: sample the frame through a .bgra8Unorm_srgb view (VK_FORMAT_B8G8R8A8_SRGB)",
+ "expected_finding": "camera_provider_texture holds sRGB-encoded BGRA pixels but is sampled through a B8G8R8A8_UNORM view, so fsImageMesh writes sRGB code values into the linear document; fsOutput's sRGB drawable encodes them a second time (paler, brighter image)"
+}

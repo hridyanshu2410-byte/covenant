@@ -1,0 +1,3 @@
+{"id": 13, "title": "Camera uniform buffer shared across frames in flight",
+ "upstream": "https://github.com/KingoBoiii/DingoEngine/pull/63",
+ "category": "timing", "expect": ["timing.cross-queue-race"]}

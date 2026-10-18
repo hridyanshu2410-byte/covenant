@@ -1,0 +1,5738 @@
+{
+ "format": "covenant-elide-plan/1",
+ "trace": "postchain.jsonl",
+ "trace_sha1": "396191150b417090a4fd7e5b6b1100ce3fc077d5",
+ "id_scheme": {
+  "strict": "(rec, idx): rec = 0-based vkBeginCommandBuffer ordinal in the process; idx = 0-based barrier-call index within that recording (sync1, sync2 and 2KHR all count)",
+  "chain": "FNV-1a 64 over the signatures of the recording's barrier calls so far (state continues from the previous barrier's chain value; recording start = 0xcbf29ce484222325)",
+  "sig": "FNV-1a 64 of the canonical content string; the layer never touches a call whose sig differs",
+  "sig_format": "<1|2>|<depFlags> then |M:ss:sa:ds:da, |B:ss:sa:ds:da:sfam:dfam:off:size, |I:ss:sa:ds:da:sfam:dfam:old:new:aspect:baseMip:levels:baseLayer:layers, |E:ss:ds; decimal"
+ },
+ "proof": {
+  "oracle": "covenant.timing.check (vector-clock happens-before over all queues; every schedule the recorded synchronization allows)",
+  "obligation": "the planned frame reports no diagnostic the recorded frame does not; layout transitions and ownership transfers are never removed",
+  "strengthening": [
+   "layout transitions modelled as writes between the src and dst scopes",
+   "a layout transition must reach later accesses through its own dst scope (or a chain from it), not by a later barrier capturing it",
+   "write-after-write requires the later write in the dst access scope",
+   "attachment load/store operations modelled as accesses"
+  ],
+  "baseline_diagnostics": 0,
+  "baseline": [],
+  "new_diagnostics_with_plan": 0,
+  "plain_timing_check": {
+   "baseline": 0,
+   "with_plan": 0,
+   "new": 0
+  },
+  "oracle_runs": 119,
+  "oracle_source_sha1": "9c04d6e0260c4c12bfeb2745a7d498d3bc94f0ff",
+  "seconds": 1.02
+ },
+ "summary": {
+  "calls": 47,
+  "decisions": {
+   "narrow": 25,
+   "remove": 21,
+   "required": 1
+  },
+  "structs": {
+   "total": 96,
+   "removed": 22,
+   "narrowed": 73,
+   "kept": 1
+  },
+  "chain_entries": 16,
+  "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace"
+ },
+ "barriers": [
+  {
+   "rec": 0,
+   "idx": 0,
+   "seq": 152,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8bee9373de4d3945",
+   "chain": "8bee9373de4d3945",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "bloom0",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 1,
+     "image": "lum0",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 2,
+     "image": "bloom1",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 3,
+     "image": "lum1",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 4,
+     "image": "bloom2",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 5,
+     "image": "lum2",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 6,
+     "image": "bloom3",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 7,
+     "image": "lum3",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 8,
+     "image": "bloom4",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 9,
+     "image": "lum4",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 10,
+     "image": "bloom5",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 11,
+     "image": "lum5",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 12,
+     "image": "post_out",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x40"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard",
+    "image[1]": "narrowed (local accesses): no new hazard",
+    "image[2]": "narrowed (local accesses): no new hazard",
+    "image[3]": "narrowed (local accesses): no new hazard",
+    "image[4]": "narrowed (local accesses): no new hazard",
+    "image[5]": "narrowed (local accesses): no new hazard",
+    "image[6]": "narrowed (local accesses): no new hazard",
+    "image[7]": "narrowed (local accesses): no new hazard",
+    "image[8]": "narrowed (local accesses): no new hazard",
+    "image[9]": "narrowed (local accesses): no new hazard",
+    "image[10]": "narrowed (local accesses): no new hazard",
+    "image[11]": "narrowed (local accesses): no new hazard",
+    "image[12]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 1,
+   "seq": 154,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "frame_cb",
+   "sig": "f7cbbae632f781a0",
+   "chain": "c0be5c43c28f9f00",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x800",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_WRITE",
+       "UNIFORM_READ"
+      ]
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x48"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 158 (frame_cb, submitted @seq 211 on graphics0): set 0 binding 0",
+    "message": "'params' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 2,
+   "seq": 159,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "f8923a4f9f1b6e7a",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 3,
+   "seq": 163,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "1411c7df8351fcec",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 167 (frame_cb, submitted @seq 211 on graphics0): set 0 binding 0",
+    "message": "'bloom0' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 4,
+   "seq": 168,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "1627761fb0edbe8e",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 5,
+   "seq": 172,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "52882b0ddb089b68",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 175 (frame_cb, submitted @seq 211 on graphics0): set 0 binding 0",
+    "message": "'bloom1' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 6,
+   "seq": 176,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "ddb478ad7a433722",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 7,
+   "seq": 180,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "963bc39b62d69174",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 183 (frame_cb, submitted @seq 211 on graphics0): set 0 binding 0",
+    "message": "'bloom2' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 8,
+   "seq": 184,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "8500bf2ddcad93f6",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 9,
+   "seq": 188,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "ca29f3c51a101210",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 191 (frame_cb, submitted @seq 211 on graphics0): set 0 binding 0",
+    "message": "'bloom3' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 10,
+   "seq": 192,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "9276032ca2d40baa",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 11,
+   "seq": 196,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "da618a612b063b7c",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 199 (frame_cb, submitted @seq 211 on graphics0): set 0 binding 0",
+    "message": "'bloom4' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 12,
+   "seq": 200,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "cca1f861acc8a0be",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 13,
+   "seq": 204,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "c2b6299c4eb03a78",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 207 (frame_cb, submitted @seq 211 on graphics0): set 0 binding 0",
+    "message": "'bloom5' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 14,
+   "seq": 208,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "b2bad0a202f2c552",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 0,
+   "seq": 219,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8bee9373de4d3945",
+   "chain": "8bee9373de4d3945",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "bloom0",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 1,
+     "image": "lum0",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 2,
+     "image": "bloom1",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 3,
+     "image": "lum1",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 4,
+     "image": "bloom2",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 5,
+     "image": "lum2",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 6,
+     "image": "bloom3",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 7,
+     "image": "lum3",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 8,
+     "image": "bloom4",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 9,
+     "image": "lum4",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 10,
+     "image": "bloom5",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 11,
+     "image": "lum5",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 12,
+     "image": "post_out",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x40"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard",
+    "image[1]": "narrowed (local accesses): no new hazard",
+    "image[2]": "narrowed (local accesses): no new hazard",
+    "image[3]": "narrowed (local accesses): no new hazard",
+    "image[4]": "narrowed (local accesses): no new hazard",
+    "image[5]": "narrowed (local accesses): no new hazard",
+    "image[6]": "narrowed (local accesses): no new hazard",
+    "image[7]": "narrowed (local accesses): no new hazard",
+    "image[8]": "narrowed (local accesses): no new hazard",
+    "image[9]": "narrowed (local accesses): no new hazard",
+    "image[10]": "narrowed (local accesses): no new hazard",
+    "image[11]": "narrowed (local accesses): no new hazard",
+    "image[12]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 1,
+   "seq": 221,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "frame_cb",
+   "sig": "f7cbbae632f781a0",
+   "chain": "c0be5c43c28f9f00",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x800",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_WRITE",
+       "UNIFORM_READ"
+      ]
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x48"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 225 (frame_cb, submitted @seq 278 on graphics0): set 0 binding 0",
+    "message": "'params' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 2,
+   "seq": 226,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "f8923a4f9f1b6e7a",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 3,
+   "seq": 230,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "1411c7df8351fcec",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 234 (frame_cb, submitted @seq 278 on graphics0): set 0 binding 0",
+    "message": "'bloom0' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 4,
+   "seq": 235,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "1627761fb0edbe8e",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 5,
+   "seq": 239,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "52882b0ddb089b68",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 242 (frame_cb, submitted @seq 278 on graphics0): set 0 binding 0",
+    "message": "'bloom1' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 6,
+   "seq": 243,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "ddb478ad7a433722",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 7,
+   "seq": 247,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "963bc39b62d69174",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 250 (frame_cb, submitted @seq 278 on graphics0): set 0 binding 0",
+    "message": "'bloom2' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 8,
+   "seq": 251,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "8500bf2ddcad93f6",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 9,
+   "seq": 255,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "ca29f3c51a101210",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 258 (frame_cb, submitted @seq 278 on graphics0): set 0 binding 0",
+    "message": "'bloom3' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 10,
+   "seq": 259,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "9276032ca2d40baa",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 11,
+   "seq": 263,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "da618a612b063b7c",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 266 (frame_cb, submitted @seq 278 on graphics0): set 0 binding 0",
+    "message": "'bloom4' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 12,
+   "seq": 267,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "cca1f861acc8a0be",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 13,
+   "seq": 271,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "c2b6299c4eb03a78",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 274 (frame_cb, submitted @seq 278 on graphics0): set 0 binding 0",
+    "message": "'bloom5' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 14,
+   "seq": 275,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "b2bad0a202f2c552",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 0,
+   "seq": 286,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8bee9373de4d3945",
+   "chain": "8bee9373de4d3945",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "bloom0",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 1,
+     "image": "lum0",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 2,
+     "image": "bloom1",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 3,
+     "image": "lum1",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 4,
+     "image": "bloom2",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 5,
+     "image": "lum2",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 6,
+     "image": "bloom3",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 7,
+     "image": "lum3",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 8,
+     "image": "bloom4",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 9,
+     "image": "lum4",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 10,
+     "image": "bloom5",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 11,
+     "image": "lum5",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 12,
+     "image": "post_out",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x40"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard",
+    "image[1]": "narrowed (local accesses): no new hazard",
+    "image[2]": "narrowed (local accesses): no new hazard",
+    "image[3]": "narrowed (local accesses): no new hazard",
+    "image[4]": "narrowed (local accesses): no new hazard",
+    "image[5]": "narrowed (local accesses): no new hazard",
+    "image[6]": "narrowed (local accesses): no new hazard",
+    "image[7]": "narrowed (local accesses): no new hazard",
+    "image[8]": "narrowed (local accesses): no new hazard",
+    "image[9]": "narrowed (local accesses): no new hazard",
+    "image[10]": "narrowed (local accesses): no new hazard",
+    "image[11]": "narrowed (local accesses): no new hazard",
+    "image[12]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 1,
+   "seq": 288,
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "cb": "frame_cb",
+   "sig": "f7cbbae632f781a0",
+   "chain": "c0be5c43c28f9f00",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x800",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_WRITE",
+       "UNIFORM_READ"
+      ]
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x48"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 292 (frame_cb, submitted @seq 345 on graphics0): set 0 binding 0",
+    "message": "'params' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 2,
+   "seq": 293,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "f8923a4f9f1b6e7a",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 3,
+   "seq": 297,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "1411c7df8351fcec",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 301 (frame_cb, submitted @seq 345 on graphics0): set 0 binding 0",
+    "message": "'bloom0' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 4,
+   "seq": 302,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "1627761fb0edbe8e",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 5,
+   "seq": 306,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "52882b0ddb089b68",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 309 (frame_cb, submitted @seq 345 on graphics0): set 0 binding 0",
+    "message": "'bloom1' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 6,
+   "seq": 310,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "ddb478ad7a433722",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 7,
+   "seq": 314,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "963bc39b62d69174",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 317 (frame_cb, submitted @seq 345 on graphics0): set 0 binding 0",
+    "message": "'bloom2' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 8,
+   "seq": 318,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "8500bf2ddcad93f6",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 9,
+   "seq": 322,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "ca29f3c51a101210",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 325 (frame_cb, submitted @seq 345 on graphics0): set 0 binding 0",
+    "message": "'bloom3' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 10,
+   "seq": 326,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "9276032ca2d40baa",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 11,
+   "seq": 330,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "da618a612b063b7c",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 333 (frame_cb, submitted @seq 345 on graphics0): set 0 binding 0",
+    "message": "'bloom4' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 12,
+   "seq": 334,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "cca1f861acc8a0be",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 13,
+   "seq": 338,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "c2b6299c4eb03a78",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "why": {
+    "memory[0]": "narrowed (local accesses): no new hazard"
+   },
+   "not_removable_because": {
+    "code": "timing.missing-barrier",
+    "at": "vkCmdDispatch @seq 341 (frame_cb, submitted @seq 345 on graphics0): set 0 binding 0",
+    "message": "'bloom5' is written and then read on queue 'graphics0' with no barrier in between."
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 14,
+   "seq": 342,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "b2bad0a202f2c552",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 3,
+   "idx": 0,
+   "seq": 416,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "b57a9ec3b0f5083f",
+   "chain": "b57a9ec3b0f5083f",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "action": "remove"
+    },
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "post_out",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 1,
+     "image": "bloom0",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 2,
+     "image": "lum0",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 3,
+     "image": "bloom1",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 4,
+     "image": "lum1",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 5,
+     "image": "bloom2",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 6,
+     "image": "lum2",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 7,
+     "image": "bloom3",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 8,
+     "image": "lum3",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 9,
+     "image": "bloom4",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 10,
+     "image": "lum4",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 11,
+     "image": "bloom5",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 12,
+     "image": "lum5",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    }
+   ],
+   "why": {
+    "memory[0]": "removed: no new hazard with it gone",
+    "image[0]": "narrowed (local accesses): no new hazard",
+    "image[1]": "narrowed (local accesses): no new hazard",
+    "image[2]": "narrowed (local accesses): no new hazard",
+    "image[3]": "narrowed (local accesses): no new hazard",
+    "image[4]": "narrowed (local accesses): no new hazard",
+    "image[5]": "narrowed (local accesses): no new hazard",
+    "image[6]": "narrowed (local accesses): no new hazard",
+    "image[7]": "narrowed (local accesses): no new hazard",
+    "image[8]": "narrowed (local accesses): no new hazard",
+    "image[9]": "narrowed (local accesses): no new hazard",
+    "image[10]": "narrowed (local accesses): no new hazard",
+    "image[11]": "narrowed (local accesses): no new hazard",
+    "image[12]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 3,
+   "idx": 1,
+   "seq": 430,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "a65ec39c57878844",
+   "chain": "ae8c78e39ef50ffe",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "HOST"
+      ],
+      "dst_access": [
+       "HOST_READ"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "memory[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  }
+ ],
+ "chain": [
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8bee9373de4d3945",
+   "chain": "8bee9373de4d3945",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "bloom0",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 1,
+     "image": "lum0",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 2,
+     "image": "bloom1",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 3,
+     "image": "lum1",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 4,
+     "image": "bloom2",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 5,
+     "image": "lum2",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 6,
+     "image": "bloom3",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 7,
+     "image": "lum3",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 8,
+     "image": "bloom4",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 9,
+     "image": "lum4",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 10,
+     "image": "bloom5",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 11,
+     "image": "lum5",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    },
+    {
+     "kind": "image",
+     "index": 12,
+     "image": "post_out",
+     "layout": "undefined -> general",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x40"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier",
+   "sync": 1,
+   "sig": "f7cbbae632f781a0",
+   "chain": "c0be5c43c28f9f00",
+   "decision": "narrow",
+   "sync1_src_stage_mask": "0x1000",
+   "sync1_dst_stage_mask": "0x800",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_WRITE",
+       "UNIFORM_READ"
+      ]
+     },
+     "src_stage_mask": "0x1000",
+     "src_access_mask": "0x1000",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x48"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "f8923a4f9f1b6e7a",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "1411c7df8351fcec",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "1627761fb0edbe8e",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "52882b0ddb089b68",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "ddb478ad7a433722",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "963bc39b62d69174",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "8500bf2ddcad93f6",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "ca29f3c51a101210",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "9276032ca2d40baa",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "da618a612b063b7c",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "cca1f861acc8a0be",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "c2b6299c4eb03a78",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "src_access": [
+       "SHADER_WRITE"
+      ],
+      "dst_stage": [
+       "COMPUTE_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ",
+       "SHADER_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x800",
+     "src_access_mask": "0x40",
+     "dst_stage_mask": "0x800",
+     "dst_access_mask": "0x60"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "b2bad0a202f2c552",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "b57a9ec3b0f5083f",
+   "chain": "b57a9ec3b0f5083f",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "action": "remove"
+    },
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "post_out",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 1,
+     "image": "bloom0",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 2,
+     "image": "lum0",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 3,
+     "image": "bloom1",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 4,
+     "image": "lum1",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 5,
+     "image": "bloom2",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 6,
+     "image": "lum2",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 7,
+     "image": "bloom3",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 8,
+     "image": "lum3",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 9,
+     "image": "bloom4",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 10,
+     "image": "lum4",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 11,
+     "image": "bloom5",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 12,
+     "image": "lum5",
+     "layout": "general -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    }
+   ],
+   "instances": 1
+  }
+ ]
+}

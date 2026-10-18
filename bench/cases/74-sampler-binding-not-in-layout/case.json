@@ -1,0 +1,12 @@
+{
+ "id": 74,
+ "title": "Shader samples a combined image sampler at set 0 binding 1 that the pipeline layout does not declare",
+ "upstream": "https://github.com/timi-liuliang/echo/issues/1149",
+ "bug_id": 99,
+ "category": "structure",
+ "expect": [
+  "structure.binding-not-in-layout"
+ ],
+ "fix_note": "no upstream fix (issue gives only the validation message); the fixed variant declares and writes the combined image sampler at set 0 binding 1, as VUID-VkGraphicsPipelineCreateInfo-layout-00756 requires",
+ "expected_finding": "fsMain statically uses u_BaseColorSampler (COMBINED_IMAGE_SAMPLER, set 0 binding 1), but echo_material_pipeline's layout declares only binding 0 (uniform buffer) in set 0 (VUID-VkGraphicsPipelineCreateInfo-layout-00756: descriptor slot 0.1 not declared in pipeline layout)"
+}

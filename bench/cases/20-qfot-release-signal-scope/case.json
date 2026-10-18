@@ -1,0 +1,1 @@
+{"id": 20, "title": "Upload-queue semaphore signal scope ALL_TRANSFER does not cover the release barrier's layout transition", "upstream": "https://github.com/ZihanWG/VulkanEngine/pull/28", "fix": "https://github.com/ZihanWG/VulkanEngine/pull/28", "category": "timing", "expect": ["timing.signal-scope"]}

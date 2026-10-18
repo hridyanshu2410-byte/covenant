@@ -1,0 +1,16 @@
+#version 450
+// one step of a post chain: 2x2 box filter (mode 0, bloom) or max (mode 1, luminance)
+layout(local_size_x = 8, local_size_y = 8) in;
+layout(set = 0, binding = 0, rgba16f) uniform readonly image2D src;
+layout(set = 0, binding = 1, rgba16f) uniform writeonly image2D dst;
+layout(push_constant) uniform PC { uint mode; uint iters; } pc;
+void main() {
+  ivec2 q = ivec2(gl_GlobalInvocationID.xy);
+  ivec2 sz = imageSize(dst);
+  if (q.x >= sz.x || q.y >= sz.y) return;
+  vec4 a = imageLoad(src, 2 * q), b = imageLoad(src, 2 * q + ivec2(1, 0));
+  vec4 c = imageLoad(src, 2 * q + ivec2(0, 1)), d = imageLoad(src, 2 * q + ivec2(1, 1));
+  vec4 r = pc.mode == 0u ? 0.25 * (a + b + c + d) : max(max(a, b), max(c, d));
+  for (uint k = 0u; k < pc.iters; k++) r = r * 0.999 + 0.001 * sin(r.yzwx * 3.0);
+  imageStore(dst, q, r);
+}

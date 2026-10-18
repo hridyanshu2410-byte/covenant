@@ -1,0 +1,12 @@
+{
+ "id": 80,
+ "title": "Texture-cache state tracker skips the barrier between two storage-image dispatches because layout and access mask are unchanged",
+ "upstream": "https://github.com/shadps4-emu/shadPS4/pull/5193",
+ "fix": "https://github.com/shadps4-emu/shadPS4/pull/5193",
+ "bug_id": 132,
+ "category": "timing",
+ "expect": [
+  "timing.missing-barrier"
+ ],
+ "expected_finding": "guest_cs_fill writes guest_storage_image (GENERAL, SHADER_WRITE) and guest_cs_smooth then reads and writes it, but the tracker emits no barrier between the dispatches since the requested state (GENERAL, SHADER_READ | SHADER_WRITE) equals the tracked one: read-after-write and write-after-write between the two dispatches"
+}

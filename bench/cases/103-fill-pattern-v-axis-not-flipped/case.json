@@ -1,0 +1,12 @@
+{
+ "id": 103,
+ "title": "Fill pattern sampled with a north-up pattern coordinate as a top-down atlas coordinate (pattern drawn upside down)",
+ "upstream": "https://github.com/visgl/deck.gl/pull/10550",
+ "fix": "https://github.com/visgl/deck.gl/pull/10550",
+ "bug_id": 155,
+ "category": "meaning",
+ "expect": [
+  "meaning.convention-mismatch"
+ ],
+ "expected_finding": "patternUV is derived from fill_uv = positions.xy in common space, where +y is north (up); it is used unflipped as the v coordinate inside the atlas frame, whose v axis runs down from the image's top row, so the pattern is vertically flipped"
+}

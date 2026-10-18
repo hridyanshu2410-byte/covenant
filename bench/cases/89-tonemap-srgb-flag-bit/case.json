@@ -1,0 +1,12 @@
+{
+ "id": 89,
+ "title": "Tonemap sRGB-conversion flag set on bit 7 while the shader tests bit 6",
+ "upstream": "https://github.com/godotengine/godot/issues/112263",
+ "fix": "https://github.com/godotengine/godot/pull/112272",
+ "bug_id": 141,
+ "category": "meaning",
+ "expect": [
+  "meaning.color-mismatch"
+ ],
+ "expected_finding": "the host requests linear->sRGB conversion with TONEMAP_FLAG_CONVERT_TO_SRGB = (1 << 7), but fsMain tests FLAG_CONVERT_TO_SRGB = (1 << 6): the conversion never runs and linear tonemapped colour is written to the B8G8R8A8_UNORM viewport target, which is displayed as sRGB"
+}

@@ -1,0 +1,12 @@
+{
+ "id": 90,
+ "title": "Material params grew to 272 bytes but the per-material stride stayed 256",
+ "upstream": "https://github.com/Force67/rx/pull/39",
+ "fix": "https://github.com/Force67/rx/pull/39",
+ "bug_id": 142,
+ "category": "structure",
+ "expect": [
+  "structure.host-layout"
+ ],
+ "expected_finding": "sizeof(MaterialSystem::Params) is 272 bytes (the shader's Params block is 272 too), but materials are uploaded and bound at param_index * 256: material 1's upload overwrites material 0's sss_color_radius row, and each bound 272-byte range overlaps the next slot"
+}

@@ -1,0 +1,1124 @@
+{
+ "per_frame": {
+  "calls": 201,
+  "remove": 0,
+  "narrow": 0,
+  "required": 201,
+  "structs": {
+   "keep": 213
+  },
+  "struct_kinds": {
+   "plain": 213
+  },
+  "keep_reasons": {
+   "a hazard the program already has": 189,
+   "it is a queue family ownership transfer": 24
+  },
+  "pinned_structs": 213,
+  "pinned_fraction": 1.0,
+  "tried_and_needed_structs": 0
+ },
+ "one_time": {
+  "calls": 72,
+  "remove": 0,
+  "narrow": 4,
+  "required": 68,
+  "structs": {
+   "narrow": 4,
+   "keep": 73
+  },
+  "struct_kinds": {
+   "transition": 4,
+   "plain": 73
+  },
+  "keep_reasons": {
+   "a hazard the program already has": 63,
+   "it is a queue family ownership transfer": 10
+  }
+ },
+ "per_frame_detail": [
+  {
+   "chain": "936f4bf2deb89a68",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "TOP_OF_PIPE/- -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "it is a queue family ownership transfer"
+   ]
+  },
+  {
+   "chain": "936f4bf2deb89a68",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[1] buffer#10",
+   "recorded": "TOP_OF_PIPE/- -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "it is a queue family ownership transfer"
+   ]
+  },
+  {
+   "chain": "2496b28515915b21",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "904781200ed25e3c",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "d83a9d8f9cf03605",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "5ac7db392bef6e90",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "b496cf38c83503a9",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "b86358ade2a43564",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "5ea1f7aedb115eed",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "97840455fb986a78",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "a2f1c8ac6d1cdd11",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "a7509cf2aeef59cc",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "ad0fc675d5335175",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "6687f064184fc620",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "d0883481bfdf7e19",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "70ded0fef0f84a74",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "4a6e104154eb0f5d",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "2fcc5d714f94cc88",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "0f2827bbb1301201",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "02ce8102e9f7c65c",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "9ee2b4661135f5e5",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "f4c411870ca41730",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "32f0e020a3f90e09",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "e6a0c04ce97bc984",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "bd6f07e448fe8fcd",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "fcff239a03f99298",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "57953f9b29479571",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "3eabd795ea7f90ec",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "95f125f9512fa9d5",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "f4c2095db99604c0",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "0da74a207c73cf79",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "585780e496719a94",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "1afe8c4385a15b3d",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "973d8dbbdc6bbea8",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "be5da94645e185e1",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "0154775e4fc70e7c",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "2f9576e98ee260c5",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "d867728cc80cead0",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "eb73f2d161fdc169",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "09f7967780f2c1a4",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "3ff92e262719e4ad",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "684fc06e118c60b8",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "8cb5ab81937724d1",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "b77e72d5ea85000c",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "746331fd4e991a35",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "611f10900f946260",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "c8eb41cf60a327d9",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "336610f06186a2b4",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "bd40139fa417091d",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "abc33f318e6128c8",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "6e90acf3bf6f62c1",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "333969fa5cc3a59c",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "acb38abb2812a7a5",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "fbd5de1499f07f70",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "eb4ae4816a4735c9",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "fde77214d9fc17c4",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "3d360c7af9a2748d",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "957ffa52de3e91d8",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "62fc23ab5777d331",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "d9fa0120c7619d2c",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "d8de41b4ed337795",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "2a1e1bfd8fd80800",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "0abc96aae5ec4539",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "e3b5b670ca4285d4",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "270e8de2573f17fd",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "e9545b7fd6977fdc",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> BOTTOM_OF_PIPE/-",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "it is a queue family ownership transfer"
+   ]
+  },
+  {
+   "chain": "e9545b7fd6977fdc",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[1] buffer#10",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> BOTTOM_OF_PIPE/-",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "it is a queue family ownership transfer"
+   ]
+  },
+  {
+   "chain": "1ad4876824b07c3a",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "TOP_OF_PIPE/- -> VERTEX_INPUT/VERTEX_ATTRIBUTE_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "it is a queue family ownership transfer"
+   ]
+  },
+  {
+   "chain": "1ad4876824b07c3a",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[1] buffer#10",
+   "recorded": "TOP_OF_PIPE/- -> VERTEX_INPUT/VERTEX_ATTRIBUTE_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "it is a queue family ownership transfer"
+   ]
+  },
+  {
+   "chain": "df6308597c592979",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#9",
+   "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> BOTTOM_OF_PIPE/-",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "it is a queue family ownership transfer"
+   ]
+  },
+  {
+   "chain": "df6308597c592979",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[1] buffer#10",
+   "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> BOTTOM_OF_PIPE/-",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "it is a queue family ownership transfer"
+   ]
+  }
+ ],
+ "proof": {
+  "baseline_diagnostics": 248,
+  "plain_timing_check": {
+   "baseline": 248,
+   "with_plan": 248,
+   "new": 0
+  },
+  "pairwise_recheck": {
+   "baseline": 248,
+   "with_plan": 248,
+   "new": 0
+  },
+  "pinned_for_baseline_hazards": 252,
+  "oracle_runs": 9,
+  "seconds": 1.01
+ },
+ "chain_entries": 4,
+ "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace"
+}

@@ -1,0 +1,13 @@
+{
+ "id": 93,
+ "title": "Location-indicator shader reads its drawable UBO from the global paint params binding",
+ "upstream": "https://github.com/maplibre/maplibre-native/pull/4642",
+ "fix": "https://github.com/maplibre/maplibre-native/pull/4642",
+ "bug_id": 145,
+ "category": "structure",
+ "expect": [
+  "structure.host-layout"
+ ],
+ "expect_note": "the binding exists and has the right descriptor type; what disagrees is the block behind it (80-byte LocationIndicatorUBO declared over the 48-byte GlobalPaintParamsUBO), so host-layout is the closest code",
+ "expected_finding": "the shader declares LocationIndicatorUBO (float4x4 matrix + float4 color, 80 bytes) at set 0 binding 0, where the host binds the 48-byte GlobalPaintParamsUBO; the drawable UBO the host writes is at binding 4"
+}

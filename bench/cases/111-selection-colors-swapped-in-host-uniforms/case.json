@@ -1,0 +1,12 @@
+{
+ "id": 111,
+ "title": "Host uniform struct stores selection background before foreground while the shader's std140 block declares foreground first",
+ "upstream": "https://github.com/ghostty-org/ghostty/pull/14460",
+ "fix": "https://github.com/ghostty-org/ghostty/pull/14460",
+ "bug_id": 163,
+ "category": "structure",
+ "expect": [
+  "structure.host-layout"
+ ],
+ "expected_finding": "Globals.iSelectionForegroundColor is at offset 4464 and iSelectionBackgroundColor at 4480, but the host Uniforms struct copied into the buffer has selection_background_color at 4464 and selection_foreground_color at 4480, so the shader reads each selection colour from the other's slot"
+}

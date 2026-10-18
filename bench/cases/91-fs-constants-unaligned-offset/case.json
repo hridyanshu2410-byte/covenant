@@ -1,0 +1,11 @@
+{
+ "id": 91,
+ "title": "Fragment-shader constants placed at the unaligned end of the vertex constants",
+ "upstream": "https://github.com/bkaradzic/bgfx/pull/3663",
+ "fix": "https://github.com/bkaradzic/bgfx/pull/3663",
+ "bug_id": 143,
+ "category": "structure",
+ "expect": [],
+ "expect_note": "no existing code covers a constant-block offset that breaks the device's placement alignment (D3D12 CBV 256 bytes; here the dynamic offset 272 is not a multiple of minUniformBufferOffsetAlignment); closest is structure.host-layout",
+ "expected_finding": "the fragment constant block is bound at region + m_vsh->m_size = region + 272, which is not a multiple of the required uniform-buffer offset alignment; the fix rounds the offset up to 512"
+}

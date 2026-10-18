@@ -1,0 +1,12 @@
+{
+ "id": 76,
+ "title": "GPU-driven draw: compute-written indirect arguments and instance data are covered only by a shader-storage barrier",
+ "upstream": "https://github.com/bkaradzic/bgfx/pull/3878",
+ "fix": "https://github.com/bkaradzic/bgfx/pull/3878",
+ "bug_id": 128,
+ "category": "timing",
+ "expect": [
+  "timing.barrier-scope"
+ ],
+ "expected_finding": "gpu_cull writes indirect_buffer and instance_buffer; the barrier after the dispatch (glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT) ported) has destination scope shader stages / SHADER_STORAGE_READ only, so vkCmdDrawIndexedIndirect's INDIRECT_COMMAND_READ of indirect_buffer (DRAW_INDIRECT) and the VERTEX_ATTRIBUTE_READ of instance_buffer (per-instance stream) are not ordered after the compute writes (read-after-write)"
+}

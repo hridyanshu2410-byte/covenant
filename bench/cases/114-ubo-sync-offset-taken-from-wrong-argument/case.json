@@ -1,0 +1,12 @@
+{
+ "id": 114,
+ "title": "UBO sync polyfill takes its offset from the wrong argument, so every uniform group is written at offset 0 of the shared batch buffer",
+ "upstream": "https://github.com/pixijs/pixijs/issues/12106",
+ "fix": "https://github.com/pixijs/pixijs/pull/12154",
+ "bug_id": 166,
+ "category": "structure",
+ "expect": [
+  "structure.host-layout"
+ ],
+ "expected_finding": "uniformBatchBindGroup[1] and [2] bind localUniforms at offsets 256 and 512 of the batch buffer, but the host writes all three groups' uTransformMatrix/uColor/uRound at offset 0 (the sync callback reads its offset from the null dataInt32 argument); meshes 1 and 2 read zeros and mesh 0 reads the last group's values"
+}

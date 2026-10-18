@@ -1,0 +1,12 @@
+{
+ "id": 49,
+ "title": "Window-space view cache overflow frees every cached descriptor set while earlier ring command buffers still use them",
+ "upstream": "https://github.com/DisplayXR/displayxr-runtime/issues/1792",
+ "bug_id": 89,
+ "category": "timing",
+ "expect": [
+  "timing.free-while-in-use"
+ ],
+ "fix_note": "no upstream fix (issue open); the fixed variant applies the issue's first proposal: synchronize with the outstanding command buffers (vkQueueWaitIdle) before eviction on the split path",
+ "expected_finding": "at frame 3 forget_dead overflows and calls vkFreeDescriptorSets on window_space_set:hud (and the app_window sets) while the command buffers of frames 1 and 2, which bind them, may still execute: the three-deep ring only waited for frame 0's fence (VUID-vkFreeDescriptorSets-pDescriptorSets-00309)"
+}

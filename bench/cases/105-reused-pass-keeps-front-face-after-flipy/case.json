@@ -1,0 +1,12 @@
+{
+ "id": 105,
+ "title": "Same render target rebound with the other flipY reuses the open pass and keeps pipelines keyed to the old front face",
+ "upstream": "https://github.com/pixijs/pixijs/pull/12207",
+ "fix": "https://github.com/pixijs/pixijs/pull/12207",
+ "bug_id": 157,
+ "category": "meaning",
+ "expect": [
+  "meaning.convention-mismatch"
+ ],
+ "expected_finding": "the second draw into renderTexture uses a uProjectionMatrix whose Y axis is negated (flipY = true), which reverses the screen-space winding of every triangle, but it is drawn with the same COUNTER_CLOCKWISE-front, back-culling pipeline as the unflipped first draw; culling keeps the CW (back) triangle and drops the CCW (front) one"
+}

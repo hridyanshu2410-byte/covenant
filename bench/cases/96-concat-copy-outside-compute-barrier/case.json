@@ -1,0 +1,12 @@
+{
+ "id": 96,
+ "title": "Concat's vkCmdCopyBuffer regions sit between compute->compute barriers that order neither the copies' reads nor their writes",
+ "upstream": "https://github.com/HartsyAI/HartsyInference/pull/113",
+ "fix": "https://github.com/HartsyAI/HartsyInference/pull/113",
+ "bug_id": 148,
+ "category": "timing",
+ "expect": [
+  "timing.barrier-scope"
+ ],
+ "expected_finding": "mul_scalar writes tensor_lhs / tensor_rhs and its trailing barrier has destination COMPUTE_SHADER / SHADER_STORAGE_READ, so the vkCmdCopyBuffer reads of those buffers (TRANSFER_READ) are not ordered after the writes; the barrier after the copies has source COMPUTE_SHADER / SHADER_STORAGE_WRITE, so the copies' TRANSFER_WRITEs to tensor_concat are not made available to rms_norm, which reads it (read-after-write in both places)"
+}

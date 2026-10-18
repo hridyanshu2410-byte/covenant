@@ -1,0 +1,72 @@
+{
+ "per_frame": {
+  "calls": 1,
+  "remove": 0,
+  "narrow": 0,
+  "required": 1,
+  "structs": {
+   "keep": 1
+  },
+  "struct_kinds": {
+   "plain": 1
+  },
+  "keep_reasons": {
+   "a hazard the program already has": 1
+  },
+  "pinned_structs": 1,
+  "pinned_fraction": 1.0,
+  "tried_and_needed_structs": 0
+ },
+ "one_time": {
+  "calls": 6,
+  "remove": 0,
+  "narrow": 3,
+  "required": 3,
+  "structs": {
+   "keep": 3,
+   "narrow": 3
+  },
+  "struct_kinds": {
+   "transition": 6
+  },
+  "keep_reasons": {
+   "layout transition, no narrower mask verified": 2,
+   "it synchronizes with the host, which the trace does not observe": 1
+  }
+ },
+ "per_frame_detail": [
+  {
+   "chain": "3a44e9acf26cd175",
+   "instances": 1,
+   "decisions": {
+    "required": 1
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#7",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  }
+ ],
+ "proof": {
+  "baseline_diagnostics": 9,
+  "plain_timing_check": {
+   "baseline": 9,
+   "with_plan": 9,
+   "new": 0
+  },
+  "pairwise_recheck": {
+   "baseline": 9,
+   "with_plan": 9,
+   "new": 0
+  },
+  "pinned_for_baseline_hazards": 1,
+  "oracle_runs": 8,
+  "seconds": 0.05
+ },
+ "chain_entries": 2,
+ "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace"
+}

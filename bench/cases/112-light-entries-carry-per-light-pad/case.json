@@ -1,0 +1,12 @@
+{
+ "id": 112,
+ "title": "Per-light CPU record carries a 12-byte leading pad (92 bytes) while the shader's light array has an 80-byte stride starting at offset 16",
+ "upstream": "https://gitlab.kitware.com/vtk/vtk/-/merge_requests/13006",
+ "fix": "https://gitlab.kitware.com/vtk/vtk/-/merge_requests/13006",
+ "bug_id": 164,
+ "category": "structure",
+ "expect": [
+  "structure.host-layout"
+ ],
+ "expected_finding": "SceneLights.values starts at offset 16 with an 80-byte SceneLight stride, but the host writes a 4-byte count followed by 92-byte LightInfo records (Pad[12] + 80 bytes): light 0's fields land at 16 as expected, light 1's at 108 instead of 96 and light 2's at 200 instead of 176, so every light after the first is read 12 bytes further out of step"
+}

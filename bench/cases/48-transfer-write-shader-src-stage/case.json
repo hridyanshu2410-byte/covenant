@@ -1,0 +1,12 @@
+{
+ "id": 48,
+ "title": "Barriers after copies give TRANSFER_WRITE as the source access with shader stages or BOTTOM_OF_PIPE as the source stage",
+ "upstream": "https://github.com/o3de/o3de/issues/11368",
+ "bug_id": 72,
+ "category": "timing",
+ "expect": [
+  "timing.barrier-scope"
+ ],
+ "fix_note": "no upstream fix (issue open); the fixed variant uses VK_PIPELINE_STAGE_TRANSFER_BIT as the source stage, as the VUID requires",
+ "expected_finding": "the TRANSFER_DST -> SHADER_READ_ONLY barriers of streamed_texture (srcStage = shader stages) and copy_target (srcStage = BOTTOM_OF_PIPE) do not include VK_PIPELINE_STAGE_TRANSFER_BIT, so the fragment-shader reads are not ordered after the copies' writes (VUID-vkCmdPipelineBarrier-srcAccessMask-02815)"
+}

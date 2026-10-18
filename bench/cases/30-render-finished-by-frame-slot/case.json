@@ -1,0 +1,5 @@
+{"id": 30, "title": "Render-finished semaphores allocated and indexed per frame in flight, not per swapchain image",
+ "upstream": "https://github.com/JorriFransen/v10/commit/3652d32a52ba64b5fccfb48a2abe1e7181c1dd23",
+ "fix": "https://github.com/JorriFransen/v10/commit/3652d32a52ba64b5fccfb48a2abe1e7181c1dd23",
+ "bug_id": 36, "category": "timing", "expect": ["timing.present-semaphore-reuse"],
+ "expected_finding": "render_finished[current_frame] can be signaled again while a present that waits on it may not have consumed it"}

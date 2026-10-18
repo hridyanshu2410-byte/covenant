@@ -1,0 +1,12 @@
+{
+ "id": 81,
+ "title": "SDR slides written unscaled to an scRGB (Rgba16Float, 1.0 = 80 nits) HDR swapchain",
+ "upstream": "https://github.com/ugai/sldshow2/pull/291",
+ "fix": "https://github.com/ugai/sldshow2/pull/291",
+ "bug_id": 133,
+ "category": "meaning",
+ "expect": [
+  "meaning.color-mismatch"
+ ],
+ "expected_finding": "fs_main writes decoded SDR sRGB slide values (reference white 1.0) unchanged into the R16G16B16A16_SFLOAT / EXTENDED_SRGB_LINEAR swapchain, where 1.0 means 80 nits; SDR white should map to ~203/80 = 2.54, so SDR slides show at ~40% brightness"
+}

@@ -1,0 +1,11 @@
+import covenant;
+[[vk::binding(0, 0)]] cbuffer DrawInfo { uint materialIndex; };
+[[vk::binding(0, 1)]] Sampler2D materials[4];  // set 1: the material texture heap
+struct VOut { float4 pos : SV_Position; float2 uv : TEXCOORD; };
+[shader("vertex")]
+VOut vsMain(uint vid : SV_VertexID) {
+    VOut o; float2 p = float2((vid << 1) & 2, vid & 2);
+    o.uv = p; o.pos = float4(p * 2 - 1, 0, 1); return o;
+}
+[shader("fragment")]
+float4 fsMain(VOut i) : SV_Target { return materials[NonUniformResourceIndex(materialIndex)].Sample(i.uv); }

@@ -1,0 +1,12 @@
+{
+ "id": 95,
+ "title": "Per-frame UNDEFINED -> depth-attachment transition of the shared depth image uses TOP_OF_PIPE / no access as its source scope with two frames in flight",
+ "upstream": "https://github.com/KhronosGroup/Vulkan-Tutorial/pull/211",
+ "fix": "https://github.com/KhronosGroup/Vulkan-Tutorial/pull/211",
+ "bug_id": 147,
+ "category": "timing",
+ "expect": [
+  "timing.barrier-scope"
+ ],
+ "expected_finding": "each frame's command buffer transitions depthImage UNDEFINED -> DEPTH_ATTACHMENT_OPTIMAL with srcStage TOP_OF_PIPE and srcAccess 0; with two frames in flight the previous frame's depth writes (EARLY/LATE_FRAGMENT_TESTS, DEPTH_STENCIL_ATTACHMENT_WRITE) to the same image are not in the source scope, so the layout transition and this frame's depth clear are write-after-write against them"
+}

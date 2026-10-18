@@ -1,0 +1,12 @@
+{
+ "id": 83,
+ "title": "Emulated sRGB encode applied to premultiplied colour before a premultiplied-alpha blend (FL0)",
+ "upstream": "https://github.com/google/filament/pull/10165",
+ "fix": "https://github.com/google/filament/pull/10165",
+ "bug_id": 135,
+ "category": "meaning",
+ "expect": [
+  "meaning.convention-mismatch"
+ ],
+ "expected_finding": "fsMain premultiplies the linear base colour by alpha (premultiplied output for the ONE / ONE_MINUS_SRC_ALPHA blend) and then applies pow(rgb, 0.4545) to the premultiplied value, giving encode(c) * pow(a, 0.4545) instead of encode(c) * a; with a = 0.047 the overlay's contribution is ~5x too strong"
+}

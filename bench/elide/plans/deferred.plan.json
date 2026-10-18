@@ -1,0 +1,2820 @@
+{
+ "format": "covenant-elide-plan/1",
+ "trace": "deferred.jsonl",
+ "trace_sha1": "3c01aac2c6b4095ba2b8316a9c7a0cb53854ba15",
+ "id_scheme": {
+  "strict": "(rec, idx): rec = 0-based vkBeginCommandBuffer ordinal in the process; idx = 0-based barrier-call index within that recording (sync1, sync2 and 2KHR all count)",
+  "chain": "FNV-1a 64 over the signatures of the recording's barrier calls so far (state continues from the previous barrier's chain value; recording start = 0xcbf29ce484222325)",
+  "sig": "FNV-1a 64 of the canonical content string; the layer never touches a call whose sig differs",
+  "sig_format": "<1|2>|<depFlags> then |M:ss:sa:ds:da, |B:ss:sa:ds:da:sfam:dfam:off:size, |I:ss:sa:ds:da:sfam:dfam:old:new:aspect:baseMip:levels:baseLayer:layers, |E:ss:ds; decimal"
+ },
+ "proof": {
+  "oracle": "covenant.timing.check (vector-clock happens-before over all queues; every schedule the recorded synchronization allows)",
+  "obligation": "the planned frame reports no diagnostic the recorded frame does not; layout transitions and ownership transfers are never removed",
+  "strengthening": [
+   "layout transitions modelled as writes between the src and dst scopes",
+   "a layout transition must reach later accesses through its own dst scope (or a chain from it), not by a later barrier capturing it",
+   "write-after-write requires the later write in the dst access scope",
+   "attachment load/store operations modelled as accesses"
+  ],
+  "baseline_diagnostics": 0,
+  "baseline": [],
+  "new_diagnostics_with_plan": 0,
+  "plain_timing_check": {
+   "baseline": 0,
+   "with_plan": 0,
+   "new": 0
+  },
+  "oracle_runs": 51,
+  "oracle_source_sha1": "9c04d6e0260c4c12bfeb2745a7d498d3bc94f0ff",
+  "seconds": 0.34
+ },
+ "summary": {
+  "calls": 26,
+  "decisions": {
+   "narrow": 10,
+   "remove": 15,
+   "required": 1
+  },
+  "structs": {
+   "total": 49,
+   "removed": 16,
+   "narrowed": 32,
+   "kept": 1
+  },
+  "chain_entries": 9,
+  "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace"
+ },
+ "barriers": [
+  {
+   "rec": 0,
+   "idx": 0,
+   "seq": 70,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "f8b53d42cb108808",
+   "chain": "f8b53d42cb108808",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "gbuf_albedo",
+     "layout": "undefined -> color_attachment",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "dst_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x400",
+     "dst_access_mask": "0x180"
+    },
+    {
+     "kind": "image",
+     "index": 1,
+     "image": "gbuf_normal",
+     "layout": "undefined -> color_attachment",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "dst_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x400",
+     "dst_access_mask": "0x180"
+    },
+    {
+     "kind": "image",
+     "index": 2,
+     "image": "gbuf_material",
+     "layout": "undefined -> color_attachment",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "dst_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x400",
+     "dst_access_mask": "0x180"
+    },
+    {
+     "kind": "image",
+     "index": 3,
+     "image": "hdr",
+     "layout": "undefined -> color_attachment",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "dst_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x400",
+     "dst_access_mask": "0x180"
+    },
+    {
+     "kind": "image",
+     "index": 4,
+     "image": "ldr",
+     "layout": "undefined -> color_attachment",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "dst_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x400",
+     "dst_access_mask": "0x180"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard",
+    "image[1]": "narrowed (local accesses): no new hazard",
+    "image[2]": "narrowed (local accesses): no new hazard",
+    "image[3]": "narrowed (local accesses): no new hazard",
+    "image[4]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 1,
+   "seq": 78,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "4cbb89d9d8848502",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 2,
+   "seq": 86,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "eef5dd957afc2194",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 3,
+   "seq": 94,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "5fec9e964e53fa56",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 4,
+   "seq": 95,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "a44b0d014c4c8097",
+   "chain": "d13bce171ffa85ae",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "gbuf_albedo",
+     "layout": "color_attachment -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "src_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "src_stage_mask": "0x400",
+     "src_access_mask": "0x180",
+     "dst_stage_mask": "0x80",
+     "dst_access_mask": "0x20"
+    },
+    {
+     "kind": "image",
+     "index": 1,
+     "image": "gbuf_normal",
+     "layout": "color_attachment -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "src_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "src_stage_mask": "0x400",
+     "src_access_mask": "0x180",
+     "dst_stage_mask": "0x80",
+     "dst_access_mask": "0x20"
+    },
+    {
+     "kind": "image",
+     "index": 2,
+     "image": "gbuf_material",
+     "layout": "color_attachment -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "src_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "src_stage_mask": "0x400",
+     "src_access_mask": "0x180",
+     "dst_stage_mask": "0x80",
+     "dst_access_mask": "0x20"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard",
+    "image[1]": "narrowed (local accesses): no new hazard",
+    "image[2]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 5,
+   "seq": 103,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "a9cd489706ed60c8",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 6,
+   "seq": 104,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "0b3c7cce977aaea3",
+   "chain": "764b7b5de8939614",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "hdr",
+     "layout": "color_attachment -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "src_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "src_stage_mask": "0x400",
+     "src_access_mask": "0x180",
+     "dst_stage_mask": "0x80",
+     "dst_access_mask": "0x20"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 0,
+   "idx": 7,
+   "seq": 112,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "816c2447631f17d6",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 0,
+   "seq": 123,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "f8b53d42cb108808",
+   "chain": "f8b53d42cb108808",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "gbuf_albedo",
+     "layout": "undefined -> color_attachment",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "dst_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x400",
+     "dst_access_mask": "0x180"
+    },
+    {
+     "kind": "image",
+     "index": 1,
+     "image": "gbuf_normal",
+     "layout": "undefined -> color_attachment",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "dst_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x400",
+     "dst_access_mask": "0x180"
+    },
+    {
+     "kind": "image",
+     "index": 2,
+     "image": "gbuf_material",
+     "layout": "undefined -> color_attachment",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "dst_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x400",
+     "dst_access_mask": "0x180"
+    },
+    {
+     "kind": "image",
+     "index": 3,
+     "image": "hdr",
+     "layout": "undefined -> color_attachment",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "dst_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x400",
+     "dst_access_mask": "0x180"
+    },
+    {
+     "kind": "image",
+     "index": 4,
+     "image": "ldr",
+     "layout": "undefined -> color_attachment",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "dst_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x400",
+     "dst_access_mask": "0x180"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard",
+    "image[1]": "narrowed (local accesses): no new hazard",
+    "image[2]": "narrowed (local accesses): no new hazard",
+    "image[3]": "narrowed (local accesses): no new hazard",
+    "image[4]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 1,
+   "seq": 131,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "4cbb89d9d8848502",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 2,
+   "seq": 139,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "eef5dd957afc2194",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 3,
+   "seq": 147,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "5fec9e964e53fa56",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 4,
+   "seq": 148,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "a44b0d014c4c8097",
+   "chain": "d13bce171ffa85ae",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "gbuf_albedo",
+     "layout": "color_attachment -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "src_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "src_stage_mask": "0x400",
+     "src_access_mask": "0x180",
+     "dst_stage_mask": "0x80",
+     "dst_access_mask": "0x20"
+    },
+    {
+     "kind": "image",
+     "index": 1,
+     "image": "gbuf_normal",
+     "layout": "color_attachment -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "src_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "src_stage_mask": "0x400",
+     "src_access_mask": "0x180",
+     "dst_stage_mask": "0x80",
+     "dst_access_mask": "0x20"
+    },
+    {
+     "kind": "image",
+     "index": 2,
+     "image": "gbuf_material",
+     "layout": "color_attachment -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "src_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "src_stage_mask": "0x400",
+     "src_access_mask": "0x180",
+     "dst_stage_mask": "0x80",
+     "dst_access_mask": "0x20"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard",
+    "image[1]": "narrowed (local accesses): no new hazard",
+    "image[2]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 5,
+   "seq": 156,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "a9cd489706ed60c8",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 6,
+   "seq": 157,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "0b3c7cce977aaea3",
+   "chain": "764b7b5de8939614",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "hdr",
+     "layout": "color_attachment -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "src_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "src_stage_mask": "0x400",
+     "src_access_mask": "0x180",
+     "dst_stage_mask": "0x80",
+     "dst_access_mask": "0x20"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 1,
+   "idx": 7,
+   "seq": 165,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "816c2447631f17d6",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 0,
+   "seq": 176,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "f8b53d42cb108808",
+   "chain": "f8b53d42cb108808",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "gbuf_albedo",
+     "layout": "undefined -> color_attachment",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "dst_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x400",
+     "dst_access_mask": "0x180"
+    },
+    {
+     "kind": "image",
+     "index": 1,
+     "image": "gbuf_normal",
+     "layout": "undefined -> color_attachment",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "dst_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x400",
+     "dst_access_mask": "0x180"
+    },
+    {
+     "kind": "image",
+     "index": 2,
+     "image": "gbuf_material",
+     "layout": "undefined -> color_attachment",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "dst_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x400",
+     "dst_access_mask": "0x180"
+    },
+    {
+     "kind": "image",
+     "index": 3,
+     "image": "hdr",
+     "layout": "undefined -> color_attachment",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "dst_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x400",
+     "dst_access_mask": "0x180"
+    },
+    {
+     "kind": "image",
+     "index": 4,
+     "image": "ldr",
+     "layout": "undefined -> color_attachment",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "dst_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x400",
+     "dst_access_mask": "0x180"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard",
+    "image[1]": "narrowed (local accesses): no new hazard",
+    "image[2]": "narrowed (local accesses): no new hazard",
+    "image[3]": "narrowed (local accesses): no new hazard",
+    "image[4]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 1,
+   "seq": 184,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "4cbb89d9d8848502",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 2,
+   "seq": 192,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "eef5dd957afc2194",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 3,
+   "seq": 200,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "5fec9e964e53fa56",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 4,
+   "seq": 201,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "a44b0d014c4c8097",
+   "chain": "d13bce171ffa85ae",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "gbuf_albedo",
+     "layout": "color_attachment -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "src_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "src_stage_mask": "0x400",
+     "src_access_mask": "0x180",
+     "dst_stage_mask": "0x80",
+     "dst_access_mask": "0x20"
+    },
+    {
+     "kind": "image",
+     "index": 1,
+     "image": "gbuf_normal",
+     "layout": "color_attachment -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "src_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "src_stage_mask": "0x400",
+     "src_access_mask": "0x180",
+     "dst_stage_mask": "0x80",
+     "dst_access_mask": "0x20"
+    },
+    {
+     "kind": "image",
+     "index": 2,
+     "image": "gbuf_material",
+     "layout": "color_attachment -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "src_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "src_stage_mask": "0x400",
+     "src_access_mask": "0x180",
+     "dst_stage_mask": "0x80",
+     "dst_access_mask": "0x20"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard",
+    "image[1]": "narrowed (local accesses): no new hazard",
+    "image[2]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 5,
+   "seq": 209,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "a9cd489706ed60c8",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 6,
+   "seq": 210,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "0b3c7cce977aaea3",
+   "chain": "764b7b5de8939614",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "hdr",
+     "layout": "color_attachment -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "src_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "src_stage_mask": "0x400",
+     "src_access_mask": "0x180",
+     "dst_stage_mask": "0x80",
+     "dst_access_mask": "0x20"
+    }
+   ],
+   "why": {
+    "image[0]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 2,
+   "idx": 7,
+   "seq": 218,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "816c2447631f17d6",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "why": {
+    "*": "removed: no new hazard with it gone"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 3,
+   "idx": 0,
+   "seq": 252,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "34ee1059208a26a2",
+   "chain": "34ee1059208a26a2",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "action": "remove"
+    },
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "ldr",
+     "layout": "color_attachment -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 1,
+     "image": "hdr",
+     "layout": "shader_read -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 2,
+     "image": "gbuf_albedo",
+     "layout": "shader_read -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 3,
+     "image": "gbuf_normal",
+     "layout": "shader_read -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 4,
+     "image": "gbuf_material",
+     "layout": "shader_read -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    }
+   ],
+   "why": {
+    "memory[0]": "removed: no new hazard with it gone",
+    "image[0]": "narrowed (local accesses): no new hazard",
+    "image[1]": "narrowed (local accesses): no new hazard",
+    "image[2]": "narrowed (local accesses): no new hazard",
+    "image[3]": "narrowed (local accesses): no new hazard",
+    "image[4]": "narrowed (local accesses): no new hazard"
+   },
+   "occurrences": 1
+  },
+  {
+   "rec": 3,
+   "idx": 1,
+   "seq": 258,
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "cb": "frame_cb",
+   "sig": "a65ec39c57878844",
+   "chain": "aacd4ff01e91c0bb",
+   "decision": "required",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "TRANSFER"
+      ],
+      "src_access": [
+       "TRANSFER_WRITE"
+      ],
+      "dst_stage": [
+       "HOST"
+      ],
+      "dst_access": [
+       "HOST_READ"
+      ]
+     },
+     "action": "keep"
+    }
+   ],
+   "why": {
+    "memory[0]": "kept: it synchronizes with the host, which the trace does not observe"
+   },
+   "occurrences": 1
+  }
+ ],
+ "chain": [
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "f8b53d42cb108808",
+   "chain": "f8b53d42cb108808",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "gbuf_albedo",
+     "layout": "undefined -> color_attachment",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "dst_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x400",
+     "dst_access_mask": "0x180"
+    },
+    {
+     "kind": "image",
+     "index": 1,
+     "image": "gbuf_normal",
+     "layout": "undefined -> color_attachment",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "dst_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x400",
+     "dst_access_mask": "0x180"
+    },
+    {
+     "kind": "image",
+     "index": 2,
+     "image": "gbuf_material",
+     "layout": "undefined -> color_attachment",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "dst_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x400",
+     "dst_access_mask": "0x180"
+    },
+    {
+     "kind": "image",
+     "index": 3,
+     "image": "hdr",
+     "layout": "undefined -> color_attachment",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "dst_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x400",
+     "dst_access_mask": "0x180"
+    },
+    {
+     "kind": "image",
+     "index": 4,
+     "image": "ldr",
+     "layout": "undefined -> color_attachment",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "dst_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x400",
+     "dst_access_mask": "0x180"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "4cbb89d9d8848502",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "eef5dd957afc2194",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "5fec9e964e53fa56",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "a44b0d014c4c8097",
+   "chain": "d13bce171ffa85ae",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "gbuf_albedo",
+     "layout": "color_attachment -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "src_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "src_stage_mask": "0x400",
+     "src_access_mask": "0x180",
+     "dst_stage_mask": "0x80",
+     "dst_access_mask": "0x20"
+    },
+    {
+     "kind": "image",
+     "index": 1,
+     "image": "gbuf_normal",
+     "layout": "color_attachment -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "src_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "src_stage_mask": "0x400",
+     "src_access_mask": "0x180",
+     "dst_stage_mask": "0x80",
+     "dst_access_mask": "0x20"
+    },
+    {
+     "kind": "image",
+     "index": 2,
+     "image": "gbuf_material",
+     "layout": "color_attachment -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "src_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "src_stage_mask": "0x400",
+     "src_access_mask": "0x180",
+     "dst_stage_mask": "0x80",
+     "dst_access_mask": "0x20"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "a9cd489706ed60c8",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "0b3c7cce977aaea3",
+   "chain": "764b7b5de8939614",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "hdr",
+     "layout": "color_attachment -> shader_read",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [
+       "COLOR_ATTACHMENT_OUTPUT"
+      ],
+      "src_access": [
+       "COLOR_ATTACHMENT_READ",
+       "COLOR_ATTACHMENT_WRITE"
+      ],
+      "dst_stage": [
+       "FRAGMENT_SHADER"
+      ],
+      "dst_access": [
+       "SHADER_READ"
+      ]
+     },
+     "src_stage_mask": "0x400",
+     "src_access_mask": "0x180",
+     "dst_stage_mask": "0x80",
+     "dst_access_mask": "0x20"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "8d5f29dfbffa4bf5",
+   "chain": "816c2447631f17d6",
+   "decision": "remove",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "remove"
+    }
+   ],
+   "instances": 3
+  },
+  {
+   "fn": "vkCmdPipelineBarrier2",
+   "sync": 2,
+   "sig": "34ee1059208a26a2",
+   "chain": "34ee1059208a26a2",
+   "decision": "narrow",
+   "elements": [
+    {
+     "kind": "memory",
+     "index": 0,
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "action": "remove"
+    },
+    {
+     "kind": "image",
+     "index": 0,
+     "image": "ldr",
+     "layout": "color_attachment -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 1,
+     "image": "hdr",
+     "layout": "shader_read -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 2,
+     "image": "gbuf_albedo",
+     "layout": "shader_read -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 3,
+     "image": "gbuf_normal",
+     "layout": "shader_read -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    },
+    {
+     "kind": "image",
+     "index": 4,
+     "image": "gbuf_material",
+     "layout": "shader_read -> transfer_src",
+     "recorded": {
+      "src_stage": [
+       "ALL_COMMANDS"
+      ],
+      "src_access": [
+       "MEMORY_WRITE"
+      ],
+      "dst_stage": [
+       "ALL_COMMANDS"
+      ],
+      "dst_access": [
+       "MEMORY_READ",
+       "MEMORY_WRITE"
+      ]
+     },
+     "action": "narrow",
+     "new": {
+      "src_stage": [],
+      "src_access": [],
+      "dst_stage": [
+       "TRANSFER"
+      ],
+      "dst_access": [
+       "TRANSFER_READ"
+      ]
+     },
+     "src_stage_mask": "0x0",
+     "src_access_mask": "0x0",
+     "dst_stage_mask": "0x1000",
+     "dst_access_mask": "0x800"
+    }
+   ],
+   "instances": 1
+  }
+ ]
+}

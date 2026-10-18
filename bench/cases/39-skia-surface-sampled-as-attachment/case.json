@@ -1,0 +1,5 @@
+{"id": 39, "title": "Texture Skia renders into is sampled by the sprite batch while still in COLOR_ATTACHMENT_OPTIMAL",
+ "upstream": "https://github.com/vchelaru/SkiaGameRendering/pull/117",
+ "fix": "https://github.com/vchelaru/SkiaGameRendering/pull/117",
+ "bug_id": 106, "category": "timing", "expect": ["timing.wrong-layout"],
+ "expected_finding": "skia_surface is sampled with a descriptor declaring SHADER_READ_ONLY_OPTIMAL while its current layout is COLOR_ATTACHMENT_OPTIMAL (VUID-vkCmdDraw-None-09600), and the Skia writes are not made visible to the sampling"}

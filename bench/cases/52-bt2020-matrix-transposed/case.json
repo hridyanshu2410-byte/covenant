@@ -1,0 +1,12 @@
+{
+ "id": 52,
+ "title": "BT.709 -> BT.2020 matrix in the HDR ImGui shader is applied transposed on Vulkan",
+ "upstream": "https://github.com/crosire/reshade/pull/441",
+ "fix": "https://github.com/crosire/reshade/pull/441",
+ "bug_id": 54,
+ "category": "meaning",
+ "expect": [
+  "meaning.convention-mismatch"
+ ],
+ "expected_finding": "fsImGui computes mul(lin, bt709_to_bt2020), i.e. M^T * colour, while the coefficients are the row-major BT.709 -> BT.2020 matrix; white is not preserved and greys turn green on the HDR10 swapchain"
+}

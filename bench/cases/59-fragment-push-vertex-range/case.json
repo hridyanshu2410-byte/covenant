@@ -1,0 +1,12 @@
+{
+ "id": 59,
+ "title": "Fragment-stage push constant update at offset 64 into a layout whose only range is vertex-stage",
+ "upstream": "https://github.com/Thinkofname/rust-quake/issues/1",
+ "bug_id": 59,
+ "category": "structure",
+ "expect": [
+  "structure.push-constant-range"
+ ],
+ "fix_note": "no upstream fix (reported only); the fixed variant follows the issue's answer: the layout's range includes the fragment stage and the pushes name every stage of that range",
+ "expected_finding": "vkCmdPushConstants(FRAGMENT, offset 64, size 4) on the world layout, whose only push constant range is VERTEX 0..256; fsWorld reads fragmentValue at byte 64 but no range makes it visible to the fragment stage (VUID-vkCmdPushConstants-offset-01795/01796)"
+}

@@ -1,0 +1,12 @@
+{
+ "id": 56,
+ "title": "HDR 2D viewport (linear RGBA16F) read back and quantized to 8-bit PNG without sRGB encoding",
+ "upstream": "https://github.com/hi-godot/godot-ai/pull/1070",
+ "fix": "https://github.com/hi-godot/godot-ai/pull/1070",
+ "bug_id": 49,
+ "category": "meaning",
+ "expect": [
+  "meaning.color-mismatch"
+ ],
+ "expected_finding": "capture_readback holds linear colour from viewport_2d_hdr, and encode_capture writes it to 8-bit PNG pixels without linear_to_srgb, so screenshot midtones are too dark (the window path encodes through its sRGB swapchain format)"
+}

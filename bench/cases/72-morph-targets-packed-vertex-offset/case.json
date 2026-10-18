@@ -1,0 +1,11 @@
+{
+ "id": 72,
+ "title": "Packed vertex buffers draw from the mesh's first vertex, but morph targets are still looked up by the raw vertex index",
+ "upstream": "https://github.com/bevyengine/bevy/pull/14375",
+ "fix": "https://github.com/bevyengine/bevy/pull/14375",
+ "bug_id": 126,
+ "category": "structure",
+ "expect": [],
+ "expect_note": "no existing diagnostic code covers an index whose base (firstVertex) differs from the base of the data it indexes",
+ "expected_finding": "morph_face is drawn with firstVertex 6 from the shared vertex slab, so SV_VertexID runs 6..11, while its morph_targets buffer is indexed from the mesh's own vertex 0 (6 vertices per layer): morph() reads the wrong vertices' displacements (and past the end of layer 1); the first vertex index must be subtracted"
+}

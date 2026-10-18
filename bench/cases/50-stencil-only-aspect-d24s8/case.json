@@ -1,0 +1,11 @@
+{
+ "id": 50,
+ "title": "Layout transition of a D24_UNORM_S8_UINT attachment names only the stencil aspect",
+ "upstream": "https://github.com/jpbruyere/vkvg/issues/121",
+ "bug_id": 100,
+ "category": "timing",
+ "expect": [],
+ "expect_note": "no existing diagnostic code covers a barrier subresource aspect mask; nearest is timing.wrong-layout (depth aspect left UNDEFINED)",
+ "fix_note": "maintainer committed a fix (not linked from the issue); the fixed variant sets DEPTH | STENCIL aspects, as the VUID requires",
+ "expected_finding": "the UNDEFINED -> DEPTH_STENCIL_ATTACHMENT_OPTIMAL barrier on surface_stencil (D24_UNORM_S8_UINT) has aspectMask STENCIL only; the depth aspect is not transitioned while the image is used as a depth/stencil attachment (VUID-VkImageMemoryBarrier-image-03320)"
+}

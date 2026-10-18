@@ -1,0 +1,136 @@
+{
+ "per_frame": {
+  "calls": 9,
+  "remove": 0,
+  "narrow": 0,
+  "required": 9,
+  "structs": {
+   "keep": 9
+  },
+  "struct_kinds": {
+   "plain": 9
+  },
+  "keep_reasons": {
+   "it is a queue family ownership transfer": 8,
+   "a hazard the program already has": 1
+  },
+  "pinned_structs": 9,
+  "pinned_fraction": 1.0,
+  "tried_and_needed_structs": 0
+ },
+ "one_time": {
+  "calls": 15,
+  "remove": 0,
+  "narrow": 3,
+  "required": 12,
+  "structs": {
+   "keep": 12,
+   "narrow": 3
+  },
+  "struct_kinds": {
+   "transition": 6,
+   "plain": 9
+  },
+  "keep_reasons": {
+   "it is a queue family ownership transfer": 5,
+   "it is never submitted in the trace (no evidence)": 4,
+   "layout transition, no narrower mask verified": 2,
+   "it synchronizes with the host, which the trace does not observe": 1
+  }
+ },
+ "per_frame_detail": [
+  {
+   "chain": "a4ff8e95c25521e6",
+   "instances": 1,
+   "decisions": {
+    "required": 1
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#7",
+   "recorded": "TRANSFER/- -> COMPUTE_SHADER/SHADER_WRITE",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "it is a queue family ownership transfer"
+   ]
+  },
+  {
+   "chain": "c8b24b3d5b41e65e",
+   "instances": 1,
+   "decisions": {
+    "required": 1
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#7",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  },
+  {
+   "chain": "30f18b1d965088e3",
+   "instances": 1,
+   "decisions": {
+    "required": 1
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#7",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> TRANSFER/-",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "it is a queue family ownership transfer"
+   ]
+  },
+  {
+   "chain": "1129f0d2d41373c5",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#7",
+   "recorded": "COMPUTE_SHADER/- -> VERTEX_INPUT/VERTEX_ATTRIBUTE_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "it is a queue family ownership transfer"
+   ]
+  },
+  {
+   "chain": "d798bf82b90adfe9",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#7",
+   "recorded": "VERTEX_INPUT/VERTEX_ATTRIBUTE_READ -> COMPUTE_SHADER/-",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "it is a queue family ownership transfer"
+   ]
+  }
+ ],
+ "proof": {
+  "baseline_diagnostics": 9,
+  "plain_timing_check": {
+   "baseline": 9,
+   "with_plan": 9,
+   "new": 0
+  },
+  "pairwise_recheck": {
+   "baseline": 9,
+   "with_plan": 9,
+   "new": 0
+  },
+  "pinned_for_baseline_hazards": 1,
+  "oracle_runs": 8,
+  "seconds": 0.05
+ },
+ "chain_entries": 2,
+ "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace"
+}

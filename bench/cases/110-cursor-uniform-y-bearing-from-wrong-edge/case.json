@@ -1,0 +1,12 @@
+{
+ "id": 110,
+ "title": "Custom-shader cursor uniform adds the glyph's Y bearing (measured up from the cell bottom) to a y-down top-of-cell coordinate",
+ "upstream": "https://github.com/ghostty-org/ghostty/pull/8122",
+ "fix": "https://github.com/ghostty-org/ghostty/pull/8122",
+ "bug_id": 162,
+ "category": "meaning",
+ "expect": [
+  "meaning.convention-mismatch"
+ ],
+ "expected_finding": "iCurrentCursor.y is computed as the cell's top edge in y-down fragCoord pixels plus bearings[1]; the Y bearing is a y-up distance from the cell bottom to the glyph top, so the sum is neither edge of the cursor (for the underline cursor it lands 2 px below the cell top instead of at the cell bottom), and the shader's cursor rectangle [y - h, y] is drawn at the wrong height"
+}

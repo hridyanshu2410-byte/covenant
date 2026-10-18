@@ -1,0 +1,30 @@
+{
+ "ops": 3930,
+ "base": {
+  "checker_epoch": 0,
+  "checker_epoch_new": 0,
+  "checker_pairwise": 0,
+  "checker_pairwise_new": 0,
+  "reference": 0,
+  "reference_new": 0,
+  "seconds": 2.5
+ },
+ "strict": {
+  "checker_epoch": 0,
+  "checker_epoch_new": 0,
+  "checker_pairwise": 0,
+  "checker_pairwise_new": 0,
+  "reference": 0,
+  "reference_new": 0,
+  "seconds": 1.48
+ },
+ "chain": {
+  "checker_epoch": 0,
+  "checker_epoch_new": 0,
+  "checker_pairwise": 0,
+  "checker_pairwise_new": 0,
+  "reference": 0,
+  "reference_new": 0,
+  "seconds": 1.49
+ }
+}

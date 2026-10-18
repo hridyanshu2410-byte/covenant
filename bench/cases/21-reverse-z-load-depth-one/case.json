@@ -1,0 +1,1 @@
+{"id": 21, "title": "Reversed-depth pass starts from depth 1.0 (the forward-Z far value)", "upstream": "https://github.com/briar-systems/boom/issues/162", "fix": "https://github.com/briar-systems/boom/pull/173", "category": "meaning", "expect": ["meaning.convention-mismatch"]}

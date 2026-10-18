@@ -1,0 +1,1 @@
+{"id": 11, "title": "Bindless material heap not bound for one pass", "upstream": "https://github.com/drsnuggles8/OloEngineBase/issues/1512", "fix": "https://github.com/drsnuggles8/OloEngineBase/pull/1515", "category": "structure", "expect": ["structure.missing-binding"]}

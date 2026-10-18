@@ -1,0 +1,1 @@
+{"id": 28, "title": "Depth made read-only for attachment reads only; soft particles also sample it in the fragment shader", "upstream": "https://github.com/stride3d/stride/pull/3466", "fix": "https://github.com/stride3d/stride/pull/3466", "category": "timing", "expect": ["timing.barrier-scope"]}

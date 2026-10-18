@@ -1,0 +1,12 @@
+{
+ "id": 102,
+ "title": "glTF positions loaded with Y negated (a mirror, not an up-axis change), compensated by clockwise front faces and a -90 degree rotation",
+ "upstream": "https://github.com/KhronosGroup/Vulkan-Tutorial/issues/377",
+ "fix": "https://github.com/KhronosGroup/Vulkan-Tutorial/pull/484",
+ "bug_id": 154,
+ "category": "meaning",
+ "expect": [
+  "meaning.convention-mismatch"
+ ],
+ "expected_finding": "loadModel writes vertex.pos = (x, -y, z) from the glTF POSITION accessor, a reflection (determinant -1) of the right-handed, CCW-wound glTF mesh, so the object-space input of vertMain is mirrored; the pipeline's frontFace = CLOCKWISE only compensates the winding flip the reflection causes, and the model renders as its mirror image"
+}

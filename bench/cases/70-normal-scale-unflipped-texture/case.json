@@ -1,0 +1,12 @@
+{
+ "id": 70,
+ "title": "Unflipped glTF normal texture with a UV-derived tangent frame and normalScale left at (1, 1)",
+ "upstream": "https://github.com/MrityunjayBhardwaj/TheBasher/issues/1325",
+ "bug_id": 27,
+ "category": "meaning",
+ "expect": [
+  "meaning.convention-mismatch"
+ ],
+ "fix_note": "no fix merged (issue open); the fixed variant applies the issue's fix: normalScale computed from the texture's flipY, (1, -1) for flipY = false",
+ "expected_finding": "the normal texture is uploaded unflipped (flipY = false, glTF +Y green with v = 0 at the top) and perturbNormal2Arb derives the bitangent from the UV derivatives, which for unflipped UVs points along -Y of the texture's convention; normalScale.y stays +1, so the green channel is applied inverted and the surface leans the wrong way"
+}

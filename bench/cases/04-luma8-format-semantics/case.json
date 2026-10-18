@@ -1,0 +1,1 @@
+{"id": 4, "title": "Grayscale sRGB image uploaded with a linear format", "upstream": "https://github.com/bevyengine/bevy/pull/25538", "category": "meaning", "expect": ["meaning.color-mismatch"]}

@@ -1,0 +1,12 @@
+{
+ "id": 109,
+ "title": "PQ source mapped to an SDR destination with a gamut matrix that ignores the different luminance of 1.0 (10000 nits vs 203 nits)",
+ "upstream": "https://dawn-review.googlesource.com/c/dawn/+/307215",
+ "fix": "https://dawn-review.googlesource.com/c/dawn/+/307215",
+ "bug_id": 161,
+ "category": "meaning",
+ "expect": [
+  "meaning.unit-mismatch"
+ ],
+ "expected_finding": "gammaDecodeParams is the PQ EOTF, whose output 1.0 means 10000 nits, while gammaEncodeParams is the sRGB inverse EOTF, whose input 1.0 means SDR white (203 nits); gamutConversionMatrix = XYZToRGB_sRGB * RGBToXYZ_Rec2020 carries no 10000/203 factor, so a 203-nit grey lands at 0.0203 and the picture is about 50x too dark"
+}

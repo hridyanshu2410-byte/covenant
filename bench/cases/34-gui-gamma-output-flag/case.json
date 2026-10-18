@@ -1,0 +1,5 @@
+{"id": 34, "title": "GUI material's _GammaOutput flag skips the sRGB decode of the GUI texture before an sRGB framebuffer encodes again",
+ "upstream": "https://github.com/vchelaru/SkiaGameRendering/issues/147",
+ "fix": "https://github.com/vchelaru/SkiaGameRendering/pull/148",
+ "bug_id": 119, "category": "meaning", "expect": ["meaning.color-mismatch"],
+ "expected_finding": "the sRGB-encoded GUI texture reaches the sRGB swapchain without a decode (gammaOutput = 1), so it is encoded twice (191 shows as 224)"}

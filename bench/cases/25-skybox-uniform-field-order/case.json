@@ -1,0 +1,1 @@
+{"id": 25, "title": "Host and shader declare SkyboxUniforms fields in different order (f32 before mat4)", "upstream": "https://github.com/bevyengine/bevy/pull/18863", "fix": "https://github.com/bevyengine/bevy/pull/18863", "category": "structure", "expect": ["structure.host-layout"]}

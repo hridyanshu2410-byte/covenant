@@ -1,0 +1,1219 @@
+{
+ "particles": {
+  "plan_summary": {
+   "calls": 38,
+   "decisions": {
+    "narrow": 10,
+    "remove": 27,
+    "required": 1
+   },
+   "structs": {
+    "total": 39,
+    "removed": 28,
+    "narrowed": 10,
+    "kept": 1
+   },
+   "chain_entries": 13,
+   "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace"
+  },
+  "proof": {
+   "baseline_diagnostics": 0,
+   "new_diagnostics_with_plan": 0,
+   "plain_timing_check": {
+    "baseline": 0,
+    "with_plan": 0,
+    "new": 0
+   },
+   "oracle_runs": 47,
+   "seconds": 0.08
+  },
+  "naive_control": {
+   "calls_removed": 27,
+   "checker_hazards": 0
+  },
+  "scale_invariance": {
+   "4": "same plan",
+   "16": "same plan"
+  },
+  "base": {
+   "workload": "particles",
+   "device": "llvmpipe (LLVM 20.1.2, 256 bits)",
+   "frames": 3,
+   "scale": 1,
+   "hashes": {
+    "image": "21b31085212b9f03",
+    "histogram": "19abaa31bdc1e22b",
+    "particles0": "7430e30684eb82e0",
+    "particles1": "0938c14c61fd5922",
+    "particles2": "477d6717afa7c434",
+    "particles3": "e6cf4f03a79e2bff",
+    "particles4": "4c12669bd81188d9",
+    "particles5": "5a425835abb731bb",
+    "particles6": "71f12b068a20da5c",
+    "particles7": "753a8b3c7aa8bdc1"
+   },
+   "gpu_ms": [
+    167.685516,
+    160.230416,
+    159.930364
+   ],
+   "cpu_ms": [
+    168.256656,
+    160.454674,
+    160.157448
+   ],
+   "gpu_ms_median": 160.230416,
+   "cpu_ms_median": 160.454674,
+   "validation_messages": 0,
+   "sync_hazards": 0,
+   "layer_stats": null,
+   "stderr_hazard_lines": []
+  },
+  "disabled": {
+   "workload": "particles",
+   "device": "llvmpipe (LLVM 20.1.2, 256 bits)",
+   "frames": 3,
+   "scale": 1,
+   "hashes": {
+    "image": "21b31085212b9f03",
+    "histogram": "19abaa31bdc1e22b",
+    "particles0": "7430e30684eb82e0",
+    "particles1": "0938c14c61fd5922",
+    "particles2": "477d6717afa7c434",
+    "particles3": "e6cf4f03a79e2bff",
+    "particles4": "4c12669bd81188d9",
+    "particles5": "5a425835abb731bb",
+    "particles6": "71f12b068a20da5c",
+    "particles7": "753a8b3c7aa8bdc1"
+   },
+   "gpu_ms": [
+    182.243174,
+    148.270842,
+    154.80852
+   ],
+   "cpu_ms": [
+    187.636407,
+    148.518677,
+    155.0343
+   ],
+   "gpu_ms_median": 154.80852,
+   "cpu_ms_median": 155.0343,
+   "validation_messages": 0,
+   "sync_hazards": 0,
+   "layer_stats": {
+    "plan": "bench/elide/plans/particles.plan.json",
+    "mode": "strict",
+    "active": false,
+    "recordings": 4,
+    "barrier_calls": 38,
+    "matched": 0,
+    "sig_mismatch": 0,
+    "removed_calls": 0,
+    "narrowed_calls": 0,
+    "structs_removed": 0,
+    "structs_narrowed": 0
+   },
+   "stderr_hazard_lines": []
+  },
+  "strict": {
+   "workload": "particles",
+   "device": "llvmpipe (LLVM 20.1.2, 256 bits)",
+   "frames": 3,
+   "scale": 1,
+   "hashes": {
+    "image": "21b31085212b9f03",
+    "histogram": "19abaa31bdc1e22b",
+    "particles0": "7430e30684eb82e0",
+    "particles1": "0938c14c61fd5922",
+    "particles2": "477d6717afa7c434",
+    "particles3": "e6cf4f03a79e2bff",
+    "particles4": "4c12669bd81188d9",
+    "particles5": "5a425835abb731bb",
+    "particles6": "71f12b068a20da5c",
+    "particles7": "753a8b3c7aa8bdc1"
+   },
+   "gpu_ms": [
+    164.718318,
+    109.216235,
+    182.315153
+   ],
+   "cpu_ms": [
+    165.258068,
+    109.462694,
+    187.25583
+   ],
+   "gpu_ms_median": 164.718318,
+   "cpu_ms_median": 165.258068,
+   "validation_messages": 0,
+   "sync_hazards": 0,
+   "layer_stats": {
+    "plan": "bench/elide/plans/particles.plan.json",
+    "mode": "strict",
+    "active": true,
+    "recordings": 4,
+    "barrier_calls": 38,
+    "matched": 37,
+    "sig_mismatch": 0,
+    "removed_calls": 27,
+    "narrowed_calls": 10,
+    "structs_removed": 28,
+    "structs_narrowed": 10
+   },
+   "stderr_hazard_lines": []
+  },
+  "base_long": {
+   "workload": "particles",
+   "device": "llvmpipe (LLVM 20.1.2, 256 bits)",
+   "frames": 8,
+   "scale": 1,
+   "hashes": {
+    "image": "319bbaf50ae12583",
+    "histogram": "abb480fcf15a4ef1",
+    "particles0": "57d39eb516339d25",
+    "particles1": "2abe5ea1d331a8a5",
+    "particles2": "02da311aafc63990",
+    "particles3": "a2f34ff02276d541",
+    "particles4": "8437bd35e1ba32c4",
+    "particles5": "8150c5c9a9e9f940",
+    "particles6": "5b249613774479ea",
+    "particles7": "899931ef42dc9a99"
+   },
+   "gpu_ms": [
+    170.961135,
+    177.410541,
+    120.12031,
+    151.386334,
+    154.655524,
+    144.299551,
+    136.226282,
+    144.043976
+   ],
+   "cpu_ms": [
+    175.558039,
+    177.71349,
+    120.388276,
+    152.819461,
+    159.562583,
+    144.554891,
+    136.478675,
+    144.308406
+   ],
+   "gpu_ms_median": 147.842942,
+   "cpu_ms_median": 148.687176,
+   "validation_messages": 0,
+   "sync_hazards": 0,
+   "layer_stats": null,
+   "stderr_hazard_lines": []
+  },
+  "chain_long": {
+   "workload": "particles",
+   "device": "llvmpipe (LLVM 20.1.2, 256 bits)",
+   "frames": 8,
+   "scale": 1,
+   "hashes": {
+    "image": "319bbaf50ae12583",
+    "histogram": "abb480fcf15a4ef1",
+    "particles0": "57d39eb516339d25",
+    "particles1": "2abe5ea1d331a8a5",
+    "particles2": "02da311aafc63990",
+    "particles3": "a2f34ff02276d541",
+    "particles4": "8437bd35e1ba32c4",
+    "particles5": "8150c5c9a9e9f940",
+    "particles6": "5b249613774479ea",
+    "particles7": "899931ef42dc9a99"
+   },
+   "gpu_ms": [
+    168.547115,
+    141.305985,
+    180.654842,
+    207.423346,
+    158.327442,
+    155.936691,
+    133.648992,
+    163.072956
+   ],
+   "cpu_ms": [
+    169.136198,
+    141.574125,
+    180.921604,
+    207.664195,
+    158.561702,
+    156.149001,
+    133.896451,
+    163.303392
+   ],
+   "gpu_ms_median": 160.700199,
+   "cpu_ms_median": 160.932547,
+   "validation_messages": 0,
+   "sync_hazards": 0,
+   "layer_stats": {
+    "plan": "bench/elide/plans/particles.plan.json",
+    "mode": "chain",
+    "active": true,
+    "recordings": 9,
+    "barrier_calls": 98,
+    "matched": 97,
+    "sig_mismatch": 0,
+    "removed_calls": 72,
+    "narrowed_calls": 25,
+    "structs_removed": 73,
+    "structs_narrowed": 25
+   },
+   "stderr_hazard_lines": []
+  },
+  "naive": {
+   "workload": "particles",
+   "device": "llvmpipe (LLVM 20.1.2, 256 bits)",
+   "frames": 3,
+   "scale": 1,
+   "hashes": {
+    "image": "21b31085212b9f03",
+    "histogram": "19abaa31bdc1e22b",
+    "particles0": "7430e30684eb82e0",
+    "particles1": "0938c14c61fd5922",
+    "particles2": "477d6717afa7c434",
+    "particles3": "e6cf4f03a79e2bff",
+    "particles4": "4c12669bd81188d9",
+    "particles5": "5a425835abb731bb",
+    "particles6": "71f12b068a20da5c",
+    "particles7": "753a8b3c7aa8bdc1"
+   },
+   "gpu_ms": [
+    169.878547,
+    153.653803,
+    164.94856
+   ],
+   "cpu_ms": [
+    170.340436,
+    153.897064,
+    165.170868
+   ],
+   "gpu_ms_median": 164.94856,
+   "cpu_ms_median": 165.170868,
+   "validation_messages": 0,
+   "sync_hazards": 0,
+   "layer_stats": {
+    "plan": "bench/elide/plans/particles.naive.json",
+    "mode": "strict",
+    "active": true,
+    "recordings": 4,
+    "barrier_calls": 38,
+    "matched": 27,
+    "sig_mismatch": 0,
+    "removed_calls": 27,
+    "narrowed_calls": 0,
+    "structs_removed": 27,
+    "structs_narrowed": 0
+   },
+   "stderr_hazard_lines": []
+  },
+  "base_scaled": {
+   "workload": "particles",
+   "device": "llvmpipe (LLVM 20.1.2, 256 bits)",
+   "frames": 3,
+   "scale": 4,
+   "hashes": {
+    "image": "a6693236ed0b0383",
+    "histogram": "70152c43149b6788",
+    "particles0": "32299ef5a71f458b",
+    "particles1": "4cf45fadabaefab2",
+    "particles2": "3afefb06cce941c8",
+    "particles3": "1d9f30d7dd6d4ff0",
+    "particles4": "88b4b177a8b09cf2",
+    "particles5": "bb957288e3567216",
+    "particles6": "4c179f4a686195bf",
+    "particles7": "2fe076502022c454"
+   },
+   "gpu_ms": [
+    723.644355,
+    655.968261,
+    716.760536
+   ],
+   "cpu_ms": [
+    724.110984,
+    662.884125,
+    717.060488
+   ],
+   "gpu_ms_median": 716.760536,
+   "cpu_ms_median": 717.060488,
+   "validation_messages": 0,
+   "sync_hazards": 0,
+   "layer_stats": null,
+   "stderr_hazard_lines": []
+  },
+  "chain_scaled": {
+   "workload": "particles",
+   "device": "llvmpipe (LLVM 20.1.2, 256 bits)",
+   "frames": 3,
+   "scale": 4,
+   "hashes": {
+    "image": "a6693236ed0b0383",
+    "histogram": "70152c43149b6788",
+    "particles0": "32299ef5a71f458b",
+    "particles1": "4cf45fadabaefab2",
+    "particles2": "3afefb06cce941c8",
+    "particles3": "1d9f30d7dd6d4ff0",
+    "particles4": "88b4b177a8b09cf2",
+    "particles5": "bb957288e3567216",
+    "particles6": "4c179f4a686195bf",
+    "particles7": "2fe076502022c454"
+   },
+   "gpu_ms": [
+    815.622814,
+    671.559677,
+    595.256645
+   ],
+   "cpu_ms": [
+    818.154542,
+    671.871493,
+    595.542297
+   ],
+   "gpu_ms_median": 671.559677,
+   "cpu_ms_median": 671.871493,
+   "validation_messages": 0,
+   "sync_hazards": 0,
+   "layer_stats": {
+    "plan": "bench/elide/plans/particles.plan.json",
+    "mode": "chain",
+    "active": true,
+    "recordings": 4,
+    "barrier_calls": 38,
+    "matched": 37,
+    "sig_mismatch": 0,
+    "removed_calls": 27,
+    "narrowed_calls": 10,
+    "structs_removed": 28,
+    "structs_narrowed": 10
+   },
+   "stderr_hazard_lines": []
+  },
+  "timing": {
+   "frames": 10,
+   "runs": 5,
+   "base_ms": [
+    137.232909,
+    163.111894,
+    168.133601,
+    149.018881,
+    161.261775
+   ],
+   "plan_ms": [
+    164.561172,
+    153.702661,
+    162.343314,
+    133.769768,
+    168.27887
+   ],
+   "base_median": 161.261775,
+   "plan_median": 162.343314
+  }
+ },
+ "deferred": {
+  "plan_summary": {
+   "calls": 26,
+   "decisions": {
+    "narrow": 10,
+    "remove": 15,
+    "required": 1
+   },
+   "structs": {
+    "total": 49,
+    "removed": 16,
+    "narrowed": 32,
+    "kept": 1
+   },
+   "chain_entries": 9,
+   "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace"
+  },
+  "proof": {
+   "baseline_diagnostics": 0,
+   "new_diagnostics_with_plan": 0,
+   "plain_timing_check": {
+    "baseline": 0,
+    "with_plan": 0,
+    "new": 0
+   },
+   "oracle_runs": 51,
+   "seconds": 0.34
+  },
+  "naive_control": {
+   "calls_removed": 15,
+   "checker_hazards": 0
+  },
+  "scale_invariance": {
+   "4": "same plan",
+   "16": "same plan"
+  },
+  "base": {
+   "workload": "deferred",
+   "device": "llvmpipe (LLVM 20.1.2, 256 bits)",
+   "frames": 3,
+   "scale": 1,
+   "hashes": {
+    "ldr": "5884d9785198a44c",
+    "hdr": "cc2d3641eaf0be14",
+    "albedo": "62aed79d4aa85c9c",
+    "normal": "fd5cd3a907f3c45d",
+    "material": "bc35112ed579356c"
+   },
+   "gpu_ms": [
+    139.914731,
+    91.32473,
+    72.314073
+   ],
+   "cpu_ms": [
+    143.875381,
+    91.53346,
+    72.49967
+   ],
+   "gpu_ms_median": 91.32473,
+   "cpu_ms_median": 91.53346,
+   "validation_messages": 0,
+   "sync_hazards": 0,
+   "layer_stats": null,
+   "stderr_hazard_lines": []
+  },
+  "disabled": {
+   "workload": "deferred",
+   "device": "llvmpipe (LLVM 20.1.2, 256 bits)",
+   "frames": 3,
+   "scale": 1,
+   "hashes": {
+    "ldr": "5884d9785198a44c",
+    "hdr": "cc2d3641eaf0be14",
+    "albedo": "62aed79d4aa85c9c",
+    "normal": "fd5cd3a907f3c45d",
+    "material": "bc35112ed579356c"
+   },
+   "gpu_ms": [
+    78.280758,
+    61.752846,
+    50.024537
+   ],
+   "cpu_ms": [
+    86.887479,
+    62.056246,
+    50.27274
+   ],
+   "gpu_ms_median": 61.752846,
+   "cpu_ms_median": 62.056246,
+   "validation_messages": 0,
+   "sync_hazards": 0,
+   "layer_stats": {
+    "plan": "bench/elide/plans/deferred.plan.json",
+    "mode": "strict",
+    "active": false,
+    "recordings": 4,
+    "barrier_calls": 26,
+    "matched": 0,
+    "sig_mismatch": 0,
+    "removed_calls": 0,
+    "narrowed_calls": 0,
+    "structs_removed": 0,
+    "structs_narrowed": 0
+   },
+   "stderr_hazard_lines": []
+  },
+  "strict": {
+   "workload": "deferred",
+   "device": "llvmpipe (LLVM 20.1.2, 256 bits)",
+   "frames": 3,
+   "scale": 1,
+   "hashes": {
+    "ldr": "5884d9785198a44c",
+    "hdr": "cc2d3641eaf0be14",
+    "albedo": "62aed79d4aa85c9c",
+    "normal": "fd5cd3a907f3c45d",
+    "material": "bc35112ed579356c"
+   },
+   "gpu_ms": [
+    93.15082,
+    72.426028,
+    77.87803
+   ],
+   "cpu_ms": [
+    93.613767,
+    72.594309,
+    78.04943
+   ],
+   "gpu_ms_median": 77.87803,
+   "cpu_ms_median": 78.04943,
+   "validation_messages": 0,
+   "sync_hazards": 0,
+   "layer_stats": {
+    "plan": "bench/elide/plans/deferred.plan.json",
+    "mode": "strict",
+    "active": true,
+    "recordings": 4,
+    "barrier_calls": 26,
+    "matched": 25,
+    "sig_mismatch": 0,
+    "removed_calls": 15,
+    "narrowed_calls": 10,
+    "structs_removed": 16,
+    "structs_narrowed": 32
+   },
+   "stderr_hazard_lines": []
+  },
+  "base_long": {
+   "workload": "deferred",
+   "device": "llvmpipe (LLVM 20.1.2, 256 bits)",
+   "frames": 8,
+   "scale": 1,
+   "hashes": {
+    "ldr": "a5e60fbd25a409a5",
+    "hdr": "67919a8f5f4ba710",
+    "albedo": "9dabf32788bfd7f3",
+    "normal": "c40d301cceefe524",
+    "material": "dc968c9fce547d2d"
+   },
+   "gpu_ms": [
+    80.573877,
+    47.021305,
+    48.746135,
+    54.778028,
+    42.274762,
+    43.00286,
+    44.937459,
+    42.158706
+   ],
+   "cpu_ms": [
+    81.145412,
+    47.212321,
+    48.951265,
+    54.95331,
+    42.499176,
+    43.200358,
+    45.075794,
+    42.356839
+   ],
+   "gpu_ms_median": 45.979382,
+   "cpu_ms_median": 46.144058,
+   "validation_messages": 0,
+   "sync_hazards": 0,
+   "layer_stats": null,
+   "stderr_hazard_lines": []
+  },
+  "chain_long": {
+   "workload": "deferred",
+   "device": "llvmpipe (LLVM 20.1.2, 256 bits)",
+   "frames": 8,
+   "scale": 1,
+   "hashes": {
+    "ldr": "a5e60fbd25a409a5",
+    "hdr": "67919a8f5f4ba710",
+    "albedo": "9dabf32788bfd7f3",
+    "normal": "c40d301cceefe524",
+    "material": "dc968c9fce547d2d"
+   },
+   "gpu_ms": [
+    100.334518,
+    76.362801,
+    82.083787,
+    70.340676,
+    90.911797,
+    69.494497,
+    68.609946,
+    69.285792
+   ],
+   "cpu_ms": [
+    106.260997,
+    76.598268,
+    82.28334,
+    70.573323,
+    91.110995,
+    69.672031,
+    68.813236,
+    69.469943
+   ],
+   "gpu_ms_median": 73.351738,
+   "cpu_ms_median": 73.585796,
+   "validation_messages": 0,
+   "sync_hazards": 0,
+   "layer_stats": {
+    "plan": "bench/elide/plans/deferred.plan.json",
+    "mode": "chain",
+    "active": true,
+    "recordings": 9,
+    "barrier_calls": 66,
+    "matched": 65,
+    "sig_mismatch": 0,
+    "removed_calls": 40,
+    "narrowed_calls": 25,
+    "structs_removed": 41,
+    "structs_narrowed": 77
+   },
+   "stderr_hazard_lines": []
+  },
+  "naive": {
+   "workload": "deferred",
+   "device": "llvmpipe (LLVM 20.1.2, 256 bits)",
+   "frames": 3,
+   "scale": 1,
+   "hashes": {
+    "ldr": "5884d9785198a44c",
+    "hdr": "cc2d3641eaf0be14",
+    "albedo": "62aed79d4aa85c9c",
+    "normal": "fd5cd3a907f3c45d",
+    "material": "bc35112ed579356c"
+   },
+   "gpu_ms": [
+    142.015327,
+    90.201715,
+    89.279482
+   ],
+   "cpu_ms": [
+    145.358801,
+    90.428563,
+    89.457931
+   ],
+   "gpu_ms_median": 90.201715,
+   "cpu_ms_median": 90.428563,
+   "validation_messages": 0,
+   "sync_hazards": 0,
+   "layer_stats": {
+    "plan": "bench/elide/plans/deferred.naive.json",
+    "mode": "strict",
+    "active": true,
+    "recordings": 4,
+    "barrier_calls": 26,
+    "matched": 15,
+    "sig_mismatch": 0,
+    "removed_calls": 15,
+    "narrowed_calls": 0,
+    "structs_removed": 15,
+    "structs_narrowed": 0
+   },
+   "stderr_hazard_lines": []
+  },
+  "base_scaled": {
+   "workload": "deferred",
+   "device": "llvmpipe (LLVM 20.1.2, 256 bits)",
+   "frames": 3,
+   "scale": 4,
+   "hashes": {
+    "ldr": "78c76a3fb4372ea4",
+    "hdr": "9568dc9c6fc24582",
+    "albedo": "3e47baa6c0079395",
+    "normal": "b53e05d59d09c63f",
+    "material": "5d47a225ee3e61a4"
+   },
+   "gpu_ms": [
+    481.927934,
+    365.942822,
+    324.173317
+   ],
+   "cpu_ms": [
+    482.324091,
+    366.171087,
+    328.609707
+   ],
+   "gpu_ms_median": 365.942822,
+   "cpu_ms_median": 366.171087,
+   "validation_messages": 0,
+   "sync_hazards": 0,
+   "layer_stats": null,
+   "stderr_hazard_lines": []
+  },
+  "chain_scaled": {
+   "workload": "deferred",
+   "device": "llvmpipe (LLVM 20.1.2, 256 bits)",
+   "frames": 3,
+   "scale": 4,
+   "hashes": {
+    "ldr": "78c76a3fb4372ea4",
+    "hdr": "9568dc9c6fc24582",
+    "albedo": "3e47baa6c0079395",
+    "normal": "b53e05d59d09c63f",
+    "material": "5d47a225ee3e61a4"
+   },
+   "gpu_ms": [
+    422.295754,
+    331.097122,
+    365.980891
+   ],
+   "cpu_ms": [
+    422.846997,
+    331.29504,
+    366.161797
+   ],
+   "gpu_ms_median": 365.980891,
+   "cpu_ms_median": 366.161797,
+   "validation_messages": 0,
+   "sync_hazards": 0,
+   "layer_stats": {
+    "plan": "bench/elide/plans/deferred.plan.json",
+    "mode": "chain",
+    "active": true,
+    "recordings": 4,
+    "barrier_calls": 26,
+    "matched": 25,
+    "sig_mismatch": 0,
+    "removed_calls": 15,
+    "narrowed_calls": 10,
+    "structs_removed": 16,
+    "structs_narrowed": 32
+   },
+   "stderr_hazard_lines": []
+  },
+  "timing": {
+   "frames": 10,
+   "runs": 5,
+   "base_ms": [
+    45.722947,
+    70.921609,
+    70.594171,
+    69.515208,
+    46.601078
+   ],
+   "plan_ms": [
+    69.347152,
+    69.298754,
+    53.059341,
+    69.297798,
+    69.036867
+   ],
+   "base_median": 69.515208,
+   "plan_median": 69.297798
+  }
+ },
+ "postchain": {
+  "plan_summary": {
+   "calls": 47,
+   "decisions": {
+    "narrow": 25,
+    "remove": 21,
+    "required": 1
+   },
+   "structs": {
+    "total": 96,
+    "removed": 22,
+    "narrowed": 73,
+    "kept": 1
+   },
+   "chain_entries": 16,
+   "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace"
+  },
+  "proof": {
+   "baseline_diagnostics": 0,
+   "new_diagnostics_with_plan": 0,
+   "plain_timing_check": {
+    "baseline": 0,
+    "with_plan": 0,
+    "new": 0
+   },
+   "oracle_runs": 119,
+   "seconds": 1.02
+  },
+  "naive_control": {
+   "calls_removed": 36,
+   "checker_hazards": 30
+  },
+  "scale_invariance": {
+   "4": "same plan",
+   "16": "same plan"
+  },
+  "base": {
+   "workload": "postchain",
+   "device": "llvmpipe (LLVM 20.1.2, 256 bits)",
+   "frames": 3,
+   "scale": 1,
+   "hashes": {
+    "image": "aaf17cd133740184",
+    "bloom0": "3af848902b85e8b9",
+    "lum0": "7ee1309e59b3ca19",
+    "bloom1": "9f0e7273930e1ebb",
+    "lum1": "bee41faaba27344f",
+    "bloom2": "f6518423bef75a07",
+    "lum2": "c614074f9cd6bf0f",
+    "bloom3": "f3ca9108ff875a25",
+    "lum3": "7f7e5cbbc240cd33",
+    "bloom4": "c120f14b9389aa38",
+    "lum4": "61a34c8d4e453044",
+    "bloom5": "614b35c27efde928",
+    "lum5": "e87ac0f36d6cc32d"
+   },
+   "gpu_ms": [
+    138.002124,
+    128.866522,
+    126.903967
+   ],
+   "cpu_ms": [
+    138.569552,
+    129.121306,
+    127.160983
+   ],
+   "gpu_ms_median": 128.866522,
+   "cpu_ms_median": 129.121306,
+   "validation_messages": 0,
+   "sync_hazards": 0,
+   "layer_stats": null,
+   "stderr_hazard_lines": []
+  },
+  "disabled": {
+   "workload": "postchain",
+   "device": "llvmpipe (LLVM 20.1.2, 256 bits)",
+   "frames": 3,
+   "scale": 1,
+   "hashes": {
+    "image": "aaf17cd133740184",
+    "bloom0": "3af848902b85e8b9",
+    "lum0": "7ee1309e59b3ca19",
+    "bloom1": "9f0e7273930e1ebb",
+    "lum1": "bee41faaba27344f",
+    "bloom2": "f6518423bef75a07",
+    "lum2": "c614074f9cd6bf0f",
+    "bloom3": "f3ca9108ff875a25",
+    "lum3": "7f7e5cbbc240cd33",
+    "bloom4": "c120f14b9389aa38",
+    "lum4": "61a34c8d4e453044",
+    "bloom5": "614b35c27efde928",
+    "lum5": "e87ac0f36d6cc32d"
+   },
+   "gpu_ms": [
+    140.32708,
+    126.734188,
+    130.389644
+   ],
+   "cpu_ms": [
+    140.901241,
+    126.974899,
+    130.67423
+   ],
+   "gpu_ms_median": 130.389644,
+   "cpu_ms_median": 130.67423,
+   "validation_messages": 0,
+   "sync_hazards": 0,
+   "layer_stats": {
+    "plan": "bench/elide/plans/postchain.plan.json",
+    "mode": "strict",
+    "active": false,
+    "recordings": 4,
+    "barrier_calls": 47,
+    "matched": 0,
+    "sig_mismatch": 0,
+    "removed_calls": 0,
+    "narrowed_calls": 0,
+    "structs_removed": 0,
+    "structs_narrowed": 0
+   },
+   "stderr_hazard_lines": []
+  },
+  "strict": {
+   "workload": "postchain",
+   "device": "llvmpipe (LLVM 20.1.2, 256 bits)",
+   "frames": 3,
+   "scale": 1,
+   "hashes": {
+    "image": "aaf17cd133740184",
+    "bloom0": "3af848902b85e8b9",
+    "lum0": "7ee1309e59b3ca19",
+    "bloom1": "9f0e7273930e1ebb",
+    "lum1": "bee41faaba27344f",
+    "bloom2": "f6518423bef75a07",
+    "lum2": "c614074f9cd6bf0f",
+    "bloom3": "f3ca9108ff875a25",
+    "lum3": "7f7e5cbbc240cd33",
+    "bloom4": "c120f14b9389aa38",
+    "lum4": "61a34c8d4e453044",
+    "bloom5": "614b35c27efde928",
+    "lum5": "e87ac0f36d6cc32d"
+   },
+   "gpu_ms": [
+    162.804745,
+    134.786115,
+    116.755628
+   ],
+   "cpu_ms": [
+    163.478472,
+    135.03917,
+    117.065704
+   ],
+   "gpu_ms_median": 134.786115,
+   "cpu_ms_median": 135.03917,
+   "validation_messages": 0,
+   "sync_hazards": 0,
+   "layer_stats": {
+    "plan": "bench/elide/plans/postchain.plan.json",
+    "mode": "strict",
+    "active": true,
+    "recordings": 4,
+    "barrier_calls": 47,
+    "matched": 46,
+    "sig_mismatch": 0,
+    "removed_calls": 21,
+    "narrowed_calls": 25,
+    "structs_removed": 22,
+    "structs_narrowed": 73
+   },
+   "stderr_hazard_lines": []
+  },
+  "base_long": {
+   "workload": "postchain",
+   "device": "llvmpipe (LLVM 20.1.2, 256 bits)",
+   "frames": 8,
+   "scale": 1,
+   "hashes": {
+    "image": "87205d3e66edc5cb",
+    "bloom0": "ed3a4eb105d9377b",
+    "lum0": "9c994bd1382076f1",
+    "bloom1": "bc4eea94c03a2e55",
+    "lum1": "4eafe568bb62a4e8",
+    "bloom2": "cc7dc1daee397904",
+    "lum2": "5a4f126457ee9491",
+    "bloom3": "b7ecea3c55c5f523",
+    "lum3": "e7dfbcdd2e23cd3a",
+    "bloom4": "bc4c2c6c29273e1f",
+    "lum4": "862aa678075b8965",
+    "bloom5": "fafe7e97c7c44da7",
+    "lum5": "1faae215e17c53e8"
+   },
+   "gpu_ms": [
+    141.372922,
+    133.350744,
+    130.33811,
+    141.491843,
+    118.016358,
+    86.825917,
+    133.274173,
+    132.580803
+   ],
+   "cpu_ms": [
+    141.861045,
+    133.591964,
+    130.644908,
+    141.782709,
+    118.323028,
+    87.188022,
+    133.588425,
+    132.90476
+   ],
+   "gpu_ms_median": 132.927488,
+   "cpu_ms_median": 133.246593,
+   "validation_messages": 0,
+   "sync_hazards": 0,
+   "layer_stats": null,
+   "stderr_hazard_lines": []
+  },
+  "chain_long": {
+   "workload": "postchain",
+   "device": "llvmpipe (LLVM 20.1.2, 256 bits)",
+   "frames": 8,
+   "scale": 1,
+   "hashes": {
+    "image": "87205d3e66edc5cb",
+    "bloom0": "ed3a4eb105d9377b",
+    "lum0": "9c994bd1382076f1",
+    "bloom1": "bc4eea94c03a2e55",
+    "lum1": "4eafe568bb62a4e8",
+    "bloom2": "cc7dc1daee397904",
+    "lum2": "5a4f126457ee9491",
+    "bloom3": "b7ecea3c55c5f523",
+    "lum3": "e7dfbcdd2e23cd3a",
+    "bloom4": "bc4c2c6c29273e1f",
+    "lum4": "862aa678075b8965",
+    "bloom5": "fafe7e97c7c44da7",
+    "lum5": "1faae215e17c53e8"
+   },
+   "gpu_ms": [
+    138.651119,
+    117.493036,
+    107.771169,
+    100.830844,
+    111.095118,
+    141.547693,
+    86.90542,
+    110.767755
+   ],
+   "cpu_ms": [
+    139.304488,
+    117.902997,
+    108.110565,
+    103.013164,
+    111.43524,
+    143.471314,
+    94.13241,
+    112.741826
+   ],
+   "gpu_ms_median": 110.931436,
+   "cpu_ms_median": 112.088533,
+   "validation_messages": 0,
+   "sync_hazards": 0,
+   "layer_stats": {
+    "plan": "bench/elide/plans/postchain.plan.json",
+    "mode": "chain",
+    "active": true,
+    "recordings": 9,
+    "barrier_calls": 122,
+    "matched": 121,
+    "sig_mismatch": 0,
+    "removed_calls": 56,
+    "narrowed_calls": 65,
+    "structs_removed": 57,
+    "structs_narrowed": 173
+   },
+   "stderr_hazard_lines": []
+  },
+  "naive": {
+   "workload": "postchain",
+   "device": "llvmpipe (LLVM 20.1.2, 256 bits)",
+   "frames": 3,
+   "scale": 1,
+   "hashes": {
+    "image": "aaf17cd133740184",
+    "bloom0": "3af848902b85e8b9",
+    "lum0": "7ee1309e59b3ca19",
+    "bloom1": "9f0e7273930e1ebb",
+    "lum1": "bee41faaba27344f",
+    "bloom2": "f6518423bef75a07",
+    "lum2": "c614074f9cd6bf0f",
+    "bloom3": "f3ca9108ff875a25",
+    "lum3": "7f7e5cbbc240cd33",
+    "bloom4": "c120f14b9389aa38",
+    "lum4": "61a34c8d4e453044",
+    "bloom5": "614b35c27efde928",
+    "lum5": "e87ac0f36d6cc32d"
+   },
+   "gpu_ms": [
+    172.0788,
+    104.214015,
+    84.07546
+   ],
+   "cpu_ms": [
+    172.659623,
+    104.601386,
+    84.492775
+   ],
+   "gpu_ms_median": 104.214015,
+   "cpu_ms_median": 104.601386,
+   "validation_messages": 30,
+   "sync_hazards": 30,
+   "layer_stats": {
+    "plan": "bench/elide/plans/postchain.naive.json",
+    "mode": "strict",
+    "active": true,
+    "recordings": 4,
+    "barrier_calls": 47,
+    "matched": 36,
+    "sig_mismatch": 0,
+    "removed_calls": 36,
+    "narrowed_calls": 0,
+    "structs_removed": 36,
+    "structs_narrowed": 0
+   },
+   "stderr_hazard_lines": [
+    "[validation] SYNC-HAZARD-READ-AFTER-WRITE: Validation Error: [ SYNC-HAZARD-READ-AFTER-WRITE ] Object 0: handle = 0x80000000008, name = bloom0_view, type = VK_OBJECT_TYPE_IMAGE_VIEW; | MessageID = 0xe4d96472 | vkCmdDispatch():  Hazard READ_AFTER_WRITE for VkImageView 0x80000000008[bloom0_view], in VkCommandBuffer 0x55c96cec2710[frame_cb], and VkPipeline 0x380000000038[chain_step], VkDescriptorSet 0x3d000000003d[downA_set1], type: VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, imageLayout: VK_IMAGE_LAYOUT_GENERAL, binding #0, index 0. Access info (usage: SYNC_COMPUTE_SHADER_SHADER_STORAGE_READ, prior_usage: SYNC_COMPUTE_SHADER_SHADER_STORAGE_WRITE, write_barriers: 0, command: vkCmdDispatch, seq_no: 4, reset_no: 2).",
+    "[validation] SYNC-HAZARD-READ-AFTER-WRITE: Validation Error: [ SYNC-HAZARD-READ-AFTER-WRITE ] Object 0: handle = 0xb000000000b, name = lum0_view, type = VK_OBJECT_TYPE_IMAGE_VIEW; | MessageID = 0xe4d96472 | vkCmdDispatch():  Hazard READ_AFTER_WRITE for VkImageView 0xb000000000b[lum0_view], in VkCommandBuffer 0x55c96cec2710[frame_cb], and VkPipeline 0x380000000038[chain_step], VkDescriptorSet 0x3e000000003e[downB_set1], type: VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, imageLayout: VK_IMAGE_LAYOUT_GENERAL, binding #0, index 0. Access info (usage: SYNC_COMPUTE_SHADER_SHADER_STORAGE_READ, prior_usage: SYNC_COMPUTE_SHADER_SHADER_STORAGE_WRITE, write_barriers: 0, command: vkCmdDispatch, seq_no: 5, reset_no: 2).",
+    "[validation] SYNC-HAZARD-READ-AFTER-WRITE: Validation Error: [ SYNC-HAZARD-READ-AFTER-WRITE ] Object 0: handle = 0xe000000000e, name = bloom1_view, type = VK_OBJECT_TYPE_IMAGE_VIEW; | MessageID = 0xe4d96472 | vkCmdDispatch():  Hazard READ_AFTER_WRITE for VkImageView 0xe000000000e[bloom1_view], in VkCommandBuffer 0x55c96cec2710[frame_cb], and VkPipeline 0x380000000038[chain_step], VkDescriptorSet 0x3f000000003f[downA_set2], type: VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, imageLayout: VK_IMAGE_LAYOUT_GENERAL, binding #0, index 0. Access info (usage: SYNC_COMPUTE_SHADER_SHADER_STORAGE_READ, prior_usage: SYNC_COMPUTE_SHADER_SHADER_STORAGE_WRITE, write_barriers: 0, command: vkCmdDispatch, seq_no: 6, reset_no: 2).",
+    "[validation] SYNC-HAZARD-READ-AFTER-WRITE: Validation Error: [ SYNC-HAZARD-READ-AFTER-WRITE ] Object 0: handle = 0x110000000011, name = lum1_view, type = VK_OBJECT_TYPE_IMAGE_VIEW; | MessageID = 0xe4d96472 | vkCmdDispatch():  Hazard READ_AFTER_WRITE for VkImageView 0x110000000011[lum1_view], in VkCommandBuffer 0x55c96cec2710[frame_cb], and VkPipeline 0x380000000038[chain_step], VkDescriptorSet 0x400000000040[downB_set2], type: VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, imageLayout: VK_IMAGE_LAYOUT_GENERAL, binding #0, index 0. Access info (usage: SYNC_COMPUTE_SHADER_SHADER_STORAGE_READ, prior_usage: SYNC_COMPUTE_SHADER_SHADER_STORAGE_WRITE, write_barriers: 0, command: vkCmdDispatch, seq_no: 7, reset_no: 2).",
+    "[validation] SYNC-HAZARD-READ-AFTER-WRITE: Validation Error: [ SYNC-HAZARD-READ-AFTER-WRITE ] Object 0: handle = 0x140000000014, name = bloom2_view, type = VK_OBJECT_TYPE_IMAGE_VIEW; | MessageID = 0xe4d96472 | vkCmdDispatch():  Hazard READ_AFTER_WRITE for VkImageView 0x140000000014[bloom2_view], in VkCommandBuffer 0x55c96cec2710[frame_cb], and VkPipeline 0x380000000038[chain_step], VkDescriptorSet 0x410000000041[downA_set3], type: VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, imageLayout: VK_IMAGE_LAYOUT_GENERAL, binding #0, index 0. Access info (usage: SYNC_COMPUTE_SHADER_SHADER_STORAGE_READ, prior_usage: SYNC_COMPUTE_SHADER_SHADER_STORAGE_WRITE, write_barriers: 0, command: vkCmdDispatch, seq_no: 8, reset_no: 2)."
+   ]
+  },
+  "base_scaled": {
+   "workload": "postchain",
+   "device": "llvmpipe (LLVM 20.1.2, 256 bits)",
+   "frames": 3,
+   "scale": 4,
+   "hashes": {
+    "image": "4ffc2815b12e61b4",
+    "bloom0": "f45f557c75596c38",
+    "lum0": "40c4479bef8bfe55",
+    "bloom1": "19cb7600829788ea",
+    "lum1": "d2e563c56218f07c",
+    "bloom2": "fb840e887bdd4cd2",
+    "lum2": "f1fcdfafdf9bc5a2",
+    "bloom3": "fbf90915f0ead1e8",
+    "lum3": "03c4fb203d9f4024",
+    "bloom4": "a330f9903d5a500a",
+    "lum4": "ab7cb5a587d0f347",
+    "bloom5": "881b9827418cac32",
+    "lum5": "5647ac6e4dfa64b0"
+   },
+   "gpu_ms": [
+    634.66278,
+    503.986856,
+    530.187362
+   ],
+   "cpu_ms": [
+    637.951197,
+    504.276229,
+    530.472206
+   ],
+   "gpu_ms_median": 530.187362,
+   "cpu_ms_median": 530.472206,
+   "validation_messages": 0,
+   "sync_hazards": 0,
+   "layer_stats": null,
+   "stderr_hazard_lines": []
+  },
+  "chain_scaled": {
+   "workload": "postchain",
+   "device": "llvmpipe (LLVM 20.1.2, 256 bits)",
+   "frames": 3,
+   "scale": 4,
+   "hashes": {
+    "image": "4ffc2815b12e61b4",
+    "bloom0": "f45f557c75596c38",
+    "lum0": "40c4479bef8bfe55",
+    "bloom1": "19cb7600829788ea",
+    "lum1": "d2e563c56218f07c",
+    "bloom2": "fb840e887bdd4cd2",
+    "lum2": "f1fcdfafdf9bc5a2",
+    "bloom3": "fbf90915f0ead1e8",
+    "lum3": "03c4fb203d9f4024",
+    "bloom4": "a330f9903d5a500a",
+    "lum4": "ab7cb5a587d0f347",
+    "bloom5": "881b9827418cac32",
+    "lum5": "5647ac6e4dfa64b0"
+   },
+   "gpu_ms": [
+    620.851895,
+    479.384171,
+    557.573063
+   ],
+   "cpu_ms": [
+    621.341496,
+    479.662122,
+    563.095837
+   ],
+   "gpu_ms_median": 557.573063,
+   "cpu_ms_median": 563.095837,
+   "validation_messages": 0,
+   "sync_hazards": 0,
+   "layer_stats": {
+    "plan": "bench/elide/plans/postchain.plan.json",
+    "mode": "chain",
+    "active": true,
+    "recordings": 4,
+    "barrier_calls": 47,
+    "matched": 46,
+    "sig_mismatch": 0,
+    "removed_calls": 21,
+    "narrowed_calls": 25,
+    "structs_removed": 22,
+    "structs_narrowed": 73
+   },
+   "stderr_hazard_lines": []
+  },
+  "timing": {
+   "frames": 10,
+   "runs": 5,
+   "base_ms": [
+    128.266045,
+    142.466847,
+    168.204209,
+    183.946996,
+    152.24286
+   ],
+   "plan_ms": [
+    166.479367,
+    146.141875,
+    152.879464,
+    173.394389,
+    155.133178
+   ],
+   "base_median": 152.24286,
+   "plan_median": 155.133178
+  }
+ }
+}

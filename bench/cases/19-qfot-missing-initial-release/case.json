@@ -1,0 +1,1 @@
+{"id": 19, "title": "Queue family ownership acquire on the compute queue without a matching release", "upstream": "https://github.com/KhronosGroup/Vulkan-Samples/issues/3", "category": "timing", "expect": ["timing.ownership-unmatched-acquire"]}

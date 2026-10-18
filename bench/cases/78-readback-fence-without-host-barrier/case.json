@@ -1,0 +1,12 @@
+{
+ "id": 78,
+ "title": "CPU reads a copy-written host-visible buffer after a fence wait with no TRANSFER -> HOST barrier",
+ "upstream": "https://github.com/mattias800/prosper/issues/2944",
+ "fix": "https://github.com/mattias800/prosper/pull/3250",
+ "bug_id": 130,
+ "category": "timing",
+ "expect": [
+  "timing.missing-barrier"
+ ],
+ "expected_finding": "vkCmdCopyImageToBuffer writes color_readback (TRANSFER_WRITE) and the host reads its mapped memory after vkWaitForFences, but no dependency with dstStageMask HOST / dstAccessMask HOST_READ makes the copy's writes available to the host (the fence only orders execution)"
+}

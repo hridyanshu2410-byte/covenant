@@ -1,0 +1,477 @@
+{
+ "per_frame": {
+  "calls": 84,
+  "remove": 0,
+  "narrow": 0,
+  "required": 84,
+  "structs": {
+   "keep": 84
+  },
+  "struct_kinds": {
+   "transition": 84
+  },
+  "keep_reasons": {
+   "layout transition, no narrower mask verified": 84
+  },
+  "pinned_structs": 0,
+  "pinned_fraction": 0.0,
+  "tried_and_needed_structs": 84
+ },
+ "one_time": {
+  "calls": 164,
+  "remove": 0,
+  "narrow": 77,
+  "required": 87,
+  "structs": {
+   "keep": 87,
+   "narrow": 77
+  },
+  "struct_kinds": {
+   "transition": 164
+  },
+  "keep_reasons": {
+   "it synchronizes with the host, which the trace does not observe": 68,
+   "layout transition, no narrower mask verified": 19
+  }
+ },
+ "per_frame_detail": [
+  {
+   "chain": "65a8ceaeaba9751f",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] image#78 undefined -> depth_stencil_attachment",
+   "recorded": "FRAGMENT_SHADER/- -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "65023812b06bc042",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] image#78 depth_stencil_attachment -> shader_read",
+   "recorded": "LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_WRITE -> FRAGMENT_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "6814d9ecac8ab0e1",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] image#74 undefined -> color_attachment",
+   "recorded": "FRAGMENT_SHADER/- -> COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "8263d6291f03419b",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] image#76 undefined -> depth_stencil_attachment",
+   "recorded": "LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_WRITE -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "744dc9b0a68bfaa1",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] image#74 color_attachment -> shader_read",
+   "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> BOTTOM_OF_PIPE/-",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "b7200d70acc22437",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] image#79 undefined -> general",
+   "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "5edee794135a5dd1",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] image#79 general -> shader_read",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "96cf6f0734983c63",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] image#80 undefined -> general",
+   "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "c07c31f095b95edd",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] image#80 general -> shader_read",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "602f1e9c9605452f",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] image#81 undefined -> general",
+   "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "219fa2fe4599a979",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] image#81 general -> shader_read",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "1bdf1124a130560b",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] image#82 undefined -> general",
+   "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "35168a29c4146995",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] image#82 general -> shader_read",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "7ecfe333a537e047",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] image#83 undefined -> general",
+   "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "59d1729a3959cd81",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] image#83 general -> shader_read",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "56ad5624d232a133",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] image#84 undefined -> general",
+   "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "480bfb2146c798cd",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] image#84 general -> shader_read",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "303c7328673c99bf",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] image#83 undefined -> general",
+   "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "eb274d04d267bd29",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] image#83 general -> shader_read",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "404bbac6403358db",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] image#82 undefined -> general",
+   "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "bfd73059764aec85",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] image#82 general -> shader_read",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "e6479307663d37d7",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] image#81 undefined -> general",
+   "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "755ed9e75f187e31",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] image#81 general -> shader_read",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "4c67c47f617a5f03",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] image#80 undefined -> general",
+   "recorded": "COMPUTE_SHADER/- -> COMPUTE_SHADER/SHADER_WRITE",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "27252f3e1c87ae1c",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] image#80 general -> shader_read",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> BOTTOM_OF_PIPE/-",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "78023e639b5bcd11",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] swapchain[1] undefined -> color_attachment",
+   "recorded": "COLOR_ATTACHMENT_OUTPUT/- -> COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "59587b18208ae7e9",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] image#5 undefined -> depth_stencil_attachment",
+   "recorded": "TOP_OF_PIPE/- -> EARLY_FRAGMENT_TESTS|LATE_FRAGMENT_TESTS/DEPTH_STENCIL_ATTACHMENT_READ|DEPTH_STENCIL_ATTACHMENT_WRITE",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  },
+  {
+   "chain": "6ebb3f09ba5ed1a8",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "image[0] swapchain[1] color_attachment -> present",
+   "recorded": "COLOR_ATTACHMENT_OUTPUT/COLOR_ATTACHMENT_WRITE -> BOTTOM_OF_PIPE/-",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "layout transition, no narrower mask verified"
+   ]
+  }
+ ],
+ "proof": {
+  "baseline_diagnostics": 0,
+  "plain_timing_check": {
+   "baseline": 0,
+   "with_plan": 0,
+   "new": 0
+  },
+  "pairwise_recheck": {
+   "baseline": 0,
+   "with_plan": 0,
+   "new": 0
+  },
+  "pinned_for_baseline_hazards": 0,
+  "oracle_runs": 129,
+  "seconds": 564.7
+ },
+ "chain_entries": 64,
+ "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace"
+}

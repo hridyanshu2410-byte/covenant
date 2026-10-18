@@ -1,0 +1,1 @@
+{"id": 2, "title": "Video background sampled without sRGB decode", "upstream": "https://github.com/mrdoob/three.js/issues/23780", "fix": "https://github.com/mrdoob/three.js/pull/23129", "category": "meaning", "expect": ["meaning.color-mismatch"]}

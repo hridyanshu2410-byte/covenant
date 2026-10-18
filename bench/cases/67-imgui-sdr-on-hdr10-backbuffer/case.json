@@ -1,0 +1,12 @@
+{
+ "id": 67,
+ "title": "ImGui renders SDR sRGB colours with an 8-bit UNORM pipeline into an HDR10 (PQ, BT.2020) back buffer",
+ "upstream": "https://github.com/Fexty12573/SharpPluginLoader/pull/73",
+ "fix": "https://github.com/Fexty12573/SharpPluginLoader/pull/73",
+ "bug_id": 115,
+ "category": "meaning",
+ "expect": [
+  "meaning.color-mismatch"
+ ],
+ "expected_finding": "fsMain writes sRGB-encoded BT.709 ImGui colours unchanged into the A2B10G10R10 / HDR10_ST2084 swapchain, which expects PQ-encoded BT.2020 values (no sRGB decode, primaries conversion or PQ encode); the ImGui pipeline is also built for R8G8B8A8_UNORM instead of the back buffer's format"
+}

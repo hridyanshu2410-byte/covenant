@@ -1,0 +1,12 @@
+{
+ "id": 104,
+ "title": "SVG rasterised to premultiplied RGBA uploaded unconverted into the BGRA (straight-alpha) sprite atlas",
+ "upstream": "https://github.com/zed-industries/zed/pull/52641",
+ "fix": "https://github.com/zed-industries/zed/pull/52641",
+ "bug_id": 156,
+ "category": "meaning",
+ "expect": [
+  "meaning.color-mismatch"
+ ],
+ "expected_finding": "Image::to_image_data calls render_single_frame(.., to_brga = false), so the tiny-skia pixmap (premultiplied RGBA byte order) is copied into the B8G8R8A8_UNORM atlas that every other path fills with straight-alpha BGRA; the sprite shader reads R and B swapped (#38BDF8 shows as #F8BD38) and the colour still premultiplied"
+}

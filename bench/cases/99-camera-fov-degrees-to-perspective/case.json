@@ -1,0 +1,12 @@
+{
+ "id": 99,
+ "title": "Camera field of view given in degrees (45.0) to a perspective function that takes radians",
+ "upstream": "https://github.com/iced-rs/iced/pull/3319",
+ "fix": "https://github.com/iced-rs/iced/pull/3319",
+ "bug_id": 151,
+ "category": "meaning",
+ "expect": [
+  "meaning.unit-mismatch"
+ ],
+ "expected_finding": "Camera::fov_y is 45.0 (degrees) and is passed as fov_y_radians to perspective_rh, whose result becomes Uniforms.projection; the projection's vertical scale is cot(22.5 rad) instead of cot(22.5 deg)"
+}

@@ -1,0 +1,5 @@
+{"id": 36, "title": "Per-frame depth layout transition uses TOP_OF_PIPE and no access, unordered against the previous frame's depth writes",
+ "upstream": "https://github.com/KhronosGroup/Vulkan-Samples/issues/1334",
+ "bug_id": 42, "category": "timing", "expect": ["timing.barrier-scope"],
+ "fix_note": "issue open; the fixed variant applies the fix given in the issue (srcStage LATE_FRAGMENT_TESTS, srcAccess DEPTH_STENCIL_ATTACHMENT_WRITE)",
+ "expected_finding": "the UNDEFINED->DEPTH_ATTACHMENT_OPTIMAL transition of depth_stencil (write) is not ordered after the previous frame's depth attachment writes (write-after-write)"}

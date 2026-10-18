@@ -1,0 +1,5 @@
+{"id": 37, "title": "Explicit f32 padding slot after nine scalars does not align vec4 tint_color: shader reads it at 48, host writes it at 40",
+ "upstream": "https://github.com/SpaceCorps/open-glass/pull/18",
+ "fix": "https://github.com/SpaceCorps/open-glass/pull/18",
+ "bug_id": 65, "category": "structure", "expect": ["structure.host-layout"],
+ "expected_finding": "OpticalUniforms: host tint_color at byte 40, resolution 56, glass_bounds 64, corner_radius 80; the shader block has them at 48, 64, 80, 96"}

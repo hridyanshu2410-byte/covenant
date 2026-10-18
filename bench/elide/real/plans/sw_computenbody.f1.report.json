@@ -1,0 +1,72 @@
+{
+ "per_frame": {
+  "calls": 3,
+  "remove": 0,
+  "narrow": 0,
+  "required": 3,
+  "structs": {
+   "keep": 3
+  },
+  "struct_kinds": {
+   "plain": 3
+  },
+  "keep_reasons": {
+   "a hazard the program already has": 3
+  },
+  "pinned_structs": 3,
+  "pinned_fraction": 1.0,
+  "tried_and_needed_structs": 0
+ },
+ "one_time": {
+  "calls": 5,
+  "remove": 0,
+  "narrow": 4,
+  "required": 1,
+  "structs": {
+   "narrow": 4,
+   "keep": 1
+  },
+  "struct_kinds": {
+   "transition": 4,
+   "plain": 1
+  },
+  "keep_reasons": {
+   "a hazard the program already has": 1
+  }
+ },
+ "per_frame_detail": [
+  {
+   "chain": "8302612546d546f0",
+   "instances": 3,
+   "decisions": {
+    "required": 3
+   },
+   "sync": 1,
+   "what": "buffer[0] buffer#4",
+   "recorded": "COMPUTE_SHADER/SHADER_WRITE -> COMPUTE_SHADER/SHADER_READ",
+   "chain_action": "keep",
+   "chain_new": null,
+   "why": [
+    "a hazard the program already has"
+   ]
+  }
+ ],
+ "proof": {
+  "baseline_diagnostics": 4,
+  "plain_timing_check": {
+   "baseline": 4,
+   "with_plan": 4,
+   "new": 0
+  },
+  "pairwise_recheck": {
+   "baseline": 4,
+   "with_plan": 4,
+   "new": 0
+  },
+  "pinned_for_baseline_hazards": 4,
+  "oracle_runs": 9,
+  "seconds": 0.04
+ },
+ "chain_entries": 2,
+ "chain_note": "merged conservatively over all instances of each key; re-verified on the whole trace"
+}

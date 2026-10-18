@@ -1,0 +1,12 @@
+{
+ "id": 63,
+ "title": "Light-pass barrier gives the depth texture the wrong before-state, and G-buffer resources are never moved back",
+ "upstream": "https://github.com/shuhuai/DeferredShadingD3D12/issues/2",
+ "bug_id": 123,
+ "category": "timing",
+ "expect": [
+  "timing.wrong-layout"
+ ],
+ "fix_note": "fix described in the issue (updated ApplyLightingPSO), no commit linked; D3D12 resource states ported to Vulkan image layouts",
+ "expected_finding": "ApplyLightingPSO transitions mDsTexture with oldLayout DEPTH_STENCIL_READ_ONLY_OPTIMAL while it is in DEPTH_STENCIL_ATTACHMENT_OPTIMAL (written by the G-buffer pass); the G-buffer targets and depth texture are left in SHADER_READ_ONLY_OPTIMAL, so the next frame renders the G-buffer into them in the wrong layout and the next barriers' old layouts are wrong (D3D12 RESOURCE_BARRIER_BEFORE_AFTER_MISMATCH)"
+}

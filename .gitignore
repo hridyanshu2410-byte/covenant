@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Build products (model driver, benchmark and elision work directories)
+model_driver/build/
+/build/
+*.so
+*.so.*
+*.o
+*.dll
+*.exe

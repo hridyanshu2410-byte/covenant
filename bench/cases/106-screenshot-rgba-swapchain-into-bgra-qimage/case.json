@@ -1,0 +1,12 @@
+{
+ "id": 106,
+ "title": "Screenshot rendered in the RGBA swapchain format copied byte-for-byte into a BGRA (QImage RGB32) buffer",
+ "upstream": "https://github.com/azahar-emu/azahar/pull/2170",
+ "fix": "https://github.com/azahar-emu/azahar/pull/2170",
+ "bug_id": 158,
+ "category": "meaning",
+ "expect": [
+  "meaning.color-mismatch"
+ ],
+ "expected_finding": "screenshot_frame has the surface format R8G8B8A8_UNORM; its bytes reach screenshot_bits by vkCmdCopyImageToBuffer and memcpy in R, G, B, A order, but screenshot_bits is a QImage::Format_RGB32 buffer (written out as BMP) whose byte order is B, G, R, A, so red and blue are swapped in the saved screenshot"
+}

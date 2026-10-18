@@ -1,0 +1,1 @@
+{"id": 5, "title": "Vertex normals supplied in view space, used as object space", "upstream": "https://github.com/processing/processing/issues/2904", "category": "meaning", "expect": ["meaning.frame-mismatch"]}
