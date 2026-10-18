@@ -1,0 +1,776 @@
+%% =====================================================================
+%% formal.tex -- Sections 4 (Formal Semantics) and 5 (Verification Algorithm).
+%% The algorithm of Figure fig:alg is transcribed from covenant/timing.py of the release.
+%% =====================================================================
+\providecommand{\Sc}[1]{\mathit{Sc}_{#1}}
+\providecommand{\ASc}[2]{\mathit{ASc}_{#1}^{#2}}
+\providecommand{\ESs}{\mathit{ES}^{\mathrm{src}}}
+\providecommand{\ESd}{\mathit{ES}^{\mathrm{dst}}}
+\providecommand{\AS}{\mathit{AS}}
+\providecommand{\chainto}{\rightsquigarrow}
+\providecommand{\mspecl}[1]{\ensuremath{\Rightarrow_{m}^{#1}}}
+\providecommand{\ordl}[1]{\mathit{ord}_{#1}}
+\providecommand{\Hpw}{\ensuremath{\Haz_C^{\mathit{pw}}}}
+\providecommand{\Hep}{\ensuremath{\Haz_C^{\mathit{ep}}}}
+\providecommand{\Hspec}{\ensuremath{\Haz_{\mathit{spec}}}}
+\providecommand{\kw}[1]{\textbf{#1}}
+\providecommand{\pc}[1]{\textsc{#1}}
+\providecommand{\posof}{\pi}
+\providecommand{\Hstrict}{\ensuremath{\Haz_{\mathit{spec}}^{\mathit{dom}}}}
+
+%% ===================================================================
+\section{Formal Semantics of the Recorded Frame}
+\label{sec:model}
+
+The guarantee of \sys is a chain of steps, from a run of the host program to a statement about that run
+(Table~\ref{tab:chain}). Each step is of one of three kinds: a definition or theorem that we prove
+(Appendix~\ref{app:proofs}), a named premise about capture or modelling (\S\ref{sec:premises}), or trusted code
+that we test but do not prove (\S\ref{sec:tcb}). We keep the three apart.
+
+\begin{table}[t]
+\caption{From captured execution to stated guarantee. ``Proved'' means proved in Appendix~\ref{app:proofs} for the
+algorithm of Figure~\ref{fig:alg}, relative to our transcription of the specification
+(Definitions~\ref{def:events}--\ref{def:spec}). The transcription follows the Vulkan specification at Vulkan-Docs
+tag \code{v1.4.365}, the revision of the headers our model driver and validation baseline use.}
+\label{tab:chain}
+\small
+\begin{tabular}{@{}p{0.30\columnwidth}p{0.30\columnwidth}p{0.32\columnwidth}@{}}
+\toprule
+Step & Bridge & Kind \\
+\midrule
+run $\to$ trace $\tau$ & A1, A2-H; scope A3 & premise about capture \\
+$\tau \to$ events $E(\tau)$ & A2, A-HOST, A-RT/EV/DS & premise about the model \\
+$E(\tau) \to \Hspec(\tau)$ & Def.~\ref{def:events}--\ref{def:spec} & definition (our transcription) \\
+algorithm $\to \Hspec$ & Thm.~\ref{thm:sound}, Lem.~\ref{lem:fast} & proved, under W1 (and W2 for Lem.~\ref{lem:fast}) \\
+source code $\to$ algorithm & \S\ref{sec:tcb} & trusted, tested \\
+no report $\to$ run is race-free & Cor.~\ref{cor:sched} & proved from the rows above \\
+no premise warning $\to$ host domain & Prop.~\ref{prop:hostdom} & proved; removes the device-to-host part of A-HOST \\
+recorded frames $\to$ later frames & Thm.~\ref{thm:window} & proved, conditional on P-PER, which the trace cannot establish \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Events and synchronization}
+\label{sec:events}
+
+\begin{definition}[Trace, queues and events]\label{def:events}
+A trace $\tau$ is the sequence of Vulkan calls of one run, in host order. From it \sys builds a set of queues
+$Q = \{\mathit{host}\} \cup Q_{\mathit{dev}} \cup \{\mathit{present}{:}i\}_i$, with one presentation queue per
+swapchain image, and for each queue $q$ a sequence of operations, appended in host order: the $k$-th operation of $q$
+is at position $(q,k)$, and $\mathit{call}(o)$ is the host call that appended $o$. An operation is an access, a
+barrier struct, a signal $\mathsf{Sig}(x,S)$ or a wait $\mathsf{Wait}(x,W)$ of a name $x$, or an event set/reset
+marker. $S$ and $W$ are stage masks or $\top$ (all stages). A queue submission is $\mathsf{Sig}(\mathit{submit}_c)$ on
+the host followed by $\mathsf{Wait}(\mathit{submit}_c,\top)$ at the head of the batch on its queue. A fence or idle
+wait is a signal on a device queue and a $\top$ wait on the host. Swapchain acquire and present are encoded on the
+presentation queues as in \S\ref{sec:impl}. A queue's operations after a wait whose name is never signalled are
+dropped.
+
+The events $E(\tau)$ are the accesses and the layout transitions; a transition $t_B$ sits at the position of its
+barrier struct $B$. An event $a$ has a queue $q(a)$, a position $p(a)$, a resource $r(a)$ and a region
+$R(a)$: a set of elements, which are the bytes of a buffer, or the aspect $\times$ layer slots of one mip level of an
+image. It also has a kind $k(a) \in \{\mathsf{R},\mathsf{W}\}$ (transitions are $\mathsf{W}$), a stage $s(a)$ (a
+pipeline stage, $\bot$ if unknown, or the pseudo-stage $\mathsf{LT}$ for a transition), an access flag $f(a)$ ($\bot$ if
+unknown), and four exemption tags: its command, its render-pass scope, its subpass instance with a load/store
+marker, and its atomic mode. A transition is \emph{explicit} if an image memory barrier performs it and
+\emph{automatic} if a render pass does. An event may carry a \emph{position token} $\posof(a)$
+(\S\ref{sec:fblocal}); $\posof(a) = \bot$ otherwise. The frames of $\tau$ are the segments of the host's call sequence that end at each
+\code{vkQueuePresentKHR}; $\mathit{fr}(o)$ is the frame that contains $\mathit{call}(o)$.
+\end{definition}
+
+\paragraph{Scopes}
+For a stage mask $M$, $\ESs(M)$ and $\ESd(M)$ are its source and destination \emph{execution} stage sets. They add to
+each named stage the logically earlier (source) or later (destination) stages of every synchronization pipeline
+that contains it, as listed in the Vulkan registry. \code{ALL\_COMMANDS}, \code{BOTTOM\_OF\_PIPE} (source) and
+\code{TOP\_OF\_PIPE} (destination) give $\top$; \code{TOP\_OF\_PIPE} (source) and \code{BOTTOM\_OF\_PIPE}
+(destination) give $\emptyset$. \code{ALL\_GRAPHICS} gives the graphics and mesh stages, \code{TRANSFER} also gives
+\code{COPY}, \code{BLIT}, \code{CLEAR} and \code{RESOLVE}, and the acceleration-structure build stage also gives the
+copy stage. $\AS(M)$, the \emph{access} stage set, applies only these group expansions; it adds no earlier or later
+stages. $\top$ contains every stage except $\mathsf{LT}$, which is in a set only if it is named, and $\bot$ is in a set
+only if the set is $\top$. The two fragment-test stages are interchangeable in access sets (decision M1, as in
+validation). $f \in_k A$ is access-mask membership for an access of kind $k$; \code{MEMORY\_READ} and
+\code{MEMORY\_WRITE} contain every read or write, including one whose flag is $\bot$, which no other mask contains,
+and \code{SHADER\_READ} does not contain \code{UNIFORM\_READ}.
+
+\begin{definition}[Dependencies, chains, ordering and races]\label{def:spec}
+A \emph{dependency} $D$ is a barrier struct $B=(S_1,A_1,S_2,A_2,r_B,R_B)$, where $r_B = \ast$ for a global
+barrier; a signal; or a wait. Each $D$ has a position $p(D)$ on a queue $q(D)$. A barrier struct also has a call
+identity, and an event wait has a cut $c_B$: the position of the latest set of its event before it, or $-\infty$ if
+there is none or a reset followed it. Each dependency has a first and a second stage set: $\ESs(S_1)$ and $\ESd(S_2)$
+for a barrier, $\ESs(S)$ for a signal and $\ESd(W)$ for a wait (empty on the side that does not apply). Host signals,
+host waits and submission waits have $\top$.
+
+\emph{Locality.} A barrier struct or subpass dependency $D$ also has a locality $\lambda(D)$: $\mathsf{loc}$ when its
+dependency flags hold \code{BY\_REGION}, or \code{VIEW\_LOCAL} with view offset~0; $\mathsf{nopos}$ for
+\code{VIEW\_LOCAL} with a non-zero view offset; and $\mathsf{glob}$ otherwise. Signals and waits are $\mathsf{glob}$.
+$F$ is the set of framebuffer-space stages (fragment shader, early and late fragment tests, color attachment output).
+An event $a$ is \emph{located} if $s(a) \in F \cup \{\bot, \mathsf{LT}\}$, that is, if it may be a framebuffer-space
+operation.
+
+\emph{Synchronization scopes.} An event $a$ with $q(a) = q(D)$ is in $\Sc{1}(D)$ if $p(a) < p(D)$, $s(a)$ is in
+$D$'s first stage set, $a$ is not in another struct of $D$'s call, and $p(a) < c_D$ when $D$ is an event wait. It
+is in $\Sc{2}(D)$ if $p(a) > p(D)$ and $s(a)$ is in $D$'s second stage set. Transitions are the exception: $t_B$ is
+in $\Sc{1}(B)$ and $\Sc{2}(B)$, in $\Sc{1}$ of a later signal with $S = \top$, and in $\Sc{2}$ of an earlier wait
+with $W = \top$ or an earlier submission wait, and in no other scope.
+
+\emph{Access scopes,} for an element $\ell$: $a \in \ASc{1}{\ell}(D)$ if $a \in \Sc{1}(D)$ and, when $D$ is a barrier
+struct, $s(a) \in \AS(S_1)$, $f(a) \in_{k(a)} A_1$, and $r_B = \ast$ or ($r_B = r(a)$ and $\ell \in R_B$).
+$\ASc{2}{\ell}(D)$ is defined in the same way from $S_2$ and $A_2$. A signal's access scopes are its whole
+synchronization scopes, and so are a wait's. A transition is in both access scopes of its own barrier.
+
+\emph{Links.} A \emph{link} $(D,c)$ is a dependency with a class $c \in \{\mathsf{G},\mathsf{N},\mathsf{L}\}$ that
+restricts its second stage set: to all of it ($\mathsf{G}$), to its stages outside $F$ ($\mathsf{N}$), or to its
+stages in $F$ ($\mathsf{L}$). A link is \emph{entered locally} when $\lambda(D) \ne \mathsf{glob}$ and it is entered
+from a located event or from an $\mathsf{L}$ link. A link entered locally has class $\mathsf{N}$ or $\mathsf{L}$
+($\mathsf{L}$ only if $\lambda(D) = \mathsf{loc}$); every other link has class $\mathsf{G}$.
+
+\emph{Chaining.} $(D,c) \chainto (D',c')$ if $D$ and $D'$ are on one queue, $p(D) < p(D')$, $D$'s second stage set
+restricted by $c$ meets $D'$'s first stage set, they are not two structs of one call, $p(D) < c_{D'}$ when $D'$ is an
+event wait, and $c'$ follows the rule above; or if $D$ is $\mathsf{Sig}(x,\cdot)$, $D'$ is $\mathsf{Wait}(x,\cdot)$
+and $c = c' = \mathsf{G}$. On the host, every earlier dependency chains into every later one.
+
+\emph{Ordering.} $a \xspec b$ if $q(a) = q(b) = \mathit{host}$ and $p(a) < p(b)$, or if there is a chain $(D_1,c_1)
+\chainto \dots \chainto (D_n,c_n)$ ($n \ge 1$) with $a \in \Sc{1}(D_1)$, $c_1$ given by the rule above with $D_1$
+entered from $a$, $b \in \Sc{2}(D_n)$ with $s(b)$ in $D_n$'s second stage set restricted by $c_n$, and
+$\posof(a) = \posof(b) \ne \bot$ if $c_n = \mathsf{L}$. $a \mspecl{\ell} b$ holds if the same is true with $a \in
+\ASc{1}{\ell}(D_1)$ and $b \in \ASc{2}{\ell}(D_n)$; host program order is also a memory order, and a host wait is
+treated as one (premise A-HOST, \S\ref{sec:hostdom}). The intermediate dependencies need only chain.
+
+\emph{Races.} $a$ and $b$ \emph{conflict} if $r(a) = r(b)$, $R(a) \cap R(b) \ne \emptyset$, one of them writes, and
+they are not exempt. Five kinds of pair are exempt: (E1)~two accesses of one command; (E2)~attachment accesses of one
+render-pass scope on one queue (rasterization order); (E3)~a load or store operation and an access of its subpass
+instance; (E4)~two accesses on one queue with compatible atomic modes; (E5)~two transitions on one queue, at least one of them
+explicit (rule R-LT).
+They \emph{race at} $\ell \in R(a) \cap R(b)$ if neither $\ordl{\ell}(a,b)$ nor $\ordl{\ell}(b,a)$ holds, where
+$\ordl{\ell}(x,y)$ is $x \mspecl{\ell} y$ if $k(x) = \mathsf{W}$ and $x \xspec y$ otherwise. We write $a \spec b$ when
+$\ordl{\ell}(a,b)$ holds for every $\ell \in R(a) \cap R(b)$. $\Hspec(\tau)$ is the set of pairs that race at some
+element.
+\end{definition}
+
+\paragraph{Rule R-LT}
+Layout transitions ``performed via image memory barriers execute in their entirety in submission order, relative to
+other image layout transitions submitted to the same queue, including those performed by render passes'', so a pair of
+transitions on one queue of which at least one is by an image memory barrier is exempt (E5). Two automatic
+transitions of render passes are outside this sentence and are checked like any other pair (the matrix of transition
+pairs, with the specification text and a regression test for each cell, is in \supp{B}). The order is not
+transitive: ``an application must not rely on ordering of image layout transitions to influence ordering of other
+commands''. R-LT therefore adds no chain, and a write ordered before the first transition but not before the second
+still races the second. This wording entered the specification in v1.4.326; earlier revisions gave transitions an
+implicit dependency, so R-LT is the newer, weaker rule. The same paragraph adds that the ordering ``only applies if the
+implementation performs actual read/write operations during the transition''; R-LT is consistent with it, since a
+transition that performs no read or write leaves nothing for the exempt pair to race on, and R-LT never orders other
+commands through a transition.
+
+\paragraph{Framebuffer-local dependencies}
+\label{sec:fblocal}
+A dependency with \code{BY\_REGION} is \emph{framebuffer-local} for a pair of framebuffer-space operations: it orders
+them only where their framebuffer regions overlap, and \code{VIEW\_LOCAL} adds the same restriction per view. A pair
+in which either operation is in a stage outside framebuffer space is ordered as by any other dependency, and a chain
+with one ordinary link is ordinary. Definition~\ref{def:spec} encodes this with the link classes: $\mathsf{N}$ carries
+the ordinary part of a local dependency entered from a located event, $\mathsf{L}$ its framebuffer-space part, and any
+ordinary link returns the chain to $\mathsf{G}$. An $\mathsf{L}$ ending orders only an access at the source's own
+position, which the trace translation records as a token: for an attachment read or write, a load, store or resolve
+operation, an automatic transition of an attachment, or a single-sample input-attachment read, $\posof(a)$ is the image
+with the base mip level and base layer of the view through which it is accessed. Every other access has
+$\posof(a) = \bot$: a storage, sampled or uniform access of one fragment can reach any byte, so no local dependency
+orders it.
+
+\begin{lemma}[Position tokens]\label{lem:tokens}
+Let $\posof(a) = \posof(b) \ne \bot$. Then every texel that $a$ and $b$ both access is accessed by each of them at the
+same framebuffer coordinate and view.
+\end{lemma}
+\begin{proof}
+A framebuffer-space operation with a token accesses, at framebuffer coordinate $(x,y)$ of view $v$, the texel
+$(x,y)$ of layer $\mathit{base}+v$ of mip $\mathit{base}$ of its image, and no other texel; a single-sample input
+attachment read is restricted to its own pixel by the specification. Two operations whose views have the same image,
+base mip and base layer therefore map each common texel to the same coordinate and view.
+\end{proof}
+
+So an $\mathsf{L}$ chain from $a$ orders $b$ at every common texel, and treating \code{nopos} links as $\mathsf{N}$
+only, and tokenless accesses as unordered by $\mathsf{L}$ links, can only add races. Traces recorded without subpass
+dependency flags are read with every explicit subpass dependency local, the weaker reading. Theorem~\ref{thm:sound}
+and Lemma~\ref{lem:fast} are proved for this definition (Appendix~\ref{app:sound}), and the executable reference
+implements it.
+
+\paragraph{The verified configuration}
+Definition~\ref{def:spec} follows the specification on layout transitions from \code{UNDEFINED}: a write before such a
+transition must be made available to it ($\ordl{\ell}$ uses $\mspecl{\ell}$ when the earlier access writes), although the
+transition discards the contents. The specification requires that all memory writes be made available before a
+layout transition executes, and \code{UNDEFINED} only permits the old contents to be discarded. The \emph{verified
+configuration} is \sys's default: spec-strict transitions, conservative host capture (\S\ref{sec:capture}) and the
+weaker reading of unrecorded subpass flags. Two opt-in switches leave it, a heuristic that accepts an execution
+dependency before a transition from \code{UNDEFINED} (relaxation R1) and byte-difference host capture; each report
+records its configuration, and every theorem in this paper is stated for the verified one.
+
+%% ===================================================================
+\subsection{Premises}
+\label{sec:premises}
+
+Table~\ref{tab:assume} lists the premises. They are of three kinds, plus the periodicity premises of
+\S\ref{sec:window}. \emph{Capture} premises (A1, A2-H) relate the run
+to the trace, and A3 states the scope. \emph{Model} premises (A2, A-HOST and the rows for ray tracing, events and
+dynamic state) relate the trace to the events. \emph{Well-formedness} premises (W1, W2) hold by construction of the
+trace translation. The checker's own correctness is not a premise. Section~\ref{sec:tcb} states which code is trusted and how it is
+tested.
+
+\begin{table}[tp]
+\caption{Premises of the theorems, and their status. TLAS/BLAS: top-/bottom-level acceleration structure; SBT:
+shader binding table; BDA: buffer device address.}
+\label{tab:assume}
+\footnotesize
+\begin{tabular}{@{}p{0.27\columnwidth}p{0.68\columnwidth}@{}}
+\toprule
+Premise & Status \\
+\midrule
+\multicolumn{2}{@{}l}{\emph{Capture}} \\
+A1 trace faithfulness & by construction of the recording driver: every call of the run with its arguments, in one
+host order. A command the model does not interpret is reported (\code{timing.unmodelled-command}); no claim is made for it \\
+A2-H conservative host capture & page protection: a page written between two calls is charged to every binding it
+overlaps, at that call boundary (\S\ref{sec:capture}). The opt-in byte-difference capture is outside A2-H \\
+A3 one host path (scope) & only the recorded path and one interleaving of host threads \\
+\midrule
+\multicolumn{2}{@{}l}{\emph{Model}} \\
+A2 device accesses over-approximated & an event per access of a recorded command, with its stage and flag (or $\bot$)
+and a region that contains it; exemption tags never claimed falsely. Byte intervals; aspect $\times$ layer per mip;
+static binding use; every written element of a bound descriptor array, except under a holding index guard
+(Lemma~\ref{lem:guard}). Aliasing of distinct resources is not modelled \\
+A-HOST host-domain operations & host-to-device: a submission makes earlier host writes available and visible to the
+device. This holds for host-coherent memory, the only host-visible memory the model driver offers, so it holds for
+the recorded run; for non-coherent memory on another device it needs the application's
+\code{vkFlushMappedMemoryRanges}. Device-to-host: a host wait (fence, timeline value, query with \code{WAIT}, idle)
+orders the waited scope before later host events (specified), and Definition~\ref{def:spec} also treats it as a memory
+order, which the specification does not grant. \sys reports every pair that relies on the latter as a premise warning;
+with none reported, A-HOST is used only for host-to-device (Proposition~\ref{prop:hostdom}). Host reads are not events,
+so no claim on host readback \\
+A-RT1 TLAS references & read at submission from host-visible instance buffers; if unresolvable, every live BLAS \\
+A-RT2 device addresses & resolved at record time against live buffers; an unmatched address is reported \\
+A-RT3 shader BDA accesses & not tracked; the pipeline is listed as ``untracked'' \\
+A-RT4 query results & not memory (AS properties, compacted sizes, timestamps) \\
+A-RT5 \code{vkCmdTraceRays}\-\code{Indirect2KHR} & SBT in GPU memory, unknown; reported \\
+A-RT6 host AS builds/copies & a host write of the destination; inputs not tracked \\
+A-EV1 events & a wait is a barrier whose first scope is cut at the latest set of the event on its queue; a host
+\code{vkSetEvent} orders nothing on the device (reported) \\
+A-DS1 dynamic state & whitelisted state folded into the over-approximation (all bound vertex buffers read, all color
+attachments written) \\
+\midrule
+\multicolumn{2}{@{}l}{\emph{Well-formedness} (by construction of the trace translation)} \\
+W1 unique signals & each name is signalled at most once (numbered binary instances, timeline values, fence
+generations) \\
+W2 contiguity & the accesses of one command lie on one queue with nothing between them; no wait, signal or access of
+another scope (instance) lies between two accesses of one render-pass scope (subpass instance); the structs of one
+barrier call are consecutive (Lemma~\ref{lem:fast} only) \\
+\midrule
+P-MONO, P-WSI, P-PER & Theorem~\ref{thm:window} only (\S\ref{sec:window}); the first two and periodicity inside
+$\tau$ can be checked on $\tau$, continuation beyond it cannot \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%% ===================================================================
+\subsection{Soundness}
+
+Let $\Hpw(\tau)$ be the set of pairs that the pairwise mode of Figure~\ref{fig:alg} reports, and $\Hep(\tau)$ the set
+that the epoch mode reports.
+
+\begin{theorem}[Soundness of the checking algorithm]\label{thm:sound}
+Let $\tau$ satisfy W1, and run the algorithm of Figure~\ref{fig:alg} in the verified configuration.
+If \pc{Ordered}$(a,b)$ returns \emph{ok} for conflicting events $a, b$, then $a \spec b$. Hence
+$\Hspec(\tau) \subseteq \Hpw(\tau)$.
+\end{theorem}
+
+The proof (Appendix~\ref{app:sound}) follows the algorithm's own structure, in five lemmas. (i)~The order in which the
+algorithm processes operations extends program order and the pairing of signals with waits. (ii)~The barrier chain
+state of an event reaches exactly the links, with their classes, that a chain of Definition~\ref{def:spec} reaches
+from it; in memory mode it reaches only links whose first dependency covers the whole event region. (iii)~A same-queue answer of
+\emph{ok} exhibits such a chain. (iv)~An accepted relay entry of a wait record (an entry at or after $p(e)$ that passes its stage filter)
+means that a chain leads from $e$ into that wait; this lemma needs W1. (v)~Each way in which a wait is accepted puts
+the later event in a scope of a chain that starts at that wait. Finally, the pairwise mode presents every
+earlier conflicting event as a candidate. A race is therefore never answered \emph{ok}, and it is reported unless it
+is exempt, and exempt pairs are not races.
+
+\begin{corollary}[What an accepted trace guarantees]\label{cor:sched}
+Assume also A1, A2, A2-H, A-HOST and the modelling rows of Table~\ref{tab:assume}. If $\Hspec(\tau) = \emptyset$
+(in particular, if the pairwise mode reports nothing, or if the epoch mode reports nothing under the premises of
+Lemma~\ref{lem:fast}), then on the recorded host path every two conflicting memory accesses that the model covers are
+ordered as Definition~\ref{def:spec} requires. Hence no device schedule consistent with $\tau$'s synchronization lets
+them race. If, moreover, no premise warning is reported, this holds with host waits given only their specified
+execution dependency (Proposition~\ref{prop:hostdom}).
+\end{corollary}
+
+The bridge from the run to $E(\tau)$ is an abstraction lemma (Appendix~\ref{app:abstraction}). A2 and A2-H give each
+covered access $\alpha$ of the run a representative event $a$ whose scopes are subsets of $\alpha$'s. An ordering
+of the representatives therefore implies the same ordering of the accesses, and every race of covered accesses is a
+race of their representatives.
+
+\subsection{Host-domain operations}
+\label{sec:hostdom}
+A device write is visible to a later host write of the same memory only after a \emph{domain operation}: a memory
+dependency whose destination access mask holds \code{HOST\_READ} or \code{HOST\_WRITE}. A fence or a host wait alone
+gives an execution dependency; the specification states that it does not make device results visible to the host.
+Definition~\ref{def:spec} treats a host wait as a memory order, so on its own it would accept a device write followed,
+after a fence wait, by a host write with no such barrier. We therefore separate that case.
+
+\begin{definition}[Host-domain ordering]\label{def:hostdom}
+A device write $e$ is \emph{host-domain ordered} before a host write $u$ if there is a barrier struct $B$ with $e
+\mspecl{\ell} B$ for every $\ell \in R(e) \cap R(u)$ (a chain from $e$ whose last link is $B$), $\mathsf{HOST}$ in $B$'s
+second stage and access stage sets, \code{HOST\_READ}, \code{HOST\_WRITE} or \code{MEMORY\_*} in its second access
+mask, and a chain from $B$ whose last link holds $u$ in its second scope. $\Hstrict(\tau)$ is $\Hspec(\tau)$ plus every pair of a device write and a later host write
+that conflict and are not host-domain ordered.
+\end{definition}
+
+\sys checks this for every pair it accepts in which a device write precedes a host write: it looks for such a $B$ on
+the write's queue, reached by the write's memory chain and recorded before the latest position of that queue that a
+host wait holds through signals of every stage. When there is none, it reports the pair as a premise warning
+(\code{timing.premise-host-domain}). The test is conservative: a domain operation on another queue is not credited.
+
+\begin{proposition}[Host domain]\label{prop:hostdom}
+Under the premises of Theorem~\ref{thm:sound}, if the pairwise mode, or the epoch mode under W2, reports no error and
+no premise warning, then $\Hstrict(\tau) = \emptyset$.
+\end{proposition}
+
+The proof (Appendix~\ref{app:hostdom}) shows that an accepted pair without a warning has the barrier the definition
+asks for, and that in epoch mode a write that stands in for a dropped device write carries the domain operation over to
+it, as in Lemma~\ref{lem:fast}. In the opposite direction no premise is left for the recorded run: the model driver
+offers only host-coherent host-visible memory, where a submission performs the host-to-device domain operation. On a
+device whose application chooses non-coherent memory, the host path differs (A3) and its flushes become a premise.
+
+\subsection{Descriptor arrays}
+\label{sec:guards}
+A2 charges a draw with a read of every written element of each descriptor array its shaders use statically, which is
+sound but imprecise when a shader selects one element per instance. \sys narrows the read only when it can show which
+elements a draw can select. An \emph{index guard} $g$ of a direct, non-indexed draw $d$ holds when: (C1) every index
+into the array is a constant or a chain of at most four constant shifts and masks of one flat 32-bit integer vertex
+attribute; (C2) the pipeline has only vertex and fragment stages, no dynamic vertex-input state and no instance
+divisor; (C3--C4) every attribute word $d$ fetches lies in host-written pages with recorded contents, rebuilt as of
+$d$'s submission; (C5) no device command writes those bytes, and no image is bound on them; (C6) no host write to them
+races $d$'s vertex-input read, and none recorded after the submission is ordered before it; (C7) every decoded index is
+in range; (C8) the array holds sampled images. The decoded set $I(d)$ is the image of the decoded words under the
+index chain. Under a holding guard, elements outside $I(d)$ are charged only if the guard fails.
+
+\begin{lemma}[Index guards]\label{lem:guard}
+Let $g$ hold for draw $d$ in the final check. Then in every device schedule consistent with $\tau$'s synchronization,
+every invocation of $d$ indexes the array only with elements of $I(d)$, so the narrowed events still represent every
+access of the run (A2).
+\end{lemma}
+
+The proof (Appendix~\ref{app:guard}) has three steps: the vertex fetch reads the rebuilt bytes in every schedule,
+because no device command writes them (C5), every host write to them is ordered before the draw at or before its
+submission or makes the guard fail (C6), and a race with any of them would be reported by Theorem~\ref{thm:sound}; the
+shader maps those bytes into $I(d)$ (C1, C2, C7); and the events dropped therefore stand for no access. The guard is
+not self-supporting: C5 and C6 mention only events on the attribute bytes, which are buffer bytes, and the
+happens-before order, while the events a guard removes are image reads (C8), and accesses create no dependencies. So
+the set of failing guards is the same whether or not the conditional reads are present; the checker computes it by
+re-running with failed guards widened until no new guard fails. Any other index source (push constants, uniforms,
+storage buffers, indirect or indexed draws) keeps the full charge.
+
+\subsection{Guarantee eligibility}
+\label{sec:eligible}
+Every check reports three facts separately. \emph{Checking complete}: every queue ran to its end (no wait was left
+without a signal). \emph{Reporting complete}: report grouping finished within its budget; when it does not, every
+diagnostic is still reported, as a site group without a repair, and the result is marked incomplete (grouping never
+removes a diagnostic, so this does not affect the guarantee). \emph{Guarantee-eligible}: the verified configuration,
+checking complete, no detected capture or coverage violation (an unmodelled command, an untracked mapping, a capture
+warning, host writes from another thread), and no premise warning. For an eligible trace, an empty error report is an
+instance of Corollary~\ref{cor:sched} and Proposition~\ref{prop:hostdom}; P2 and the model premises remain assumptions.
+\S\ref{sec:eval} reports eligibility per evaluated trace.
+
+\paragraph{What the theorem covers, and what it does not}
+\label{sec:cover}
+\emph{Proved:} Theorem~\ref{thm:sound} and Lemma~\ref{lem:fast} relate the algorithm to
+Definitions~\ref{def:events}--\ref{def:spec}. They are proved by hand, not mechanized, and relative to our
+transcription of the specification, whose fidelity the differential tests of \S\ref{sec:eval-sem} test against
+synchronization validation. \emph{Assumed about capture:}
+\begin{itemize}
+\item \emph{trace faithfulness} (A1): the trace holds the calls of this run, in host order;
+\item \emph{conservative host capture} (A2-H): for every CPU store $\sigma$ to mapped memory, the trace has a host
+  write event $w$ whose region contains $\sigma$'s bytes on every resource bound there, and every event ordered
+  before $w$ (after $w$) is ordered before (after) $\sigma$. Page protection gives this: the first store to a page
+  after a call faults and marks the page, the driver re-protects every page at the next call, and the write is
+  placed between those two calls, where the host queue has no other operation. It does not depend on whether the
+  store changed a value. The byte-difference mode charges only changed bytes, and is therefore a heuristic outside
+  the corollary; so is the page-straddle rule that charges a shared page only to recently bound buffers;
+\item \emph{the recorded host path only} (A3): no other path or host-thread interleaving.
+\end{itemize}
+\emph{Assumed about the model:} over-approximated device accesses (A2), the host-domain operations (A-HOST) and the
+modelling rows of Table~\ref{tab:assume}. \emph{Not covered:} host paths the run did not take, including other
+driver responses such as image counts, \code{VK\_SUBOPTIMAL\_KHR} results and swapchain recreation; other
+interleavings of a multithreaded host; host \emph{reads} of mapped memory; accesses through aliased memory of distinct
+resources; shader device-address accesses (A-RT3), query results (A-RT4), the inputs of host acceleration-structure
+builds (A-RT6) and unmodelled commands; memory ordering inside a shader; and semantic conventions. The protocol checks
+of \S\ref{sec:protocol} are separate guarantees, not consequences of Theorem~\ref{thm:sound}.
+
+%% ===================================================================
+\subsection{Precision}
+\label{sec:precision}
+
+An exact access abstraction does not, by itself, make the checker exact. Exact accesses fix $E(\tau)$, but they do
+not make the decision procedure exact. The algorithm decides whether a
+dependency covers an access with one region test (``the barrier's region contains the whole access region''), while
+Definition~\ref{def:spec} decides element by element. For example, let a write $a$ cover bytes $[0,256)$, let one
+barrier call carry two buffer structs for $[0,128)$ and $[128,256)$, and let a read $b$ of $[0,256)$ follow. Every
+byte is ordered, so the pair is not a race. Neither struct contains all of $R(a)$, however, so the pairwise mode
+reports it. What does hold is the following.
+
+\begin{proposition}[Conditional precision of the pairwise mode]\label{thm:complete}
+Let $\tau$ satisfy the premises of Theorem~\ref{thm:sound}. Assume further that (i)~no signal has a stage mask other
+than $\top$, and (ii)~$\tau$ is \emph{region-uniform}: for every barrier struct $B$ with a region on resource $r$ and
+every event $a$ on $r$, either $R_B \supseteq R(a)$ or $R_B \cap R(a) = \emptyset$. Then $\Hpw(\tau) = \Hspec(\tau)$.
+\end{proposition}
+
+Condition (ii) is the missing condition, and it can be met by construction. Splitting every access at all barrier
+region bounds on its resource yields a region-uniform trace $\tau^\sharp$ with the same races (the parts of one access
+are disjoint, so they never conflict, and Definition~\ref{def:spec} is decided per element; Appendix~\ref{app:precision}).
+The pairwise mode on $\tau^\sharp$ is exact under (i). The checker does not split, so it may report
+pairs that are not races when barrier regions cut accesses (the generator setting with partial region coverage,
+\S\ref{sec:eval-sem}).
+Without (i), the relay of a masked signal keeps a bounded number of stage-filtered entries per queue
+(Figure~\ref{fig:alg}), and dropping one only removes orderings, so the checker can be stricter there.
+The proposition is exact relative to $E(\tau)$. Relative to the \emph{run}, a report can also come from the
+abstraction: an over-approximated region, an unknown stage or flag (which lies only in scopes of every stage or every
+access), a captured host page, or a choice of the transcription that is stricter than the specification
+(\S\ref{sec:eval-wholeframe}). Exact events remove the first three, but not a region cut, which is why an exact access
+abstraction alone does not make the checker exact. The epoch mode reports a subset of $\Hpw$
+(Lemma~\ref{lem:modes}), so it can miss pairs, but it flags at least one event of every race (Lemma~\ref{lem:fast}).
+
+%% ===================================================================
+\subsection{Periodic executions}
+\label{sec:window}
+
+A trace covers finitely many frames. A program usually runs longer, so we ask when a finite window decides the race
+freedom of every later frame. The answer is conditional, because the future is not in the trace.
+
+\begin{definition}[Periodic continuation]\label{def:periodic}
+$\tau$ is \emph{periodic after warm-up $w$ with period $p$} if there is a shift $\sigma$ from the operations of frames
+$\ge w$ onto those of frames $\ge w+p$. The shift preserves queues (up to a permutation of the swapchain images),
+program order, all attributes up to a renaming of resources and synchronization objects, and the pairing of waits with
+signals, and it maps frame $i$ onto frame $i+p$. Its \emph{periodic continuation} $\tau^\infty$ is the unique infinite
+event structure whose first frames are those of $\tau$ and on which $\sigma$ extends to all frames $\ge w$.
+\end{definition}
+
+The premises are these. \textbf{P-MONO}: every wait is paired with a signal appended earlier in host order (no
+wait-before-signal). \textbf{P-WSI}: every device access to a swapchain image is recorded in a command submitted
+after an acquire of that image and before its next present, and no other event touches a swapchain image.
+\textbf{P-PER}: the run continues as $\tau^\infty$. The parameters are properties of $\tau^\infty$; because $\sigma$
+preserves them, they can be measured on the first $w+p+D$ frames of $\tau$. $N$ is the least number such
+that, before the first submission or host access of each frame $j \ge w$, the host has waited on a $\top$ signal of
+every device queue that follows all that queue's operations of frames $\le j - N$. $G$ is the largest frame distance
+between a device access $b$ to a swapchain image and the acquire it is held under or the present that ends it.
+
+\begin{theorem}[Window, conditional on periodic continuation]\label{thm:window}
+Let $\tau$ be periodic after $w$ with period $p$, satisfy P-MONO, P-WSI and the premises of Theorem~\ref{thm:sound},
+and let $D = \max(N, G+1)$ and $M = w + p + D - 1$. Every race of $\tau^\infty$ has a translate of a witness race in
+the first $M$ frames. Hence, if $\tau$ has at least $M$ frames, $\Hspec(\tau^\infty) = \emptyset$ if and only if the
+first $M$ frames of $\tau$ have no race. Under P-PER, a checker-clean window therefore implies race freedom of the
+whole run (Corollary~\ref{cor:sched}).
+\end{theorem}
+
+The derivation (Appendix~\ref{app:window}) uses three facts. First, by P-MONO every chain runs forward in host order,
+so the ordering of two events depends only on the operations appended between them, and a prefix of $\tau^\infty$ has
+the same races as $\tau^\infty$ on its events. Second, two events that are not presentation-engine events and lie $N$
+or more frames apart are ordered through the host's fence or idle wait. Third, presentation-engine accesses are
+\emph{not} bounded by any frame fence. A fence proves that a submission has completed, never that the present waiting
+on its semaphore, or the engine's read of the image, has. They are bounded through the acquire of the same image
+instead. Under P-WSI, if a device access $b$ races any presentation-engine read of its image, then it also races
+either the read that ends at the acquire that $b$ is held under, or the read of the present that ends it, and both lie
+within $G$ frames of $b$. $G$ is 0 when every frame acquires, renders to and presents its own image.
+
+\paragraph{What the trace can and cannot establish}
+P-MONO, P-WSI, $N$, $G$ and periodicity within $\tau$ are properties of the trace, and can be checked on it.
+P-PER is a claim about host behaviour after the trace ends, which input, resizing or streaming can change, and no
+finite trace establishes it. Theorem~\ref{thm:window} therefore does not by itself license applying a barrier plan to
+frames that were not traced. Section~\ref{sec:elide} restricts the transformation guarantee to the recorded execution,
+and makes no claim about reusing a plan beyond it. The window analysis of the checker
+computes $N$ from device queues only, compares frame signatures that abstract which signal each wait consumes, and
+checks $w + N + 2$ frames. That bound reaches $M$ only when $p + \max(N, G+1) \le N + 3$, for example when $p \le 3$
+and $G < N$, and its $N$ ignores the presentation queues. We therefore report it as a measurement on the traces and
+not as an instance of the theorem (\S\ref{sec:eval-sem}).
+
+%% ===================================================================
+\subsection{Trusted computing base}
+\label{sec:tcb}
+
+Theorem~\ref{thm:sound} and Lemma~\ref{lem:fast} are proved for the algorithm of Figure~\ref{fig:alg}, not for its
+Python source. We do not assume that ``the checker implements the specification relation''. Instead we state an
+explicit trusted computing base: the code whose agreement with the model we trust, and how each
+part is tested (Table~\ref{tab:tcb}). Everything else (report grouping and repair synthesis, diagnostic text, the
+structure checks, the window analysis, the optimizer's search) is outside it. Their errors can cost precision or
+readability, but they cannot turn a race into an accepted trace, because every verdict passes through T4.
+
+\begin{table}[t]
+\caption{Trusted computing base and how each part is tested.}
+\label{tab:tcb}
+\small
+\begin{tabular}{@{}p{0.30\columnwidth}p{0.64\columnwidth}@{}}
+\toprule
+Trusted code & Tested by \\
+\midrule
+T1 recording driver (\code{covvk.cpp}): calls, arguments, host-write pages (A1, A2-H) & the same binaries under
+synchronization validation in the whole-frame (1,251 programs) and ray-tracing/mesh (13) differential tests; capture
+tests \\
+T2 trace translation (\code{host\_trace}, \code{ranges}, SPIR-V access analysis): events, regions, exemption tags,
+W1, W2 & unit tests; the two whole-frame differential tests; 114 \bench reproductions \\
+T3 stage and access algebra (pipeline tables, scope expansion) & regression unit tests; an executable reference
+with independently written tables; 750 barrier mutants under validation \\
+T4 checker core (run loop, \pc{Ordered}, chain state, \pc{Access}) & executable reference agreement
+(\S\ref{sec:eval-sem}); property tests of $\Hspec \subseteq \Hpw$, $\Hep \subseteq \Hpw$ and criterion E on random
+frames; the differential tests above \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%% ===================================================================
+\section{Verification Algorithm}
+\label{sec:algo}
+
+Figure~\ref{fig:alg} gives the algorithm as \sys implements it. One pass processes every queue in
+turn, as far as its next unsatisfied wait, until no queue can progress. Each queue has a vector clock
+$\mathit{VC}[q]$~\cite{mattern1989virtual}. A signal records a copy of its queue's clock, and a wait joins the
+recorded clock into its own and keeps a \emph{wait record}. A signal also records a \emph{relay}: for each queue,
+the positions of that queue known to be in the signal's first scope along the whole path of semaphores that reached
+it, each with the stage filter of a masked signal at its first hop. Barrier structs are appended to a per-queue list. Each
+access, and each transition, is handed to \pc{Access}, which compares it with earlier events on the same resource.
+
+\begin{figure*}[tp]
+\scriptsize
+\begin{minipage}[t]{0.49\textwidth}
+\begin{tabbing}
+\quad\=\quad\=\quad\=\quad\=\quad\=\kill
+\kw{procedure} \pc{Check}$(\tau, \mathit{mode})$ \hfill \emph{Algorithm 1} \\
+1\>$\mathit{VC}[q] \gets 0$; $\mathit{Bars}[q], \mathit{Waits}[q] \gets [\,]$; $\mathit{Full}[q] \gets 0$; $\mathit{RA}[q], \mathit{RF}[q] \gets \emptyset$ \quad for all $q$ \\
+2\>\kw{repeat} \kw{for} $n$ \kw{in} queues \kw{while} $n$ has a next operation $o$: \\
+3\>\>\kw{if} $o = \mathsf{Wait}(x,W)$: \kw{if} $x$ not yet signalled: \kw{break} \\
+4\>\>\>$(c, \rho) \gets \mathit{Sig}[x]$; $E \gets \top$ \kw{if} $W{=}\top$ or $n{=}\mathit{host}$ \kw{else} $\ESd(W)$ \\
+5\>\>\>\kw{if} $E \setminus \{\mathsf{LT}\} \ne \emptyset$: $\mathit{VC}[n] \gets \max(\mathit{VC}[n], c)$; push $w = (E, |\mathit{Bars}[n]|, \rho)$ onto $\mathit{Waits}[n]$ \\
+6\>\>\>\>$\mathit{RA}[n] \gets \mathit{RA}[n] \sqcup \rho$; \kw{if} $E = \top$: $\mathit{RF}[n] \gets \mathit{RF}[n] \sqcup \rho$ and \\
+\>\>\>\>\>$\mathit{Full}[n][m] \gets \max(\cdot, t)$ for every unfiltered $(t, \bot) \in \rho[m]$ \\
+7\>\>$\mathit{VC}[n][n] \mathrel{+}= 1$; $t \gets \mathit{VC}[n][n]$ \hfill $\triangleright$ $t = p(o)$ \\
+8\>\>\kw{if} $o = \mathsf{Sig}(x,S)$: $\mathit{Sig}[x] \gets (\mathit{VC}[n], \pc{Relay}(n, t, S))$ \\
+9\>\>\kw{if} $o$ is a barrier struct $B$: append $(t,B)$ to $\mathit{Bars}[n]$; \kw{if} $B$ transitions: \pc{Access}$(t_B)$ \\
+10\>\>\kw{if} $o$ is an access: \pc{Access}$(o)$ \\
+11\>\kw{until} no queue progressed; report \code{deadlock} for blocked queues \\[3pt]
+\kw{function} \pc{Relay}$(n, t, S)$ \quad $\triangleright$ per queue $m$: entries $(t_m, \varphi)$ \\
+1\>$\varphi_0 \gets \bot$ \kw{if} $S{=}\top$ \kw{else} $(n, t, |\mathit{Bars}[n]|, \ESs(S))$; $\rho \gets \{n \mapsto (t, \varphi_0)\}$ \\
+2\>\kw{if} $S = \top$: \kw{return} $\rho \sqcup \mathit{RA}[n]$ \hfill $\triangleright$ every wait chains into it \\
+3\>\kw{if} $\ESs(S) \setminus \{\mathsf{LT}\} \ne \emptyset$: $\rho \gets \rho \sqcup \mathit{RF}[n]$ \\
+4\>\kw{for} $w$ \kw{in} $\mathit{Waits}[n]$ with $w.E \ne \top$: \kw{if} $\pc{Chain}(w).X_{\mathit{tot}}$ meets $\ESs(S)$: $\rho \gets \rho \sqcup w.\rho$ \\
+5\>\kw{return} $\rho$ \\[3pt]
+\kw{function} \pc{Ordered}$(e, u)$ \quad $\triangleright$ $e$ processed before $u$; $m{=}q(e)$, $n{=}q(u)$ \hfill \emph{Algorithm 2} \\
+1\>$\mathit{mem} \gets (k(e) = \mathsf{W})$;\ $O \gets R(e) \cap R(u)$ \hfill $\triangleright$ verified configuration$^\dagger$ \\
+2\>\kw{if} $m = n = \mathit{host}$: \kw{return} ok \\
+3\>\kw{if} $m = n$: $C \gets \pc{Chain}(e)$ advanced over $\mathit{Bars}[n]$ \\
+4\>\>\kw{if} $u = t_B$: \kw{if} $C$ reached $B$ last, globally, or locally with $\posof(e){=}\posof(u){\ne}\bot$ \\
+\>\>\>\>\kw{or} $e \in \Sc{1}(B)$ (and $e \in \ASc{1}{\ell}(B)\ \forall \ell \in O$ if $\mathit{mem}$; and, if \\
+\>\>\>\>$\lambda(B) {\ne} \mathsf{glob}$ and $e$ located, $\lambda(B){=}\mathsf{loc}$ and $\posof(e){=}\posof(u){\ne}\bot$): \kw{return} ok \\
+5\>\>\kw{elif} $C.\pc{Reaches}(u, \mathit{mem}, O)$: \kw{return} ok \\
+6\>\>\kw{return} ok \kw{if} \pc{ViaWait}$(e,u,\mathit{mem},O)$ \kw{else} \emph{same} \\
+7\>\kw{if} $\mathit{VC}[n][m] < p(e)$: \kw{return} \emph{race} \\
+8\>\kw{return} ok \kw{if} \pc{ViaWait}$(e,u,\mathit{mem},O)$ \kw{else} \emph{wait} \\[3pt]
+\kw{function} \pc{ViaWait}$(e,u,\mathit{mem},O)$ \\
+1\>\kw{if} $\mathit{Full}[n][m] \ge p(e)$: \kw{return} true \\
+2\>\kw{for} $w$ \kw{in} $\mathit{Waits}[n]$, newest first: \\
+3\>\>\kw{if} no $(t, \varphi) \in w.\rho[m]$ has $t \ge p(e)$ and ($\varphi = \bot$ or $\pc{InSignal}(e, \varphi)$): \kw{continue} \\
+4\>\>\kw{if} $w.E = \top$: \kw{return} true \hfill $\triangleright$ transitions included \\
+5\>\>\kw{if} $u = t_B$: \kw{if} $\pc{Chain}(w).x_{\mathit{last}} = p(u)$: \kw{return} true; \kw{continue} \\
+6\>\>\kw{if} $s(u) \in w.E$ \kw{or} $\pc{Chain}(w).\pc{Reaches}(u,\mathit{mem},O)$: \kw{return} true \\
+7\>\kw{return} false \\[3pt]
+\kw{function} \pc{InSignal}$(e, \varphi = (q, t, k, E_S))$ \quad $\triangleright$ $e$ in the first scope of a masked signal \\
+1\>\kw{if} $E_S = \top$ \kw{or} ($e$ not a transition and $s(e) \in E_S$): \kw{return} true \\
+2\>$C \gets$ fresh $\pc{Chain}(e)$ advanced over $\mathit{Bars}[q][0..k)$ \\
+3\>\kw{return} all reached $M$ and $M^L$ sets meet $E_S$ \kw{if} $k(e){=}\mathsf{W}$ \kw{else} $C.X_{\mathit{tot}} \cup C.X^L_{\mathit{tot}}$ meets $E_S$
+\end{tabbing}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\textwidth}
+\begin{tabbing}
+\quad\=\quad\=\quad\=\quad\=\quad\=\kill
+\kw{state} \pc{Chain}$(e)$: global sets $X, M$ and local sets $X^L, M^L$, each \hfill \emph{Algorithm 3} \\
+\>as $(\cdot)_o$ for earlier calls and $(\cdot)_c[\cdot]$ per struct of the current call; \\
+\>$X_{\mathit{tot}}, X^L_{\mathit{tot}}$; $M_{\mathit{ends}}, M^L_{\mathit{ends}}$; last reached positions; $\mathit{snap}[\cdot]$; $\posof_e$ \\
+\>starts at the first barrier at or after $p(e)$ with all sets empty; \\
+\>a wait record's chain starts after the wait, seeded $X_o = M_o = X_{\mathit{tot}} = w.E$ \\
+\kw{procedure} \pc{Advance} over the next barrier $(t, B)$ of $q(e)$: \\
+1\>\kw{if} $B$ sets (resets) event $v$: save (delete) $\mathit{snap}[v]$ of all four sets; \kw{next} \\
+2\>\kw{if} $B$ starts a new call: fold $(\cdot)_c$ into $(\cdot)_o$ for all four sets \\
+3\>$Y_f \gets Y_o \cup Y_c[B.\mathit{st}]$ for $Y \in \{X, M, X^L, M^L\}$; or $\mathit{snap}[v]$ if $B$ waits on $v$ \\
+4\>$d_x \gets e \in \Sc{1}(B)$ (a transition only for its own $B$); $\mathit{lo} \gets d_x \wedge e$ located \\
+5\>$d_m \gets d_x \wedge k(e){=}\mathsf{W} \wedge s(e) \in \AS(S_1) \wedge f(e) \in_{\mathsf{W}} A_1 \wedge (r_B{=}\ast \vee (r_B{=}r(e) \wedge R_B \supseteq R(e)))$ \\
+\>\>(a transition: $d_m \gets d_x$) \\
+6\>\kw{if} $\lambda(B) = \mathsf{glob}$: $g_x \gets d_x \vee (X_f \cup X^L_f)$ meets $\ESs(S_1)$; $l_x \gets$ false \\
+\>\kw{else}: $g_x \gets (d_x \wedge \neg\mathit{lo}) \vee X_f$ meets $\ESs(S_1)$; $l_x \gets \mathit{lo} \vee X^L_f$ meets $\ESs(S_1)$ \\
+7\>\kw{if} $g_x$: $X_c[B.\mathit{st}], X_{\mathit{tot}} \mathrel{\cup}= \ESd(S_2)$ \hfill $\triangleright$ class $\mathsf{G}$ \\
+8\>\kw{if} $l_x$: $X_c[B.\mathit{st}], X_{\mathit{tot}} \mathrel{\cup}= \ESd(S_2) \setminus F$; \hfill $\triangleright$ $\mathsf{N}$ \\
+\>\>\kw{if} $\lambda(B) = \mathsf{loc}$: $X^L_c[B.\mathit{st}], X^L_{\mathit{tot}} \mathrel{\cup}= \ESd(S_2) \cap F$ \hfill $\triangleright$ $\mathsf{L}$ \\
+9\>the same for $g_m, l_m$ from $d_m$, $M_f$, $M^L_f$, adding $(r_B, R_B, S_2, A_2)$ to $M_{\mathit{ends}}$ \\
+\>\>(restricted to stages outside $F$ for $\mathsf{N}$) or to $M^L_{\mathit{ends}}$ (stages in $F$) \\
+\kw{function} \pc{Reaches}$(u, \mathit{mem}, O)$: \quad $\mathit{at} \gets \posof_e = \posof(u) \ne \bot$ \\
+1\>\kw{if} $\neg\mathit{mem}$: \kw{return} $s(u) \in X_{\mathit{tot}}$ \kw{or} ($\mathit{at}$ \kw{and} $s(u) \in X^L_{\mathit{tot}}$) \\
+2\>\kw{return} $\exists (r_B, R_B, \Sigma, A_2)$ in $M_{\mathit{ends}}$, or in $M^L_{\mathit{ends}}$ if $\mathit{at}$: \\
+\>\>($r_B{=}\ast$ \kw{or} $r_B{=}r(u) \wedge R_B \supseteq O$) $\wedge$ $s(u) \in \Sigma \cap \AS(S_2) \wedge f(u) \in_{k(u)} A_2$ \\[3pt]
+\kw{procedure} \pc{Access}$(u)$ \quad $\triangleright$ per resource: an interval map of segments \hfill \emph{Algorithm 4} \\
+\>\>$\triangleright$ each segment $\varsigma$ holds $\mathit{Wr}_\varsigma$, $\mathit{Rd}_\varsigma[\kappa]$, $\mathit{Sh}_\varsigma$ \\
+1\>$K \gets \mathit{Wr}_\varsigma$ (+ all $\mathit{Rd}_\varsigma$ if $k(u){=}\mathsf{W}$) for segments $\varsigma \subseteq R(u)$, \\
+\>\>+ $\{e : (e,d) \in \mathit{Sh}_\varsigma \text{ live},\ d,u \text{ exempt},\ k(e){=}\mathsf{W} \vee k(u){=}\mathsf{W}\}$ \\
+2\>\kw{for} each $e \in K$ once: \kw{if} $e,u$ exempt (E1--E4): $v[e] \gets$ \emph{exempt}; \kw{next} \\
+3\>\>$y \gets \pc{Ordered}(e,u)$ \\
+4\>\>\kw{if} $y \ne$ ok \kw{and} $(e,u)$ an E5 pair: $v[e] \gets$ \emph{lt}; $K \mathrel{+}= e.\mathit{hid}$ \\
+5\>\>\kw{elif} $y \ne$ ok: report $(e,u,y)$; $v[e] \gets y$ \\
+6\>\>\kw{elif} $e$ a device write, $u$ a host write, \kw{not} \pc{HostDomain}$(e,u)$: \\
+\>\>\>warn $(e,u)$; $v[e] \gets$ \emph{premise} \quad \kw{else} $v[e] \gets$ ok \\
+7\>\kw{if} $\mathit{mode} = \mathit{pairwise}$: add $u$ to each $\varsigma$; \kw{return} \\
+8\>\kw{for} each segment $\varsigma \subseteq R(u)$: \hfill $\triangleright$ epoch mode \\
+9\>\>\kw{if} $k(u) = \mathsf{W}$: \kw{for} $e \in \mathit{Wr}_\varsigma$ with ($v[e]{=}$ok and $u$ not atomic) or \pc{Supersedes}$(u,e)$, \\
+\>\>\>\>and $e \in \mathit{Rd}_\varsigma$ with $v[e]{=}$ok and $u$ not atomic: \pc{Drop}$(e,u)$; add $u$ to $\mathit{Wr}_\varsigma$ \\
+10\>\>\kw{else} $\kappa \gets (q,s,\text{scope},\text{instance},\text{load/store},\text{atomic},\posof)(u)$; \\
+\>\>\>$\mathit{Rd}_\varsigma[\kappa] \gets [u]$, plus the newest read of another command if $u$ has one \\
+\pc{Drop}$(e,u)$: remove $e$ from $\varsigma$; \kw{if} $u$ has a command, scope or instance: \\
+\>\>add $(e,u)$ to $\mathit{Sh}_\varsigma$; \kw{if} $u$ is a transition: $u.\mathit{hid} \mathrel{+}= e$ \hfill $\triangleright$ R-LT \\
+\pc{Supersedes}$(u,e)$: same queue, stage, flag, scope, instance, load/store \\
+\>marker, atomic mode and token; both writes, neither a transition \\
+\>nor in a barrier call, and not one command \\
+\pc{HostDomain}$(e,u)$: $C \gets$ fresh \pc{Chain}$(e)$ over $\mathit{Bars}[q(e)]$ up to $\mathit{Full}[\mathit{host}][q(e)]$; \\
+\>\kw{return} $C.\pc{Reaches}(h, \mathsf{true}, O)$ for a host access $h$ of $r(e)$ with \\
+\>flag \code{HOST\_READ} or \code{HOST\_WRITE} \hfill $\triangleright$ Def.~\ref{def:hostdom}
+\end{tabbing}
+\end{minipage}
+\caption{The checking algorithm as implemented in \sys (\code{covenant/timing.py}), verified configuration. ``Meets''
+is intersection of stage sets, where $\top$ meets every set that has a stage other than $\mathsf{LT}$. A relay $\rho$
+maps each queue $m$ to entries $(t, \varphi)$: the operations of $m$ at positions $\le t$ are in the first scope of
+the signal along the whole path, all of them if $\varphi = \bot$, or only those that pass \pc{InSignal} for the
+masked signal $\varphi$ at the first hop. $\sqcup$ merges relays, keeping per queue the largest unfiltered entry and
+at most four newer filtered ones; dropping an entry only removes orderings. $\mathit{RA}[n]$ and $\mathit{RF}[n]$
+merge the relays of all waits and of the full waits on $n$. A shadow entry is live while its dominator's command,
+scope or instance is still current on its queue. In Algorithm~3, the global sets hold links of classes $\mathsf{G}$
+and $\mathsf{N}$ and the local sets links of class $\mathsf{L}$ (Definition~\ref{def:spec}); a local link orders only
+an access with the source's token $\posof_e$. \pc{InSignal} tests the union of global and local sets, since a signal
+is an ordinary link. $^\dagger$Under the opt-in heuristic R1, $\mathit{mem}$ is false when $u$ is a transition from
+\code{UNDEFINED}; that mode is outside the theorems.}
+\label{fig:alg}
+\end{figure*}
+
+\paragraph{Invariants}
+Four invariants carry the proof, and they are the reason for each data structure of Figure~\ref{fig:alg}.
+\begin{enumerate}
+\item \emph{Processing order is a linearization.} Operations are processed queue by queue, each wait only after its
+  signal, so every chain of Definition~\ref{def:spec} runs forward in processing order (Lemma~\ref{lem:lin}). An
+  earlier event is therefore always available when a later one is checked, and a queue whose clock entry for $m$ is
+  below $p(e)$ has no chain from $e$ at all (Algorithm~2, line~7).
+\item \emph{The chain state is exactly the reachable links.} For a source event $e$, \pc{Chain}$(e)$ walks the barriers
+  after $e$ on its queue once, incrementally, and keeps the union of the second stage sets of the links it has
+  reached, split by class: $X$ and $M$ hold the $\mathsf{G}$ and $\mathsf{N}$ links (orderings valid for every access
+  of those stages) and $X^L$, $M^L$ the $\mathsf{L}$ links (valid only at $e$'s own framebuffer position). The structs
+  of the current call are kept apart, because structs of one call never chain into one another, and an event wait
+  continues only from what had been reached at its event's set. The memory sets admit a first link only if it holds
+  all of $R(e)$ in its first access scope (Lemma~\ref{lem:chain}).
+\item \emph{A relay entry is a chain into the signal.} An entry $(t,\varphi)$ for queue $m$ in a signal's relay
+  means that every operation of $m$ up to $t$ that passes the stage filter $\varphi$ reaches the signal by a chain
+  (Lemma~\ref{lem:clock}). A wait record keeps that relay, so a cross-queue question becomes a same-queue question on
+  the waiting queue: does the wait's own chain reach $u$ (Algorithm~2, \pc{ViaWait})?
+\item \emph{Every dropped entry has a live stand-in.} In epoch mode an entry is removed only when a later access
+  orders everything it would order: a write ordered after it, a write with the same stage, flag, scope, instance,
+  atomic mode and token, or a read with the same key (including the token). Where the stand-in may be exempt from a
+  later access that the dropped entry is not (same command, scope or instance), the entry is kept in a shadow list
+  (Lemma~\ref{lem:fast}).
+\end{enumerate}
+In \emph{pairwise} mode no entry is dropped, so every earlier conflicting event is compared with every later one. In
+\emph{epoch} mode, in the manner of FastTrack~\cite{flanagan2009fasttrack}, invariant~4 keeps the candidate lists
+short. A transition keeps the entries it dropped, because under R-LT it does not stand in for them against a later
+transition. Theorem~\ref{thm:sound} is stated for the pairwise mode, which the optimizer also uses to re-check its
+final plans (\S\ref{sec:elide}). The epoch mode is related to it as follows.
+
+\begin{lemma}[Modes]\label{lem:modes}
+\pc{Ordered}$(e,u)$ does not depend on the mode, so $\Hep(\tau) \subseteq \Hpw(\tau)$.
+\end{lemma}
+
+\begin{lemma}[Fast mode]\label{lem:fast}
+Under the premises of Theorem~\ref{thm:sound} and W2, every race $\{a,b\} \in \Hspec(\tau)$ has $a$ or $b$ in
+some pair of $\Hep(\tau)$ (criterion E). In particular, $\Hep(\tau) = \emptyset$ implies $\Hspec(\tau) = \emptyset$.
+\end{lemma}
+
+The proof (Appendix~\ref{app:fast}) shows that every drop keeps a stand-in: a later access $x$ that races the dropped
+entry $e$ either is compared with an access $v$ that stands in for $e$, where an \emph{ok} for $(v,x)$ would order $e$
+before $x$ by transitivity of Definition~\ref{def:spec} through $v$, or finds $e$ in the shadow list. Two remarks
+qualify the lemma. First, it relates $\Hep$ to $\Hspec$, not to $\Hpw$. An empty epoch result does not imply an empty
+pairwise result: when an entry is dropped piecewise by stand-ins with smaller regions, the epoch mode can be more
+precise than the pairwise mode, which tests regions as a whole. Second, two stand-in rules are necessary. An access
+with an atomic mode never stands in for what it is ordered after: after a fill of a counter, a barrier from transfer
+to compute, an atomic add in a compute shader and an atomic add in a fragment shader on one queue, the fragment add is
+exempt from the compute add (E4) but races the fill. And a read stands in only for a read with the same token: after a
+sampled read and an input-attachment read of one image in a fragment shader, a \code{BY\_REGION} dependency and a
+color write at the same position, the write is ordered after the input-attachment read but races the sampled read.
+Both frames are regression tests (Appendix~\ref{app:counter}).
+
+\paragraph{Diagnostics}
+\begin{sloppypar}
+Diagnostics include \code{timing.missing-barrier}, \code{barrier-scope}, \code{cross-queue-race},
+\code{wait-stage-scope}, \code{signal-scope}, \code{wrong-layout}, \code{stale-barrier}, \code{ownership-missing},
+\code{free-while-in-use} and \code{deadlock}, and the warnings \code{unmodelled-command} and
+\code{premise-host-domain}. Each same-queue report names the
+scope test that failed, in the specification's terms: the first synchronization scope (execution), the first access
+scope (availability), the second access scope (visibility), or a broken chain. A cross-queue report through a relay
+whose stage mask cuts the chain is \code{signal-stage-scope}.
+\end{sloppypar}
+
+\paragraph{Protocol checks are not race checks}
+\label{sec:protocol}
+Some valid-usage rules concern synchronization objects, not memory, and Theorem~\ref{thm:sound} says nothing about
+them. \sys checks them along the recorded host order, and each is justified by the rule it cites, not by
+Definition~\ref{def:spec}.
+\begin{sloppypar}
+\begin{itemize}
+\item \code{swapchain-overacquire}. Let $S$ be the swapchain's image count and $M$ the surface's
+  \code{minImageCount}. The specification says that \code{vkAcquireNextImageKHR} should not be called while the
+  application holds more than $S-M$ images. It guarantees that an acquire returns in finite time only when at most
+  $S-M$ are held, and it forbids an infinite timeout when that forward progress cannot be guaranteed
+  (\code{VUID-vkAcquireNextImageKHR-}\allowbreak\code{surface-07783}). The check counts acquires minus presents in host order and
+  reports an acquire made while more than $S-M$ images are held. With an infinite timeout this is a
+  valid-usage violation that can block forever; with a finite one, a call the specification advises against. The
+  count is exact for the recorded order and says nothing about other driver responses.
+\item \code{present-semaphore-reuse}. A binary semaphore must be unsignaled when a signal operation on it executes
+  (\code{VUID-vkQueueSubmit-}\allowbreak\code{pSignalSemaphores-00067}, \code{VUID-vkQueueSubmit2-}\allowbreak\code{semaphore-03868},
+  \code{VUID-vkAcquireNextImageKHR-}\allowbreak\code{semaphore-01286}). A present unsignals its wait semaphores at a time that no
+  submission fence bounds. The specification offers two ways to know that it has happened: a present fence
+  (\code{VK\_KHR\_swapchain\_maintenance1}), or acquiring the same image again and waiting on that acquire's semaphore
+  or fence. The justified rule is therefore an ordering obligation: a re-signal must happen after the signal of a
+  later acquisition of the same image. The check reports a re-signal made before the image is acquired again. It
+  approximates ``happens after the acquisition's signal'' by ``follows the acquire call in host order''. It therefore
+  accepts a re-signal from a batch that does not wait on that acquisition, and it does not model present fences.
+\item The in-use rules (a command buffer, fence or acquire semaphore reused while pending:
+  \code{VUID-vkBeginCommandBuffer-}\allowbreak\code{commandBuffer-00049}, \code{VUID-vkResetFences-}\allowbreak\code{pFences-01123},
+  \code{VUID-vkAcquireNextImageKHR-}\allowbreak\code{semaphore-01779}) and \code{free-while-in-use}
+  (\code{VUID-vkFreeDescriptorSets-}\allowbreak\code{pDescriptorSets-00309}) are encoded as accesses to pseudo-resources and checked by
+  the same order. Theorem~\ref{thm:sound} applies to them formally, but their meaning comes from these rules, not
+  from the memory model. A binary semaphore signalled while a signal is pending, a timeline value that does not
+  increase, and a wait that is never satisfied are reported by the trace translation.
+\end{itemize}
+\end{sloppypar}
+
+\paragraph{Report grouping by checked repair}
+Raw diagnostics are produced per accessing command and per frame, which is far too many to read. \sys reduces them
+in three steps:
+\begin{enumerate}
+\item It canonicalizes each diagnostic to a site key: code, resource role, command site and barrier site.
+\item For each group it synthesizes the narrowest barrier or mask repair and re-runs the checker in the pairwise
+  mode. A repair is \emph{checked} when the group's hazards disappear and no racing pair appears that was not
+  reported before, with pairs compared by event identity (call, command and access index), the same rule as for
+  barrier transformations (\S\ref{sec:elide}). Groups that one repair eliminates are merged.
+\item It labels as technicalities the hazards on discarded content and the ownership issues that only matter with
+  a single queue family.
+\end{enumerate}
+The result groups diagnostics by site and by checked repair. It is not one report per mistake: one root cause can
+still produce several groups, for example once per recreated swapchain, and we measure how often in
+\S\ref{sec:eval-fresh}. Grouping runs the checker as an oracle within a budget of hazard pairs and memory. When a run
+exceeds it, grouping falls back to site groups without repairs and marks the result \emph{incomplete}; every
+diagnostic is still a member of exactly one group, and an incomplete result is never presented as clean. Lemma~\ref{lem:repair} below shows that the repairs \sys synthesizes cannot add a race under
+the specification. It says nothing about the checker's reports, which over-approximate, so the event-pair comparison
+remains a safeguard that may reject a repair whose new reported pair is not a race.
+
+\begin{lemma}[Repair monotonicity]\label{lem:repair}
+Let $\tau_r$ be $\tau$ with a repair $r$ applied, where $r$ either widens the stage and access masks of one
+dependency (an explicit barrier struct, a subpass dependency or the implicit external dependency of a render pass,
+whose masks the explicit one then contains) without changing its layouts or regions, or inserts a barrier without
+a layout transition. Then the events of $\tau_r$ are those of $\tau$, identified as above, and
+$\Hspec(\tau_r) \subseteq \Hspec(\tau)$.
+\end{lemma}
+
+The proof is in Appendix~\ref{app:repair}. A source fix must keep the lemma's premise: replacing an implicit external
+dependency by an explicit one with \emph{smaller} masks is not a widening. As a test, every candidate repair the
+grouper synthesizes on 300 random frames (4,791 repairs) was applied and checked against the executable reference
+semantics; none added a racing pair.

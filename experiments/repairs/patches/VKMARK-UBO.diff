@@ -1,0 +1,283 @@
+Case:     VKMARK-UBO
+Project:  vkmark
+Upstream: https://github.com/vkmark/vkmark
+Revision: ab6e6f3
+Paths:    relative to the source root
+Files:    10 changed, +45/-5
+          src/scenes/cube_scene.cpp
+          src/scenes/cube_scene.h
+          src/scenes/desktop_scene.cpp
+          src/scenes/desktop_scene.h
+          src/scenes/shading_scene.cpp
+          src/scenes/shading_scene.h
+          src/scenes/texture_scene.cpp
+          src/scenes/texture_scene.h
+          src/scenes/vertex_scene.cpp
+          src/scenes/vertex_scene.h
+Cause:    each scene rewrites its uniform buffer in mapped memory every frame while the previous frame's draw may still read it (host write vs. device read)
+Repair:   each scene gets one fence, created signalled; draw() waits for and resets it before updating the uniforms, and the submit signals it
+Apply:    git apply VKMARK-UBO.diff   (from the source root; this header is ignored by git apply)
+
+diff --git a/src/scenes/cube_scene.cpp b/src/scenes/cube_scene.cpp
+index 9fb7e95..87e9c80 100644
+--- a/src/scenes/cube_scene.cpp
++++ b/src/scenes/cube_scene.cpp
+@@ -79,6 +79,9 @@ void CubeScene::setup(
+     setup_command_buffers();
+ 
+     submit_semaphore = vkutil::SemaphoreBuilder{*vulkan}.build();
++    submit_fence = ManagedResource<vk::Fence>{
++        vulkan->device().createFence(vk::FenceCreateInfo{vk::FenceCreateFlagBits::eSignaled}),
++        [this] (auto& f) { vulkan->device().destroyFence(f); }};
+     rotation = {45.0f, 45.0f, 10.0f};
+ }
+ 
+@@ -87,6 +90,7 @@ void CubeScene::teardown()
+     vulkan->device().waitIdle();
+ 
+     submit_semaphore = {};
++    submit_fence = {};
+     vulkan->device().freeCommandBuffers(vulkan->command_pool(), command_buffers);
+     framebuffers.clear();
+     image_views.clear();
+@@ -103,6 +107,9 @@ void CubeScene::teardown()
+ 
+ VulkanImage CubeScene::draw(VulkanImage const& image)
+ {
++    // The previous frame may still read the uniform buffer: wait before rewriting it.
++    (void)vulkan->device().waitForFences(submit_fence.raw, true, INT64_MAX);
++    vulkan->device().resetFences(submit_fence.raw);
+     update_uniforms();
+ 
+     vk::PipelineStageFlags const mask = vk::PipelineStageFlagBits::eTopOfPipe;
+@@ -115,7 +122,7 @@ VulkanImage CubeScene::draw(VulkanImage const& image)
+         .setSignalSemaphoreCount(1)
+         .setPSignalSemaphores(&submit_semaphore.raw);
+ 
+-    vulkan->graphics_queue().submit(submit_info, {});
++    vulkan->graphics_queue().submit(submit_info, submit_fence);
+ 
+     return image.copy_with_semaphore(submit_semaphore);
+ }
+diff --git a/src/scenes/cube_scene.h b/src/scenes/cube_scene.h
+index 9783b24..91bc23c 100644
+--- a/src/scenes/cube_scene.h
++++ b/src/scenes/cube_scene.h
+@@ -73,6 +73,7 @@ private:
+     std::vector<ManagedResource<vk::Framebuffer>> framebuffers;
+     std::vector<vk::CommandBuffer> command_buffers;
+     ManagedResource<vk::Semaphore> submit_semaphore;
++    ManagedResource<vk::Fence> submit_fence;
+ 
+     vk::DeviceMemory uniform_buffer_memory;
+     vk::DescriptorSetLayout descriptor_set_layout;
+diff --git a/src/scenes/desktop_scene.cpp b/src/scenes/desktop_scene.cpp
+index 1e9ea30..be7feb7 100644
+--- a/src/scenes/desktop_scene.cpp
++++ b/src/scenes/desktop_scene.cpp
+@@ -215,6 +215,9 @@ void DesktopScene::setup(
+     setup_command_buffers();
+ 
+     submit_semaphore = vkutil::SemaphoreBuilder{*vulkan}.build();
++    submit_fence = ManagedResource<vk::Fence>{
++        vulkan->device().createFence(vk::FenceCreateInfo{vk::FenceCreateFlagBits::eSignaled}),
++        [this] (auto& f) { vulkan->device().destroyFence(f); }};
+ }
+ 
+ void DesktopScene::teardown()
+@@ -222,6 +225,7 @@ void DesktopScene::teardown()
+     vulkan->device().waitIdle();
+ 
+     submit_semaphore = {};
++    submit_fence = {};
+     vulkan->device().freeCommandBuffers(vulkan->command_pool(), command_buffers);
+     framebuffers.clear();
+     image_views.clear();
+@@ -239,6 +243,9 @@ void DesktopScene::teardown()
+ 
+ VulkanImage DesktopScene::draw(VulkanImage const& image)
+ {
++    // The previous frame may still read the uniform buffer: wait before rewriting it.
++    (void)vulkan->device().waitForFences(submit_fence.raw, true, INT64_MAX);
++    vulkan->device().resetFences(submit_fence.raw);
+     update_uniforms();
+ 
+     vk::PipelineStageFlags const mask = vk::PipelineStageFlagBits::eColorAttachmentOutput;
+@@ -251,7 +258,7 @@ VulkanImage DesktopScene::draw(VulkanImage const& image)
+         .setSignalSemaphoreCount(1)
+         .setPSignalSemaphores(&submit_semaphore.raw);
+ 
+-    vulkan->graphics_queue().submit(submit_info, {});
++    vulkan->graphics_queue().submit(submit_info, submit_fence);
+ 
+     return image.copy_with_semaphore(submit_semaphore);
+ }
+diff --git a/src/scenes/desktop_scene.h b/src/scenes/desktop_scene.h
+index a5fab05..100ac9d 100644
+--- a/src/scenes/desktop_scene.h
++++ b/src/scenes/desktop_scene.h
+@@ -72,4 +72,5 @@ private:
+     std::vector<ManagedResource<vk::Framebuffer>> framebuffers;
+     std::vector<vk::CommandBuffer> command_buffers;
+     ManagedResource<vk::Semaphore> submit_semaphore;
++    ManagedResource<vk::Fence> submit_fence;
+ };
+diff --git a/src/scenes/shading_scene.cpp b/src/scenes/shading_scene.cpp
+index fa496ba..da73580 100644
+--- a/src/scenes/shading_scene.cpp
++++ b/src/scenes/shading_scene.cpp
+@@ -94,6 +94,9 @@ void ShadingScene::setup(
+     setup_command_buffers();
+ 
+     submit_semaphore = vkutil::SemaphoreBuilder{*vulkan}.build();
++    submit_fence = ManagedResource<vk::Fence>{
++        vulkan->device().createFence(vk::FenceCreateInfo{vk::FenceCreateFlagBits::eSignaled}),
++        [this] (auto& f) { vulkan->device().destroyFence(f); }};
+     rotation = 0.0;
+ }
+ 
+@@ -102,6 +105,7 @@ void ShadingScene::teardown()
+     vulkan->device().waitIdle();
+ 
+     submit_semaphore = {};
++    submit_fence = {};
+     vulkan->device().freeCommandBuffers(vulkan->command_pool(), command_buffers);
+     framebuffers.clear();
+     image_views.clear();
+@@ -120,6 +124,9 @@ void ShadingScene::teardown()
+ 
+ VulkanImage ShadingScene::draw(VulkanImage const& image)
+ {
++    // The previous frame may still read the uniform buffer: wait before rewriting it.
++    (void)vulkan->device().waitForFences(submit_fence.raw, true, INT64_MAX);
++    vulkan->device().resetFences(submit_fence.raw);
+     update_uniforms();
+ 
+     vk::PipelineStageFlags const mask = vk::PipelineStageFlagBits::eColorAttachmentOutput;
+@@ -132,7 +139,7 @@ VulkanImage ShadingScene::draw(VulkanImage const& image)
+         .setSignalSemaphoreCount(1)
+         .setPSignalSemaphores(&submit_semaphore.raw);
+ 
+-    vulkan->graphics_queue().submit(submit_info, {});
++    vulkan->graphics_queue().submit(submit_info, submit_fence);
+ 
+     return image.copy_with_semaphore(submit_semaphore);
+ }
+diff --git a/src/scenes/shading_scene.h b/src/scenes/shading_scene.h
+index d46f428..faffe71 100644
+--- a/src/scenes/shading_scene.h
++++ b/src/scenes/shading_scene.h
+@@ -80,6 +80,7 @@ private:
+     std::vector<ManagedResource<vk::Framebuffer>> framebuffers;
+     std::vector<vk::CommandBuffer> command_buffers;
+     ManagedResource<vk::Semaphore> submit_semaphore;
++    ManagedResource<vk::Fence> submit_fence;
+ 
+     vk::DeviceMemory uniform_buffer_memory;
+     vk::DescriptorSetLayout descriptor_set_layout;
+diff --git a/src/scenes/texture_scene.cpp b/src/scenes/texture_scene.cpp
+index 04a8207..231cb50 100644
+--- a/src/scenes/texture_scene.cpp
++++ b/src/scenes/texture_scene.cpp
+@@ -97,6 +97,9 @@ void TextureScene::setup(
+     setup_command_buffers();
+ 
+     submit_semaphore = vkutil::SemaphoreBuilder{*vulkan}.build();
++    submit_fence = ManagedResource<vk::Fence>{
++        vulkan->device().createFence(vk::FenceCreateInfo{vk::FenceCreateFlagBits::eSignaled}),
++        [this] (auto& f) { vulkan->device().destroyFence(f); }};
+     rotation = 0.0f;
+ }
+ 
+@@ -105,6 +108,7 @@ void TextureScene::teardown()
+     vulkan->device().waitIdle();
+ 
+     submit_semaphore = {};
++    submit_fence = {};
+     vulkan->device().freeCommandBuffers(vulkan->command_pool(), command_buffers);
+     framebuffers.clear();
+     image_views.clear();
+@@ -124,6 +128,9 @@ void TextureScene::teardown()
+ 
+ VulkanImage TextureScene::draw(VulkanImage const& image)
+ {
++    // The previous frame may still read the uniform buffer: wait before rewriting it.
++    (void)vulkan->device().waitForFences(submit_fence.raw, true, INT64_MAX);
++    vulkan->device().resetFences(submit_fence.raw);
+     update_uniforms();
+ 
+     vk::PipelineStageFlags const mask = vk::PipelineStageFlagBits::eColorAttachmentOutput;
+@@ -136,7 +143,7 @@ VulkanImage TextureScene::draw(VulkanImage const& image)
+         .setSignalSemaphoreCount(1)
+         .setPSignalSemaphores(&submit_semaphore.raw);
+ 
+-    vulkan->graphics_queue().submit(submit_info, {});
++    vulkan->graphics_queue().submit(submit_info, submit_fence);
+ 
+     return image.copy_with_semaphore(submit_semaphore);
+ }
+diff --git a/src/scenes/texture_scene.h b/src/scenes/texture_scene.h
+index 7e0dca2..e461907 100644
+--- a/src/scenes/texture_scene.h
++++ b/src/scenes/texture_scene.h
+@@ -83,6 +83,7 @@ private:
+     std::vector<ManagedResource<vk::Framebuffer>> framebuffers;
+     std::vector<vk::CommandBuffer> command_buffers;
+     ManagedResource<vk::Semaphore> submit_semaphore;
++    ManagedResource<vk::Fence> submit_fence;
+ 
+     vk::DeviceMemory uniform_buffer_memory;
+     vk::DescriptorSetLayout descriptor_set_layout;
+diff --git a/src/scenes/vertex_scene.cpp b/src/scenes/vertex_scene.cpp
+index 0fd7fe7..eb56889 100644
+--- a/src/scenes/vertex_scene.cpp
++++ b/src/scenes/vertex_scene.cpp
+@@ -96,6 +96,9 @@ void VertexScene::setup(
+     setup_command_buffers();
+ 
+     submit_semaphore = vkutil::SemaphoreBuilder{*vulkan}.build();
++    submit_fence = ManagedResource<vk::Fence>{
++        vulkan->device().createFence(vk::FenceCreateInfo{vk::FenceCreateFlagBits::eSignaled}),
++        [this] (auto& f) { vulkan->device().destroyFence(f); }};
+     rotation = 0.0;
+ }
+ 
+@@ -104,6 +107,7 @@ void VertexScene::teardown()
+     vulkan->device().waitIdle();
+ 
+     submit_semaphore = {};
++    submit_fence = {};
+     vulkan->device().freeCommandBuffers(vulkan->command_pool(), command_buffers);
+     framebuffers.clear();
+     image_views.clear();
+@@ -122,6 +126,9 @@ void VertexScene::teardown()
+ 
+ VulkanImage VertexScene::draw(VulkanImage const& image)
+ {
++    // The previous frame may still read the uniform buffer: wait before rewriting it.
++    (void)vulkan->device().waitForFences(submit_fence.raw, true, INT64_MAX);
++    vulkan->device().resetFences(submit_fence.raw);
+     update_uniforms();
+ 
+     vk::PipelineStageFlags const mask = vk::PipelineStageFlagBits::eColorAttachmentOutput;
+@@ -134,7 +141,7 @@ VulkanImage VertexScene::draw(VulkanImage const& image)
+         .setSignalSemaphoreCount(1)
+         .setPSignalSemaphores(&submit_semaphore.raw);
+ 
+-    vulkan->graphics_queue().submit(submit_info, {});
++    vulkan->graphics_queue().submit(submit_info, submit_fence);
+ 
+     return image.copy_with_semaphore(submit_semaphore);
+ }
+diff --git a/src/scenes/vertex_scene.h b/src/scenes/vertex_scene.h
+index 828a00c..9d98b33 100644
+--- a/src/scenes/vertex_scene.h
++++ b/src/scenes/vertex_scene.h
+@@ -80,6 +80,7 @@ private:
+     std::vector<ManagedResource<vk::Framebuffer>> framebuffers;
+     std::vector<vk::CommandBuffer> command_buffers;
+     ManagedResource<vk::Semaphore> submit_semaphore;
++    ManagedResource<vk::Fence> submit_fence;
+ 
+     vk::DeviceMemory uniform_buffer_memory;
+     vk::DescriptorSetLayout descriptor_set_layout;

@@ -1,0 +1,682 @@
+%% =====================================================================
+%% appendix-proofs.tex -- proofs for formal.tex (Sections 4 and 5) and elision.tex (Section 8).
+%% Defines: app:proofs, app:sound, app:abstraction, app:hostdom, app:guard, app:fast, app:precision, app:window,
+%% app:elide, app:repair, app:counter.
+%% =====================================================================
+\providecommand{\Sc}[1]{\mathit{Sc}_{#1}}
+\providecommand{\ASc}[2]{\mathit{ASc}_{#1}^{#2}}
+\providecommand{\ESs}{\mathit{ES}^{\mathrm{src}}}
+\providecommand{\ESd}{\mathit{ES}^{\mathrm{dst}}}
+\providecommand{\AS}{\mathit{AS}}
+\providecommand{\chainto}{\rightsquigarrow}
+\providecommand{\mspecl}[1]{\ensuremath{\Rightarrow_{m}^{#1}}}
+\providecommand{\ordl}[1]{\mathit{ord}_{#1}}
+\providecommand{\Hpw}{\ensuremath{\Haz_C^{\mathit{pw}}}}
+\providecommand{\Hep}{\ensuremath{\Haz_C^{\mathit{ep}}}}
+\providecommand{\Hspec}{\ensuremath{\Haz_{\mathit{spec}}}}
+\providecommand{\pc}[1]{\textsc{#1}}
+\providecommand{\reach}{\hookrightarrow}
+\providecommand{\posof}{\pi}
+\providecommand{\Hstrict}{\ensuremath{\Haz_{\mathit{spec}}^{\mathit{dom}}}}
+
+\section{Proofs}
+\label{app:proofs}
+
+The proofs refer to the algorithm of Figure~\ref{fig:alg} by procedure and line. Throughout, $\tau$ is fixed and the
+algorithm runs in the verified configuration (no relaxation for transitions from \code{UNDEFINED}). An event is
+\emph{processed} when \pc{Access} is called for it.
+
+\paragraph{Notation}
+For an event $e$ and a link $(D,c)$ we write $e \reach_x (D,c)$ if there is a chain $(D_1,c_1) \chainto \dots
+\chainto (D_k,c_k) = (D,c)$ ($k \ge 1$) with $e \in \Sc{1}(D_1)$ and $c_1$ given by the class rule of
+Definition~\ref{def:spec}, and $e \reach_m (D,c)$ if moreover $e \in \ASc{1}{\ell}(D_1)$ for every $\ell \in R(e)$. We
+write $e \reach (D,c)$ for $e \reach_m (D,c)$ when $k(e) = \mathsf{W}$ and for $e \reach_x (D,c)$ otherwise, and drop
+the class when it is $\mathsf{G}$. If $e \reach (D,c)$ and $(D,c) \chainto (D',c')$ then $e \reach (D',c')$, because
+the intermediate dependencies of a chain need only chain. For a signal or a wait, the access scopes equal the
+synchronization scopes, so $e \in \Sc{1}(\mathsf{Sig})$ gives $e \reach_m \mathsf{Sig}$. We say that a link $(D,c)$
+\emph{holds} $u$ for source $e$ if $s(u)$ is in $D$'s second stage set restricted by $c$, and $\posof(u) = \posof(e)
+\ne \bot$ when $c = \mathsf{L}$. Two facts about classes are used throughout. (C1)~A $\mathsf{G}$ link dominates the $\mathsf{N}$ and
+$\mathsf{L}$ links of the same dependency: its restricted second stage set contains theirs and it holds without a
+token condition, so it holds every access they hold, and every link they chain into is chained into from it in class
+$\mathsf{G}$, which again dominates. (C2)~Signals and waits have class $\mathsf{G}$, whatever class the link before
+them has.
+
+Two facts about the trace translation are used repeatedly. (F1)~The structs of one barrier call are consecutive on
+their queue, and only their transitions lie at their positions (W2). (F2)~A semaphore wait has an empty first stage set
+and a signal an empty second stage set, so a barrier never chains into a wait, and a chain leaves a queue only through
+a signal and enters one only through the paired wait.
+
+%% -------------------------------------------------------------------
+\subsection{Soundness (Theorem~\ref{thm:sound})}
+\label{app:sound}
+
+\begin{lemma}[Linearization]\label{lem:lin}
+Positions on a queue are assigned in processing order, a wait is processed after its signal, and host operations are
+processed in host order. Hence if $D \chainto D'$ then $D$ is processed before $D'$, and if $a \xspec b$ then $a$ is
+processed before $b$.
+\end{lemma}
+\begin{proof}
+Line~7 of \pc{Check} assigns $p(o) = \mathit{VC}[n][n]$ after incrementing it, once per operation, in queue order.
+Line~3 processes a wait only after its name has been signalled. A chain step is either a step on one queue to a later
+position, a step on the host to a later position, or a signal to its paired wait (W1 makes the pairing unique).
+Each goes forward in processing order, and so does the first step $a \in \Sc{1}(D_1)$ ($p(a) < p(D_1)$) and the last
+$b \in \Sc{2}(D_n)$ ($p(D_n) < p(b)$).
+\end{proof}
+
+\begin{lemma}[Chain state]\label{lem:chain}
+Let \pc{Chain}$(e)$ have been advanced over the barriers of $q(e)$ up to some point. Call a link $(B,\mathsf{G})$
+\emph{x-reached} if $g_x$ held at $B$ (line~7 of \pc{Advance}), $(B,\mathsf{N})$ x-reached if $l_x$ held, and
+$(B,\mathsf{L})$ x-reached if $l_x$ held and $\lambda(B) = \mathsf{loc}$ (line~8); m-reached likewise with $g_m$,
+$l_m$ (line~9).
+(a)~If $(B,c)$ is x-reached then $e \reach_x (B,c)$ through a chain of barrier structs on $q(e)$.
+(b)~If $(B,c)$ is m-reached then $e \reach_m (B,c)$, and $e$ is in the first access scope of the first struct of that
+chain on every element of $R(e)$.
+(c)~Conversely, if $e \reach_x (B,c)$ through barrier structs of $q(e)$ only, then $(B,c)$ or $(B,\mathsf{G})$ is
+x-reached, and the same for m-reached.
+For the chain of a wait record, the same statements hold with ``$e \in \Sc{1}(D_1)$'' replaced by ``$W \chainto D_1$''
+for the wait $W$ (all its links have class $\mathsf{G}$), and the m-reached and x-reached sets coincide.
+\end{lemma}
+\begin{proof}
+Invariant: when \pc{Advance} reaches struct $B$, $X_o$ is the union, over the x-reached links of earlier calls, of
+their second stage sets restricted by class ($\mathsf{G}$ and $\mathsf{N}$), $X^L_o$ the same for the $\mathsf{L}$
+links, $X_c[s]$ and $X^L_c[s]$ those over the current call with struct identity $s$, and $\mathit{snap}[v]$ the four
+unions at the latest set of event $v$ since the chain started, deleted by a reset. The same holds for the $M$ sets and
+m-reached links, whose ends $M_{\mathit{ends}}$ ($\mathsf{G}$, and $\mathsf{N}$ restricted to stages outside $F$) and
+$M^L_{\mathit{ends}}$ ($\mathsf{L}$) keep the second access masks. The invariant holds initially (all sets empty, or
+$X_o = M_o = E$ for a wait record, which stands for the wait's second stage set in class $\mathsf{G}$) and is kept by
+lines~1--3 and~6--9, since a new call folds the current one into the earlier ones. Advancing incrementally is a left
+fold over the barrier list, so it computes the same sets as one pass.
+
+(a) by induction over the order in which links are reached. Write $X_f$, $X^L_f$ for the sets of line~3.
+\emph{Base:} $d_x$ holds, so $e \in \Sc{1}(B)$: line~4 tests $p(e) < p(B)$ (the chain starts at the first barrier at
+or after $p(e)$, and a transition is admitted only at its own struct), the stage, the call condition and, for an
+event wait, that $\mathit{snap}[v]$ exists, which holds exactly when a set of $v$ lies between $e$ and $B$ without a
+later reset, that is $p(e) < c_B$. The class rule of Definition~\ref{def:spec} enters $B$ locally exactly when
+$\lambda(B) \ne \mathsf{glob}$ and $e$ is located, which is $\mathit{lo}$; line~6 then sets $l_x$ (classes
+$\mathsf{N}$, and $\mathsf{L}$ if $\mathsf{loc}$) and otherwise $g_x$ (class $\mathsf{G}$). \emph{Step:} $X_f$ or
+$X^L_f$ meets $\ESs(S_1)$. Then some x-reached link $(B',c')$ has its restricted second set meeting $\ESs(S_1)$, with
+$p(B') < p(B)$, $B'$ not another struct of $B$'s call, and $p(B') < c_B$ for an event wait, so $(B',c') \chainto
+(B,c)$ for the class $c$ that the rule gives: from $X^L_f$ ($c' = \mathsf{L}$) into a local $B$, classes $\mathsf{N}$
+and $\mathsf{L}$, which is $l_x$; from $X_f$ ($c' \in \{\mathsf{G},\mathsf{N}\}$) or into a global $B$, class
+$\mathsf{G}$, which is $g_x$. By induction $e \reach_x (B',c')$.
+
+(b) is the same argument for line~9. Its base case $d_m$ adds to $d_x$ that $k(e) = \mathsf{W}$, $s(e) \in
+\AS(S_1)$, $f(e) \in_{\mathsf{W}} A_1$ and $r_B = \ast$ or ($r_B = r(e)$ and $R_B \supseteq R(e)$), which is $e \in
+\ASc{1}{\ell}(B)$ for every $\ell \in R(e)$. A transition is in both access scopes of its own barrier.
+
+(c) by induction on the length of the chain, with the same case split read backwards: if $(B',c') \chainto (B,c)$ and
+$(B',c')$ is x-reached, its restricted second set is in $X_f$ or $X^L_f$ (by the invariant; same call and struct, or
+an earlier call, or the snapshot of an event wait with $p(B') < c_B$), and it meets $\ESs(S_1)$, so line~6 fires for
+the class the rule gives. If only $(B',\mathsf{G})$ is x-reached, (C1) gives $(B,\mathsf{G})$.
+
+For a wait record, $d_x = d_m = \mathit{false}$, the seeds of $X$ and $M$ are equal and the local sets start empty,
+so only class $\mathsf{G}$ arises and lines~7 and~9 fire together.
+\end{proof}
+
+\begin{lemma}[Same queue]\label{lem:same}
+Let $q(e) = q(u)$ and let line~4 or line~5 of \pc{Ordered} return \emph{ok}. Then $\ordl{\ell}(e,u)$ holds for every
+$\ell \in O = R(e) \cap R(u)$.
+\end{lemma}
+\begin{proof}
+All barriers in $\mathit{Bars}[n]$ precede $u$. \emph{Line~5}, execution mode: $s(u) \in X_{\mathit{tot}}$, so some
+x-reached link $(B,c)$ with $c \in \{\mathsf{G},\mathsf{N}\}$ has $s(u)$ in its restricted second set (for $s(u) =
+\bot$, only a $\mathsf{G}$ set of $\top$ contains it), hence it holds $u$ and $e \reach_x (B,c)$ by
+Lemma~\ref{lem:chain}(a); or $\posof(u) = \posof(e) \ne \bot$ and $s(u) \in X^L_{\mathit{tot}}$, so an x-reached
+$(B,\mathsf{L})$ holds $u$. Memory mode: some m-reached link holds $u$ with $u \in \ASc{2}{\ell}(B)$ for every $\ell
+\in O$ (the test of \pc{Reaches}: $r_B = \ast$ or $R_B \supseteq O$, stage in the restricted set and in $\AS(S_2)$,
+flag in $A_2$, and the token for an $\mathsf{L}$ end), and $e \reach_m (B,c)$ with $e$ in the first access scope on
+all of $R(e) \supseteq O$ (Lemma~\ref{lem:chain}(b)).
+\emph{Line~4}, $u = t_B$: $u$ is processed when $B$ is appended, so $B$ is the last barrier. If the chain reached $B$
+last globally, then $e \reach (B,\mathsf{G})$ or $e \reach (B,\mathsf{N})$ and $t_B$ is in both scopes of its own $B$;
+a transition is located, so an $\mathsf{N}$ link alone does not hold it, but the chain reached $B$ in class
+$\mathsf{G}$ there, since line~8 adds no stage of $\mathsf{LT}$ to the global sets and the last global position is set
+only by line~7. If it reached $B$ last locally, then $\posof(e) = \posof(u)$ and the $\mathsf{L}$ link holds $t_B$.
+Otherwise $e \in \Sc{1}(B)$ directly (the test repeats the conditions of $\Sc{1}$, including the event cut and the
+exclusion of other structs of the call and of transitions), in memory mode $e \in \ASc{1}{\ell}(B)$ on $O$, and, when
+$B$ is entered locally from $e$, $\lambda(B) = \mathsf{loc}$ and $\posof(e) = \posof(u)$, so the one-link chain
+$(B,\mathsf{L})$ holds $t_B$; when $B$ is not entered locally the link is $(B,\mathsf{G})$.
+\end{proof}
+
+\begin{lemma}[Relays]\label{lem:clock}
+Assume W1. Let $\mathsf{Sig}(x,S)$ be processed on queue $q_s$ with relay $\rho$, let $e$ be an event on queue $m$,
+and let $(t, \varphi) \in \rho[m]$ with $p(e) \le t$, where $\varphi = \bot$ or \pc{InSignal}$(e,\varphi)$ holds. Then
+$e \reach \mathsf{Sig}$.
+\end{lemma}
+\begin{proof}
+By induction on processing order, over the signals. An entry of $\rho$ is never created by $\sqcup$, which only keeps
+or drops entries, so every entry of $\rho[m]$ was put there by one of the lines of \pc{Relay}$(q_s, p(\mathsf{Sig}),
+S)$. \emph{Line~1}, the signal's own entry ($m = q_s$, $t = p(\mathsf{Sig})$): $e$ is an operation of $q_s$ other than
+$\mathsf{Sig}$, so $p(e) < p(\mathsf{Sig})$. If $S = \top$, $e \in \Sc{1}(\mathsf{Sig})$ (every stage, $\bot$ and
+transitions included), which is also the signal's first access scope. Otherwise $\varphi$ describes $\mathsf{Sig}$ and
+Lemma~\ref{lem:insig} below gives $e \reach \mathsf{Sig}$. \emph{Lines~2--4}, an entry of the relay $\rho'$ of a wait
+$W$ on $q_s$ processed before $\mathsf{Sig}$, whose signal $\mathsf{Sig}'$ was processed earlier still. By induction,
+$e \reach \mathsf{Sig}'$, and $\mathsf{Sig}' \chainto W$ by W1. It remains to show that $W$ chains into $\mathsf{Sig}$,
+possibly through barriers of $q_s$. Line~2: $S = \top$, and $W$'s second stage set has a stage other than $\mathsf{LT}$
+(line~5 of \pc{Check} keeps no other wait), so it meets $\top$ and $W \chainto \mathsf{Sig}$. Line~3: $W$ has $E =
+\top$, and $\ESs(S)$ has a stage other than $\mathsf{LT}$, so they meet. Line~4: $\pc{Chain}(W).X_{\mathit{tot}}$ meets
+$\ESs(S)$. Either the seed $E$ meets it, and $W \chainto \mathsf{Sig}$; or some link $(B,\mathsf{G})$ that the wait
+record's chain x-reaches has $\ESd(S_2)$ meeting $\ESs(S)$, so $W \reach_x B$ by Lemma~\ref{lem:chain} (wait-record
+form) and $B \chainto \mathsf{Sig}$. The intermediate dependencies of a chain need only chain (Definition~\ref{def:spec}), so in
+every case $e \reach \mathsf{Sig}$, and in memory mode the first link is still the one that holds $e$ in its first
+access scope.
+\end{proof}
+
+\begin{lemma}[Signal filter]\label{lem:insig}
+If \pc{InSignal}$(e,\varphi)$ holds for the masked signal $\mathsf{Sig}$ that $\varphi$ describes, and $e$ precedes it
+on its queue, then $e \reach \mathsf{Sig}$.
+\end{lemma}
+\begin{proof}
+Line~1: $e$ is not a transition and $s(e)$ is in the signal's first stage set, so $e \in \Sc{1}(\mathsf{Sig})$, which is
+also its first access scope. Line~3: the chain of $e$ is advanced over the barriers before the signal. For a write,
+some m-reached link $(B,c)$, of any class, has its restricted second stage set meeting the signal's first stage set,
+so $(B,c) \chainto \mathsf{Sig}$, a link of class $\mathsf{G}$ by (C2), and $e \reach_m (B,c)$
+(Lemma~\ref{lem:chain}(b)). For a read, the same with an x-reached link. This is why \pc{InSignal} tests the union of
+the global and the local sets: a local chain followed by a signal is an ordinary chain.
+\end{proof}
+
+\begin{lemma}[Waits]\label{lem:viawait}
+Assume W1. If \pc{ViaWait} returns true for $(e,u,\mathit{mem},O)$, then $\ordl{\ell}(e,u)$ holds for every $\ell \in
+O$.
+\end{lemma}
+\begin{proof}
+Let $m = q(e)$, $n = q(u)$. \emph{Line~1.} $\mathit{Full}[n][m] \ge p(e)$ means that some wait $W$ on $n$ processed
+before $u$ has $E = \top$ and an unfiltered entry $(t, \bot) \in W.\rho[m]$ with $t \ge p(e)$ (line~6 of \pc{Check}).
+By Lemma~\ref{lem:clock}, $e \reach \mathsf{Sig} \chainto W$, and $u \in \Sc{2}(W)$ because $W$ has every stage. A
+transition is in $\Sc{2}$ of an earlier wait of every stage, and the access scope of a wait is its synchronization
+scope. No other shortcut exists: in particular, a wait on a semaphore signalled by the host is accepted here only if
+it has $E = \top$. \emph{Lines~2--6.} The record $w$ of a wait $W$ is used only if (line~3) its relay holds an entry
+$(t,\varphi)$ for $m$ with $t \ge p(e)$ and $\varphi = \bot$ or \pc{InSignal}$(e,\varphi)$. Lemma~\ref{lem:clock}
+then gives $e \reach \mathsf{Sig} \chainto W$, so $e \reach W$. Then: line~4, $u \in \Sc{2}(W)$ as above. Line~5, $u =
+t_B$ and $W$'s chain reaches $B$, the last barrier on $n$, so $W \reach B$ (Lemma~\ref{lem:chain}) and $t_B$ is in both
+scopes of $B$. Line~6, $s(u) \in E$ gives $u \in \Sc{2}(W)$, or $W$'s chain reaches $u$ as in Lemma~\ref{lem:same},
+line~5. In memory mode the first link of the chain from $e$ is a signal, or a barrier that covers $R(e)$
+(Lemma~\ref{lem:insig}), and the last link holds $u$ in its second access scope on all of $O$.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:sound}]
+Let \pc{Ordered}$(e,u)$ return \emph{ok}, with $\mathit{mem} = (k(e) = \mathsf{W})$, which is the choice of
+$\ordl{\ell}$. Line~2: both are on the host, and host order is an execution and memory order (A-HOST). Lines~4--5:
+Lemma~\ref{lem:same}. Lines~6 and~8: Lemma~\ref{lem:viawait}. So $\ordl{\ell}(e,u)$ holds for all $\ell \in O$, that
+is, $e \spec u$.
+
+For the inclusion, let $\{a,b\}$ race at $\ell$, and let $e$ be the one that is processed first and $u$ the other. In pairwise
+mode $e$ is never removed from any segment, and $u$'s segments partition $R(u)$, so $e$ is in the segment that holds
+$\ell$. It is a candidate of \pc{Access}$(u)$: writes always are, and reads are when $u$ writes, which a conflict
+requires. The pair is not exempt by E1--E4, so \pc{Ordered}$(e,u)$ is called. It cannot return \emph{ok}, since that
+would give $\ordl{\ell}(e,u)$. Line~4 of \pc{Access} does not apply, because an E5 pair is exempt
+and does not race. So line~5 reports the pair.
+
+The locality of Definition~\ref{def:spec} enters this proof only through Lemmas~\ref{lem:chain} and~\ref{lem:same}: the
+chain state distinguishes the three classes exactly as the definition does, and a local ending is accepted only with
+equal tokens. Lemma~\ref{lem:clock} needs no change beyond (C2), because every relay entry passes through a signal, and
+Lemma~\ref{lem:viawait} none, because a wait record's chain starts in class $\mathsf{G}$.
+\end{proof}
+
+%% -------------------------------------------------------------------
+\subsection{From the run to the events (Corollary~\ref{cor:sched})}
+\label{app:abstraction}
+
+Model the run as the trace $\tau$ (A1) with its \emph{true} accesses $\alpha$ in place of the events. Each $\alpha$
+has its exact stage, flag and byte or element set. The dependencies are those of $\tau$, and the true accesses are
+ordered by Definition~\ref{def:spec} applied to them. A device access $\alpha$ is \emph{represented} by an event $a$ (A2)
+if they have the same queue and position (that of the command), $R(a) \supseteq R(\alpha)$, $s(a) \in \{s(\alpha),
+\bot\}$, $f(a) \in \{f(\alpha), \bot\}$, $k(a) = \mathsf{W}$ if $\alpha$ writes, and every exemption tag of $a$ is
+also a true exemption of $\alpha$. A CPU store $\sigma$ is represented by a host write $w$ as in A2-H.
+
+\begin{lemma}[Abstraction]\label{lem:abs}
+If $a$ represents $\alpha$ and $b$ represents $\beta$, then for $\ell \in R(\alpha) \cap R(\beta)$,
+$\ordl{\ell}(a,b)$ implies $\ordl{\ell}(\alpha,\beta)$. Hence, if $\alpha$ and $\beta$ race at $\ell$, then $a$ and
+$b$ race at $\ell$.
+\end{lemma}
+\begin{proof}
+Scope membership is monotone in the direction we need. $\bot$ lies only in a set of every stage, which contains
+$s(\alpha)$. A $\bot$ flag lies only in a mask that contains \code{MEMORY\_READ} or \code{MEMORY\_WRITE}, which contains
+$f(\alpha)$. Access-scope membership at an element $\ell$ depends on $\ell \in R_B$, not on the rest of the region, and
+positions are equal. So $a \in \Sc{i}(D)$ implies $\alpha \in \Sc{i}(D)$, and $a \in \ASc{i}{\ell}(D)$ implies
+$\alpha \in \ASc{i}{\ell}(D)$, and a chain for $a,b$ is a chain for $\alpha,\beta$. If $\alpha$ writes, so does $a$, so
+$\ordl{\ell}(a,b)$ uses the memory relation whenever $\ordl{\ell}(\alpha,\beta)$ does, and the memory relation implies
+the execution relation. For a store $\sigma$ represented by $w$, A2-H states directly that $w$ and $\sigma$ have the
+same predecessors and successors. It holds for page capture because $w$ sits between the two host calls that
+bracket $\sigma$, where the host queue has no other operation, and host-queue orderings depend only on the position
+relative to host signals and waits. For the race: $\ell \in R(a) \cap R(b)$, one of $a,b$ writes, and they are not
+exempt, because a claimed exemption would be a true one. Neither $\ordl{\ell}(a,b)$ nor $\ordl{\ell}(b,a)$ holds,
+since either would order $\alpha,\beta$.
+\end{proof}
+
+\begin{proof}[Proof of Corollary~\ref{cor:sched}]
+By Lemma~\ref{lem:abs}, a race of covered accesses gives a race in $\Hspec(\tau)$, which is empty. The pairwise case
+follows from Theorem~\ref{thm:sound} and the epoch case from Lemma~\ref{lem:fast}. For a device schedule consistent
+with $\tau$'s synchronization, an ordered pair executes in that order with the required availability and visibility,
+by the specification's definition of the dependencies.
+\end{proof}
+
+%% -------------------------------------------------------------------
+\subsection{Index guards (Lemma~\ref{lem:guard})}
+\label{app:guard}
+
+The specification counts a descriptor as accessed only if an invocation \emph{dynamically uses} it, that is, evaluates
+an access chain into the array with its index; the layout and synchronization requirements attach to that access. So
+it suffices to show that in every schedule consistent with $\tau$, every invocation of $d$ indexes the array only with
+elements of $I(d)$.
+
+\begin{proof}[Proof of Lemma~\ref{lem:guard}]
+Let $V$ be the attribute bytes that $d$ fetches (the words of vertices or instances $\mathit{first}, \dots,
+\mathit{first}+n-1$ at the recorded offset and stride), let $r$ be $d$'s vertex-input read, which covers $V$ and
+carries $g$, and let $S$ be the position of $d$'s submission in host order.
+
+\emph{Step 1: in every schedule the fetch returns the bytes rebuilt at $S$.} By C5 no device command writes $V$ and no
+image is bound on it, so the only writes to $V$ are host stores, which A2-H represents as host write events $w$ at the
+call boundary of each store, over every byte of each written page. Consider such a $w$ on $V$. If $w$ and $r$ are
+unordered, they race, so the race is reported: in pairwise mode by Theorem~\ref{thm:sound}; in epoch mode against $r$,
+or against a later read that stands in for $r$ and inherits its guard, or against a host write that $r$ was compared
+with and that $w$ precedes in host order, by Lemma~\ref{lem:fast}. A reported pair with $r$ or its stand-in fails $g$
+(C6), contradicting the premise; a reported pair of $r$ and an earlier host write likewise. If $w$ is ordered before
+$r$ and recorded before $S$, its bytes are in the rebuilt contents, since contents are rebuilt from every record before
+$S$ in host order (one host thread, P3, checked per memory by C4). If $w$ is ordered before $r$ and recorded after
+$S$ (for example through a host-signalled timeline value), then when $r$ is checked, $w$ or a later host write that
+supersedes it is a live write entry on $V$ recorded after $S$, which fails $g$ (C6). If $r$ is ordered before $w$, $w$
+does not affect what $r$ reads. Hence the fetch returns the rebuilt bytes, which C4 requires to be recorded for all of
+$V$.
+
+\emph{Step 2: the shader maps them into $I(d)$.} By C1 and C2 the index of every access chain into the array is, on
+every path, a constant or the index chain applied to the attribute value delivered to the invocation: a flat fragment
+input receives the provoking vertex's output, which the vertex shader sets to the chain applied to the attribute on
+every path (an output not set on some path, or set through a derived pointer, makes the index unknown, and the binding
+is widened). The analysis follows local variables and pointer parameters through stores, loads and calls and joins
+over all paths, ignoring branch conditions, which can only add values. Attribute fetch of a 32-bit integer format at
+the recorded stride, offset and input rate of a non-indexed direct draw (C2, C3) is a function of $V$. So every index
+lies in $I(d)$, and by C7 none is out of range.
+
+\emph{Step 3: the dropped events stand for no access.} The elements outside $I(d)$ are not dynamically used in any
+schedule, so their events correspond to no access of the run, and the remaining events still represent every access
+as A2 requires. Lemma~\ref{lem:abs} and Corollary~\ref{cor:sched} apply to the narrowed event set.
+
+\emph{No circularity.} Whether $g$ holds depends on the checker's verdicts, which depend on the event set, which
+depends on which guards hold. The conditions C5 and C6 mention only events on $V$, which are buffer bytes, and the
+happens-before order. The events a guard adds when it fails are image reads (C8), and accesses create no dependencies
+in Definition~\ref{def:spec}. So neither the events on $V$ nor any ordering changes when conditional reads are added or
+removed, and the set of failing guards is the same in every run; the checker reaches it by re-running with the failed
+guards widened. The executable reference defines $\Hspec$ with the same rule, and the property tests of
+$\Hspec \subseteq \Hpw$ include guarded frames.
+\end{proof}
+
+%% -------------------------------------------------------------------
+\subsection{Host-domain operations (Proposition~\ref{prop:hostdom})}
+\label{app:hostdom}
+
+\begin{proof}[Proof of Proposition~\ref{prop:hostdom}]
+Since no error is reported, Theorem~\ref{thm:sound} and Lemma~\ref{lem:fast} give $\Hspec(\tau) = \emptyset$. Let $e$ be a
+device write and $u$ a later host write that conflict; then $e \spec u$, and we show that $e$ is host-domain ordered
+before $u$.
+
+\emph{Pairwise mode.} \pc{Access}$(u)$ compares $u$ with $e$, \pc{Ordered} returns \emph{ok}, and since no warning is
+reported \pc{HostDomain}$(e,u)$ holds: the fresh chain of $e$, advanced over the barriers of $q(e)$ up to $t =
+\mathit{Full}[\mathit{host}][q(e)]$, m-reaches a link $(B,c)$ that holds a host access at \code{HOST\_READ} or
+\code{HOST\_WRITE} on all of $O$. By Lemma~\ref{lem:chain}(b), $e \mspecl{\ell} (B,c)$ for every $\ell \in O$, and $B$
+has $\mathsf{HOST}$ in its second stage and access stage sets and a host access in its second access mask ($\mathsf{HOST}$
+is outside $F$, so the class does not matter). $\mathit{Full}[\mathit{host}][q(e)] = t$ means that a host wait $W$
+before $u$ has an unfiltered relay entry $(t,\bot)$ for $q(e)$, so by Lemma~\ref{lem:clock} every operation of $q(e)$
+at a position up to $t$, $B$ among them, is in the first scope of a chain of signals and waits of every stage that ends
+at $W$; and $u \in \Sc{2}(W)$, because a host wait holds every later host event. This is the chain from $B$ that
+Definition~\ref{def:hostdom} asks for.
+
+\emph{Epoch mode.} Suppose $e$ is not compared with $u$. Then $e$ was dropped before $u$ was processed, by an access $v$
+that stands in for it, and we show by induction on drops that $v$ carries the domain operation over to $e$. If $v$ is
+a host write, it dropped $e$ only with \pc{Ordered}$(e,v)$ = \emph{ok} and no warning (a warning marks the pair
+\emph{premise}, which keeps $e$), so $e$ is host-domain ordered before $v$ by the pairwise argument, and the chain
+from $B$ to $v$'s host wait also reaches $u$, which follows $v$ in host order. If $v$ is a device write ordered after
+$e$ (D1), or a write that supersedes $e$ (D2), then, by the induction, $v$ is host-domain ordered before $u$ through
+some $B$, possibly on another queue. For D1, $e \mspecl{\ell} v$ and $v \mspecl{\ell} (B,c)$ compose as in
+Lemma~\ref{lem:trans}, with $B$ treated as an access at stage $\mathsf{HOST}$: $e \mspecl{\ell} (B,c)$. For D2,
+Lemma~\ref{lem:subst} gives $e \mspecl{\ell} (B,c)$ directly. A transition $v$ is a D1 drop. Shadow entries are
+compared with $u$ as in Lemma~\ref{lem:fast}. In every case $e$ is host-domain ordered before $u$.
+\end{proof}
+
+The test is conservative in two ways that the property test of the checker exercises: a domain operation on another
+queue is credited only through a stand-in, and in pairwise mode not at all; and a domain operation reached only
+through stage-masked signals is not credited. On random frames with one and two device queues, every pair that the
+pairwise mode warns about has its host write flagged (by a warning or a hazard) in epoch mode, and the epoch mode adds
+no warning.
+
+%% -------------------------------------------------------------------
+\subsection{The epoch mode (Lemmas~\ref{lem:modes} and~\ref{lem:fast})}
+\label{app:fast}
+
+\begin{proof}[Proof of Lemma~\ref{lem:modes}]
+\pc{Ordered} reads only the clocks, wait records, barrier lists and chains, and none of them depends on the
+mode. Every candidate of the epoch mode, including shadow and $\mathit{hid}$ entries, is an earlier event that
+overlaps $u$ and conflicts with it, so it is also a candidate in pairwise mode. The exemption test and the R-LT
+test are the same in both modes.
+\end{proof}
+
+The epoch mode removes an entry $e$ from a segment $\varsigma \subseteq R(u)$ in three ways. (D1)~The write $u$ is
+ordered after it: \pc{Ordered}$(e,u) = $ \emph{ok}. (D2)~The write $u$ supersedes the write $e$. (D3)~The read $u$
+replaces the read $e$ of the same key $\kappa$. The proof needs two facts about the definition.
+
+\begin{lemma}[Transitivity]\label{lem:trans}
+Let $\ell \in R(a) \cap R(v) \cap R(x)$. If $a \xspec v$ and $v \xspec x$ then $a \xspec x$. If $a \mspecl{\ell} v$ and $v
+\mspecl{\ell} x$ then $a \mspecl{\ell} x$.
+\end{lemma}
+\begin{proof}
+Host order is transitive, and a host event before (after) the first (last) host dependency of a chain is in its
+scope, so host-order steps compose with chains. Otherwise take chains $C_1 = D_1 \dots D_n$ for $(a,v)$ and $C_2 =
+D'_1 \dots D'_k$ for $(v,x)$, with $v \in \Sc{2}(D_n) \cap \Sc{1}(D'_1)$. In memory mode $a$ is in the first access
+scope of $D_1$ and $x$ is in the second access scope of $D'_k$ at $\ell$.
+
+\emph{$v$ is not a transition.} $D_n$ and $D'_1$ are on $q(v)$ with $p(D_n) < p(v) < p(D'_1)$. Both stage sets contain
+$s(v)$, or both are $\top$ if $s(v) = \bot$, so they meet. By (F1), no access lies between two structs of one call, so
+they are not two structs of one call. If $D'_1$ is an event wait, $p(D_n) < p(v) < c_{D'_1}$. Hence $D_n \chainto
+D'_1$ and $C_1C_2$ is a chain.
+
+\emph{$v = t_B$.} By Definition~\ref{def:spec}, $D_n$ is $B$ or a wait $W$ of every stage before $B$, and $D'_1$ is $B$
+or a signal $\mathsf{Sig}$ of every stage after $B$. (i)~$D_n = D'_1 = B$: concatenate and share $B$. (ii)~$D_n = W$ and
+$D'_1 = \mathsf{Sig}$: $W$'s second set is $\top$ and meets $\top$, so $W \chainto \mathsf{Sig}$. (iii)~$D_n = W$ and
+$D'_1 = B$: if $k \ge 2$ then $D'_2$ follows $B$ on $q(B)$ (by F2, $D'_2$ is not a wait) or is a signal there. Its
+first stage set meets $B$'s second set, so it has a stage other than $\mathsf{LT}$ and $W \chainto D'_2$; event cuts
+carry over, since $p(W) < p(B)$. Use $C_1 D'_2 \dots D'_k$. If $k = 1$, then $x$ follows $B$ on $q(B)$, so $x \in
+\Sc{2}(W)$, which equals $\ASc{2}{\ell}(W)$, and $C_1$ alone orders $a$ before $x$. (iv)~$D_n = B$ and $D'_1 =
+\mathsf{Sig}$: if $n \ge 2$, $D_{n-1} \chainto B$, so $D_{n-1}$'s second set has a stage other than $\mathsf{LT}$ and
+$D_{n-1} \chainto \mathsf{Sig}$ ($D_{n-1}$ precedes $B$ on $q(B)$ by F2), so use $D_1 \dots D_{n-1} C_2$. If $n = 1$,
+$a$ precedes $B$ on $q(B)$, so $a \in \Sc{1}(\mathsf{Sig})$, which equals the signal's first access scope, and $C_2$
+alone orders $a$ before $x$. In every case the first link keeps $a$ in its first (access) scope and the last link keeps
+$x$ in its second, so the memory statement follows too.
+
+\emph{Classes.} It remains to check that the concatenated chain has classes that still hold $x$ for source $a$. The
+chain for $(v,x)$ starts at $D'_1$ in the class that $v$ enters it with: locally if $D'_1$ is local and $v$ is
+located. The chain for $(a,v)$ ends at $D_n$ in a class $c_n$ that holds $v$. If $c_n = \mathsf{G}$, the
+concatenation enters $D'_1$ in class $\mathsf{G}$, which by (C1) dominates whatever class $v$ entered it with, so
+every later link of $C_2$ has a dominating counterpart and $x$ is held without a token condition. If $c_n =
+\mathsf{N}$, $s(v) \notin F$, so $v$ is not located and enters $D'_1$ in class $\mathsf{G}$, as does the
+concatenation. If $c_n = \mathsf{L}$, then $\posof(v) = \posof(a) \ne \bot$ and $v$ is located; the concatenation
+enters $D'_1$ from an $\mathsf{L}$ link, which by the class rule gives the same classes as entering it from the located
+event $v$, so $C_2$'s classes are unchanged, and an $\mathsf{L}$ ending of $C_2$ holds $x$ for source $v$, that is with
+$\posof(x) = \posof(v) = \posof(a)$, so it holds $x$ for source $a$. In the transition cases (i)--(iv) the shared or
+bridging dependency is $B$ itself, a wait or a signal; waits and signals are $\mathsf{G}$ by (C2), and for (i) the
+same argument applies at $B$.
+\end{proof}
+
+\begin{lemma}[Substitution]\label{lem:subst}
+Let $e$ and $u$ be events on one queue with $p(e) < p(u)$, equal stage, kind and position token, neither a transition
+nor in a barrier call, and let $\ell \in R(e) \cap R(u)$. If $u \xspec x$ then $e \xspec x$. If moreover $f(e) = f(u)$ and $u
+\mspecl{\ell} x$, then $e \mspecl{\ell} x$.
+\end{lemma}
+\begin{proof}
+For every dependency $D$ with $p(D) > p(u)$, membership in $\Sc{1}(D)$ depends on queue, stage, call, and $p < p(D)$ and
+$p < c_D$, all of which $e$ shares with $u$ or satisfies a fortiori. Membership in $\ASc{1}{\ell}(D)$ adds the stage,
+the flag and $\ell \in R_B$. Whether $D$ is entered locally depends only on the stage, and an $\mathsf{L}$ ending
+compares the source's token, which $e$ and $u$ share. Host order is transitive. Without equal tokens the lemma fails:
+an $\mathsf{L}$ chain from $u$ can order an access at $u$'s position that no chain from $e$ orders.
+\end{proof}
+
+\begin{proof}[Proof of Lemma~\ref{lem:fast}]
+Let $\{e,x\}$ race at $\ell$, with $e$ processed first. We show that \pc{Access}$(x)$ reports a pair that contains $x$.
+Let $\varsigma$ be the segment of $x$ that holds $\ell$. Say that $v$ \emph{covers} $e$ for $x$ if $v$ is processed
+before $x$, $\ell \in R(v)$, $v$ conflicts with $x$, $v$ and $x$ are not exempt by E1--E4, and $\ordl{\ell}(v,x)$
+implies $\ordl{\ell}(e,x)$. A \emph{cover sequence} is $e = v_0, v_1, \dots, v_k$ in which each $v_{j+1}$ covers $v_j$
+for $x$, each $v_j$ with $j \ge 1$ covers $e$ for $x$, and, whenever $v_{j+1}$ is a transition, $v_j \in
+v_{j+1}.\mathit{hid}$.
+
+\emph{Invariant.} At every point between the processing of $e$ and of $x$, there is a cover sequence whose last element
+$v_k$ is \emph{live} for $x$. That is, it is in $\mathit{Wr}_\varsigma$, or in $\mathit{Rd}_\varsigma$ (then $x$
+writes), or it is the entry of a shadow record $(v_k, d) \in \mathit{Sh}_\varsigma$ whose dominator $d$ is exempt
+from $x$ by E1--E3. Right after $e$ is processed, $k = 0$ and $e$ is in $\mathit{Wr}_\varsigma$ or
+$\mathit{Rd}_\varsigma$. Since $e$ and $x$ conflict, $x$ writes if $e$ reads. The invariant can be broken only when an
+access $u$ removes $v_k$ from $\varsigma$.
+\begin{itemize}
+\item (D1) $u$ writes, has no atomic mode, and \pc{Ordered}$(v_k,u) = $ \emph{ok}, so $\ordl{\ell}(v_k,u)$ by Theorem~\ref{thm:sound}. If $x$ is
+  not exempt from $u$ by E1--E4, append $u$: it is in $\mathit{Wr}_\varsigma$, it conflicts with $x$, and
+  $\ordl{\ell}(u,x)$, a memory order because $u$ writes, gives $\ordl{\ell}(v_k,x)$ by Lemma~\ref{lem:trans}, which
+  uses the memory relation if $v_k$ writes and the execution relation if it reads. If $u$ is a transition, $v_k$ is
+  added to $u.\mathit{hid}$. If $x$ is exempt from $u$ by E1, E2 or E3, then $u$ has a command, scope or instance, and
+  \pc{Drop} records $(v_k, u)$ in the shadow list, so $v_k$ stays live for $x$. $x$ cannot be exempt from $u$ by E4,
+  because $u$ has no atomic mode: line~9 of \pc{Access} never drops an entry at an atomic access, except by
+  supersession (D2).
+\item (D2) $u$ supersedes $v_k$: same queue, stage, flag, kind, scope, instance, load/store marker, atomic mode and
+  token, neither a transition nor in a call. By Lemma~\ref{lem:subst}, $u$ covers $v_k$ unless $x$ is exempt from $u$ and
+  not from $v_k$. Since the tags for E2--E4 are equal, that can only be E1, and then $u$ has a command and \pc{Drop}
+  shadows $v_k$.
+\item (D3) $u$ reads with the key $\kappa$ of $v_k$, which includes the token, so $v_k$ reads and $x$ writes. $\mathit{Rd}_\varsigma[\kappa]$
+  becomes $[u]$ or $[u, o]$, where $o$ is the first entry of the old list whose command differs from $u$'s. The old list
+  is ordered newest first. If $x$ is not exempt from $u$, append $u$ (Lemma~\ref{lem:subst}, execution part). Otherwise,
+  since the key fixes E2--E4, $x$ is exempt by E1, so $u$ has a command $c = \mathit{cmd}(x) \ne
+  \mathit{cmd}(v_k)$, and $o$ exists. Either $o = v_k$, which then stays, or $o$ is newer than $v_k$ with the
+  same key and a command other than $c$, and we append $o$.
+\item A shadow record is pruned when its dominator's command, scope and instance are no longer current on its queue.
+  By W2, no later access can then be exempt from the dominator by E1--E3, so the record is not live for $x$.
+\end{itemize}
+In every case each new element covers $e$, by composing the implications.
+
+\emph{Conclusion.} At \pc{Access}$(x)$, $v_k$ is a candidate. Consider \pc{Ordered}$(v_k,x)$. If it is \emph{ok},
+then $\ordl{\ell}(v_k,x)$ by Theorem~\ref{thm:sound}, hence $\ordl{\ell}(e,x)$, contradicting the race. If it is not
+\emph{ok} and the pair is not an E5 pair, then $(v_k,x)$ is reported. Otherwise line~4 adds
+$v_k.\mathit{hid}$, which contains $v_{k-1}$ and overlaps $x$ at $\ell$, and we repeat with $v_{k-1}$. If $v_{k-1}$
+was already compared, its verdict is \emph{ok}, which contradicts the race as before, or reported, or R-LT again. The
+descent ends at the latest at $v_0 = e$. There \pc{Ordered}$(e,x)$ is not \emph{ok}, and the pair is not an
+E5 pair, which would be exempt. So $(e,x)$ is reported. In all cases $x$ is in a reported pair.
+\end{proof}
+
+%% -------------------------------------------------------------------
+\subsection{Precision (Proposition~\ref{thm:complete})}
+\label{app:precision}
+
+\begin{lemma}[Clock completeness]\label{lem:clockc}
+Assume that no signal has a stage mask other than $\top$. If $e \reach_x W$ for a processed wait $W$ whose second
+stage set has a stage other than $\mathsf{LT}$, then the clock $c$ joined at $W$ has $c[q(e)] \ge p(e)$, and $W$'s relay
+holds an unfiltered entry $(t, \bot) \in W.\rho[q(e)]$ with $t \ge p(e)$.
+\end{lemma}
+\begin{proof}
+Induction on the number of semaphore pairs in the chain. The last pair is $\mathsf{Sig} \chainto W$, with $\mathsf{Sig}$
+on $q_s$. Every signal has $S = \top$, so \pc{Relay} returns at its line~2 with unfiltered entries only. If $q(e) =
+q_s$, then $c[q_s] = p(\mathsf{Sig}) > p(e)$, and the signal's own entry is $(p(\mathsf{Sig}), \bot)$. Otherwise, by
+F2, the chain enters $q_s$ through a wait $W'$ that precedes $\mathsf{Sig}$ there and chains onward, so its second set
+has a stage other than $\mathsf{LT}$. By induction its clock has $c'[q(e)] \ge p(e)$ and its relay an unfiltered entry
+$t' \ge p(e)$. $\mathit{VC}[q_s] \ge c'$ from then on, and $\mathit{RA}[q_s]$ keeps an unfiltered entry for $q(e)$ of at
+least $t'$, because $\sqcup$ keeps the largest one; line~2 of \pc{Relay} merges $\mathit{RA}[q_s]$ into $\mathsf{Sig}$'s
+relay.
+\end{proof}
+
+\begin{proof}[Proof of Proposition~\ref{thm:complete}]
+$\Hspec \subseteq \Hpw$ is Theorem~\ref{thm:sound}. For the converse, let $(e,u)$ be reported. They conflict, are not
+exempt, and are not an E5 pair, and \pc{Ordered}$(e,u)$ is not \emph{ok}. Suppose $\ordl{\ell}(e,u)$
+for every $\ell \in O$. Fix $\ell_1 \in O$ and a chain $C$ for it. By region uniformity (ii), a barrier whose region
+contains $\ell_1$ contains $R(e)$ if $e$ is in its first access scope at $\ell_1$, and contains $R(u) \supseteq O$ if $u$
+is in its second. If $C$ contains no semaphore pair, it consists of barriers on $q(u)$ and Lemma~\ref{lem:chain}(b,c)
+shows that \pc{Chain}$(e)$ m-reaches (x-reaches) its last barrier, so line~4 or~5 returns \emph{ok}. Otherwise let $W$
+be the last wait of $C$. By F2, the rest of $C$ consists of barriers on $q(u)$. By Lemma~\ref{lem:clockc}, which applies by (i), $\mathit{VC}[q(u)][q(e)] \ge p(e)$,
+so line~7 does not return \emph{race}, and $W$'s relay holds an unfiltered entry at or after $p(e)$, so line~3 of
+\pc{ViaWait} examines $W$'s record, and it returns true at line~4 ($E = \top$), line~5 (the wait chain reaches $B$ by
+Lemma~\ref{lem:chain}(c)) or line~6 ($s(u) \in E$, or the wait chain reaches the last barrier, which covers $O$).
+In each case \pc{Ordered} returns \emph{ok}, a contradiction. Hence $\ordl{\ell}(e,u)$ fails for some $\ell \in O$, and
+$\ordl{\ell}(u,e)$ fails too, since by Lemma~\ref{lem:lin} it would have $u$ processed first. So $(e,u)$ races at $\ell$.
+\end{proof}
+
+\paragraph{The split trace $\tau^\sharp$}
+For each resource $r$, the regions of the barrier structs on $r$ generate a finite Boolean algebra of element sets.
+Replace every event $a$ on $r$ by one event $a|_P$ for each atom $P$ of that algebra that meets $R(a)$, with region $R(a)
+\cap P$, at consecutive positions and with $a$'s other attributes and tags. Then $\tau^\sharp$ is region-uniform. No
+dependency lies between the parts, so no scope or chain changes, and access-scope membership at $\ell$ is that of $a$.
+The parts of one access are pairwise disjoint and never conflict. Hence $a|_P$ and $b|_{P'}$ race at $\ell$ in
+$\tau^\sharp$ if and only if $\ell \in P \cap P'$ and $a, b$ race at $\ell$ in $\tau$. W1 and W2 carry over.
+By the proposition, the pairwise mode on $\tau^\sharp$ reports exactly the parts of the races of $\tau$ when (i) holds.
+
+%% -------------------------------------------------------------------
+\subsection{Periodic executions (Theorem~\ref{thm:window})}
+\label{app:window}
+
+Write $\mathit{call}(o)$ for the host call that appended $o$, and order calls by host order.
+
+\begin{lemma}[Locality, W.1]\label{lem:loc}
+Under P-MONO, every dependency of a chain from $a$ to $b$ was appended by a call in $[\mathit{call}(a),
+\mathit{call}(b)]$. Hence whether two events are ordered, and whether they race, is the same in $\tau^\infty$ and in
+any prefix of it that contains both, and it is preserved by any map that preserves queues, program order,
+attributes, tags and pairing on the calls of that interval.
+\end{lemma}
+\begin{proof}
+On one queue, operations are appended in host order. By P-MONO, a wait is appended after its signal. So every chain
+step goes forward in host order, as do $a \in \Sc{1}(D_1)$ and $b \in \Sc{2}(D_n)$. The event cut of an event wait
+$D$ matters only through whether a set lies between $a$ and $D$, which is again inside the interval. Under P-MONO no
+wait of a prefix lacks its signal, so the prefix drops no operation.
+\end{proof}
+
+\begin{lemma}[Retirement, W.2]\label{lem:ret}
+Let $a$ and $b$ be events, neither on a presentation queue, with $\mathit{call}(a)$ before $\mathit{call}(b)$, $b$ in a
+frame $j \ge w$ and $\mathit{fr}(a) \le j - N$. Then $a \xspec b$ and $a \mspecl{\ell} b$ for every $\ell$.
+\end{lemma}
+\begin{proof}
+If $a$ is on the host, then $b$ is on the host (host order) or in a batch submitted after $a$. In the latter case, the
+host signal of that submission has $a$ in its first scope, and the submission wait has $b$ in its second (transitions
+included). If $a$ is on a device queue $q$, then by the definition of $N$ the host has waited, before the first
+submission or host access of frame $j$, on a $\top$ signal of $q$ that follows $a$. That signal holds $a$ in its first
+scope, it chains into the host wait, and the host wait chains into every later host dependency, in particular into
+the submission of $b$'s batch, whose wait holds $b$, or it holds the host event $b$ itself. All links are signals and
+waits, whose access scopes are their synchronization scopes.
+\end{proof}
+
+\begin{lemma}[Presentation, W.3]\label{lem:pres}
+Assume P-WSI and P-MONO. Let $b$ be a device write to a swapchain image $i$, held under the acquire $A_b$ and ended
+by the present $P_b$. Let $\rho_A$ be the presentation-engine read appended at $A_b$ and $\rho_P$ the one appended at
+$P_b$. If $b$ races an engine read $\pi$ of $i$, then $b$ races $\rho_A$ or $\rho_P$.
+\end{lemma}
+\begin{proof}
+All operations of the presentation queue of $i$ are reads of $i$ and signals and waits of every stage. Between $\rho_A$
+and the operations of $P_b$, the queue holds only $A_b$'s signals, because an image is not acquired twice without a
+present in between. If $\pi$ precedes $\rho_A$ on that queue or is $\rho_A$: $\rho_A \xspec b$ fails, because otherwise
+the chain starts at a signal of every stage after $\rho_A$, which also holds $\pi$, and so $\pi \xspec b$.
+$b \mspecl{\ell} \rho_A$ fails by Lemma~\ref{lem:loc}, since $\rho_A$ is appended before $b$. So $b$ races $\rho_A$.
+Otherwise $\pi$ is $\rho_P$ or follows it. $b \mspecl{\ell} \rho_P$ fails, because otherwise the chain ends at a wait
+of every stage before $\rho_P$, which also holds $\pi$. $\rho_P \xspec b$ fails by Lemma~\ref{lem:loc}. So $b$ races
+$\rho_P$.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:window}]
+Let $\{a,b\}$ race in $\tau^\infty$, with $\mathit{call}(a)$ first. \emph{Distance (W.4).} If neither is a
+presentation-engine event, then $\mathit{fr}(b) - \mathit{fr}(a) \le N - 1$ by Lemma~\ref{lem:ret}, or both lie in
+the first $w$ frames. Otherwise, by P-WSI one of them is an engine read and the other a device write $b'$ to the same
+image. By Lemma~\ref{lem:pres}, $b'$ races $\rho_A$ or $\rho_P$, which lie within $G$ frames of $b'$ by the definition
+of $G$. In both cases there is a witness race $\{a',b'\}$ of frame distance at most $D - 1$, which has an event in
+common with $\{a,b\}$. \emph{Translation.} While $\mathit{fr}(a') \ge w + p$, the calls from $\mathit{call}(a')$ to
+$\mathit{call}(b')$ lie in frames $\ge w + p$, so $\sigma^{-1}$ maps them onto frames $\ge w$, preserving everything
+Lemma~\ref{lem:loc} needs, and $\{\sigma^{-1}a', \sigma^{-1}b'\}$ is a race. After finitely many steps, $\mathit{fr}(a')
+\le w + p - 1$ and $\mathit{fr}(b') \le w + p + D - 2 = M - 1$. By Lemma~\ref{lem:loc}, this witness is a race of the
+first $M$ frames, which are those of $\tau$. Conversely, a race of the first $M$ frames is a race of $\tau^\infty$ by
+Lemma~\ref{lem:loc}. The last sentence of the theorem follows with Theorem~\ref{thm:sound} and
+Corollary~\ref{cor:sched}.
+\end{proof}
+
+\paragraph{Why a fence does not bound the presentation engine}
+In the encoding, the engine's read of a presented image is the pair $\rho_P$ (after the present's waits) and $\rho_A$
+(at the next acquire of that image, after it waits on the present's completion). A frame fence is a signal on a device
+queue. Neither read is in its first scope, because no chain runs from the presentation queue to the device except
+through an acquire's signal. So a fence wait proves nothing about them, and $N$ cannot bound them. This is the
+reason for the separate parameter $G$ and for Lemma~\ref{lem:pres}.
+
+%% -------------------------------------------------------------------
+\subsection{Elision (Theorem~\ref{thm:elide})}
+\label{app:elide}
+
+$F^*$ splits each transition $t_B$ into a struct $B_1$ with $B$'s first stage, access and region masks and a second
+stage set $\{\mathsf{LT}\}$, a transition use $\lambda_B$ at stage $\mathsf{LT}$, and a struct $B_2$ with first stage
+set $\{\mathsf{LT}\}$ and $B$'s second masks. All three have $B$'s call and struct identity. $F^*$ also turns load and
+store operations into accesses without the E3 exemption. Identify $\lambda_B$ with $t_B$.
+
+\begin{lemma}[Conservativity of $F^*$]\label{lem:fstar}
+For events $a,b$ of $\tau$ and every $\ell$, $\ordl{\ell}(a,b)$ in $F^*(\tau)$ implies $\ordl{\ell}(a,b)$ in $\tau$.
+Hence $\Hspec(\tau) \subseteq \Hspec(F^*(\tau))$ under the identification.
+\end{lemma}
+\begin{proof}
+$\mathsf{LT}$ lies in a stage set only if the set names it, so $\top$ does not contain it. $B_1$'s second set
+therefore meets only $B_2$'s first set, and conversely. $B_1 \chainto B_2$ is allowed, because they share their
+struct identity. $D \chainto B_1$ if and only if $D \chainto B$, and $B_2 \chainto D$ if and only if $B \chainto D$.
+For events other than transitions, $\Sc{1}(B_1) = \Sc{1}(B)$, $\Sc{2}(B_2) = \Sc{2}(B)$, and the same holds for the
+access scopes. Replacing each $B_1 B_2$ in a chain of $F^*(\tau)$ by $B$ gives a chain of $\tau$ with the same end
+scopes. $\lambda_B$ is in the scopes of $B_1$ (second) and $B_2$ (first) only, and $t_B$ is in both scopes of $B$, so
+orderings of $\lambda_B$ map to orderings of $t_B$. For the races: $F^*$ removes exemptions and adds events, but adds
+no ordering among the events of $\tau$.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:elide}]
+Let $\{a,b\} \in \Hspec(\tau_P)$. The plan removes or narrows only barrier structs and keeps every transition, so the
+events of $\tau_P$ are those of $\tau$, identified by (call, command, access index). By Lemma~\ref{lem:fstar},
+$\{a,b\} \in \Hspec(F^*(\tau_P))$. By Theorem~\ref{thm:sound} applied to $F^*(\tau_P)$, $\{a,b\} \in
+\Hpw(F^*(\tau_P))$. By the premise, $\{a,b\} \in \Hpw(F^*(\tau))$. The premise is checked on the final plan, so the
+order of the greedy search is irrelevant.
+\end{proof}
+
+
+%% -------------------------------------------------------------------
+\subsection{Repair monotonicity (Lemma~\ref{lem:repair})}
+\label{app:repair}
+
+\begin{proof}[Proof of Lemma~\ref{lem:repair}]
+\emph{Events.} Widening masks adds no access, and an inserted barrier without a transition adds a dependency but no
+access event; layouts and regions are unchanged, so the transitions are the same. Hence $\tau$ and $\tau_r$ have the
+same access events, identified by (call, command, access index), with the same resources, regions and kinds.
+
+\emph{Scopes grow.} Write $M \sqsubseteq M'$ when every mask of a dependency is contained in the corresponding mask of
+its repaired version. The execution scopes $\ESs$, $\ESd$ and the access scopes $\AS$ are monotone in the masks
+(each is a union over named stages or flags, possibly expanded to logically earlier or later stages). So for the
+repaired dependency $D'$ of $D$: $\Sc{1}(D) \subseteq \Sc{1}(D')$, $\Sc{2}(D) \subseteq \Sc{2}(D')$, and the same for
+the access scopes. All other dependencies are unchanged.
+
+\emph{Chains persist.} $D_1 \chainto D_2$ requires that the second synchronization scope of $D_1$ meets the first of
+$D_2$ (and, within one call, the struct-identity condition, which a repair does not change). Both scopes only grow,
+so every chain of $\tau$ is a chain of $\tau_r$, with end scopes that contain the original ones. An inserted barrier
+only adds dependencies and therefore chains.
+
+\emph{Orderings persist.} Execution ordering $\xspec$ and memory ordering $\mspec$ of two events are defined by the
+existence of a chain whose first scopes contain the earlier event (and, for $\mspec$, whose first access scope
+contains it) and whose last scopes contain the later one. By the two previous steps, every witness in $\tau$ is a
+witness in $\tau_r$. Queue-order, semaphore, fence and host orderings are untouched. So $a \spec b$ in $\tau$ implies
+$a \spec b$ in $\tau_r$.
+
+\emph{Races.} A race is a conflicting pair, at least one a write, with overlapping regions, not ordered either way.
+Conflict and overlap depend only on the events, which are the same, and every ordered pair of $\tau$ stays ordered.
+Hence every race of $\tau_r$ is a race of $\tau$: $\Hspec(\tau_r) \subseteq \Hspec(\tau)$.
+
+\emph{Implicit dependencies.} A render pass without an explicit $\mathsf{EXTERNAL}$ dependency has an implicit one.
+The grouper widens it to a dependency whose masks contain the implicit masks, which is a widening in the sense above.
+A repair that replaced the implicit dependency by an explicit one with fewer stages or flags would not be; the
+grouper never emits one.
+\end{proof}
+
+%% -------------------------------------------------------------------
+\subsection{Minimal frames}
+\label{app:counter}
+
+Each frame below is a regression test of the released checker. Each isolates one case in which a plausible
+shortcut in the algorithm would accept a race; the frames show why the corresponding lines of
+Figure~\ref{fig:alg} are needed. For each we give the pairwise result, the epoch result and the result of the
+executable reference semantics.
+\begin{itemize}
+\item \textbf{Relay through a masked signal.} Compute: write \code{buf} (compute shader), $\mathsf{Sig}(a)$. Graphics:
+  $\mathsf{Wait}(a, \text{vertex shader})$, $\mathsf{Sig}(b, \text{compute shader})$. Transfer: $\mathsf{Wait}(b)$,
+  read \code{buf} (copy). The wait's second set does not meet the signal's first set, so no chain exists and the
+  pair races. Relaying the compute queue's clock entry unfiltered through $\mathsf{Sig}(b)$ would accept it. The
+  checker builds the relay of $\mathsf{Sig}(b)$ only from waits whose chain meets its first scope (\pc{Relay},
+  line~4), so all three report the race. The host relay (a masked signal waited on by the host, which then submits)
+  is handled in the same way.
+\item \textbf{Host-signalled wait.} Host: submit, write \code{buf}, then signal value $t{=}5$ from the host. Graphics:
+  submission wait, $\mathsf{Wait}(t{=}5, \text{fragment shader})$, read \code{buf} (vertex shader, uniform read).
+  The write is ordered only into the fragment stage, so the pair races. Treating the wait as a submission would
+  accept it; \pc{ViaWait} has no such shortcut (line~1 uses only full waits). All three report the race.
+\item \textbf{Atomic stand-in.} One queue: fill \code{counter}; barrier transfer $\to$ compute; compute atomic
+  add; fragment atomic add. The fill and the fragment add race. If the epoch mode dropped the fill at the compute
+  add, the fragment add, which is exempt from the compute add by E4, would be compared with nothing. The checker does
+  not drop an entry at an atomic access (\pc{Access}, line~9), so all three report the race.
+\item \textbf{Token stand-in.} One render pass: a fragment-shader sampled read of image $A$, a fragment-shader
+  input-attachment read of $A$ (position token $\pi$), a by-region barrier from the input-attachment read to the
+  color-attachment write, and a color-attachment write of $A$ (token $\pi$). The local link orders the input read
+  before the write, but not the sampled read, which has no token, so the sampled read and the write race. If the two
+  reads shared an epoch read key, the input read would stand in for the sampled read and the race would be missed.
+  The read key and \pc{Supersedes} include the token (\pc{Access}, line~10), so both modes and the reference report
+  the race, whether or not the two reads come from one command.
+\item \textbf{Host write after a fence only.} Device: write \code{buf} (transfer). Host: wait on the fence, then
+  write \code{buf} through a mapped pointer. Without a barrier whose second scope holds a host access, the host write
+  relies on premise A-HOST (Definition~\ref{def:hostdom}); both modes emit the warning
+  \code{timing.premise-host-domain}, and the frame is not guarantee-eligible. Adding a barrier from the transfer
+  stage to the host stage with \code{HOST\_WRITE} removes the warning.
+\item \textbf{Region cut.} Write $[0,100)$; global barrier; writes $[0,50)$ and $[50,100)$; one call with two buffer
+  structs for $[0,50)$ and $[50,100)$ to the fragment shader; read $[0,100)$. No race. Pairwise reports the first
+  write and the read, because no struct covers $[0,100)$. The epoch mode and the reference report nothing. This is the
+  precision limit of Proposition~\ref{thm:complete}, which errs in the report direction.
+\end{itemize}

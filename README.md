@@ -23,6 +23,8 @@ This repository accompanies an anonymous paper submission (Anonymous authors).
 | `bench/elide/` | barrier-elision workloads, plans, traces and measurement scripts (see `bench/elide/README.md`) |
 | `tests/` | unit, property and end-to-end tests; `tests/fixtures/minimal_frames/` holds the minimal frames of the paper's appendix as standalone scripts |
 | `examples/`, `run_demo.py` | a small forward renderer written against the contract IR, with seeded bugs |
+| `paper/` | LaTeX sources and figures of the journal paper and its supplementary material |
+| `experiments/` | the paper's whole-frame differential test against Khronos validation (`wholeframe/`) and the source repairs of vkmark, GStreamer, Dear ImGui and SDL3 (`repairs/`), each with a README |
 
 ## Requirements
 

@@ -1,0 +1,136 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>COVENANT overview</title>
+<link rel="stylesheet" href="style.css">
+<style> svg text { font-family: 'Libertinus Sans', sans-serif; } svg .m { font-family: 'Inconsolata', monospace; } </style>
+</head><body><div id="fig">
+<!-- Pipeline of the synchronization-only paper (paper-wo/main.tex, Overview, Verification algorithm,
+     Implementation). Timing is the verified check; structure is secondary; barrier removal is an application
+     of the timing order. -->
+<svg width="672" height="262" viewBox="0 0 672 262">
+  <defs>
+    <marker id="a" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#5b7fa6"/></marker>
+    <marker id="ar" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#c45b5b"/></marker>
+    <marker id="ag" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#2c8a55"/></marker>
+    <filter id="sh" x="-5%" y="-5%" width="110%" height="120%"><feDropShadow dx="1" dy="1.3" stdDeviation="0.6" flood-color="#9fb2c0" flood-opacity=".55"/></filter>
+  </defs>
+  <style>
+    .in   { fill: #f9f0ec; stroke: #d98a73; }
+    .fe   { fill: #f6eef6; stroke: #a780a7; }
+    .ir   { fill: #eef6f5; stroke: #7fb5ae; }
+    .ck   { fill: #eef3f9; stroke: #7d9cc0; }
+    .ck2  { fill: #f5f7f9; stroke: #a9b6c3; }
+    .out  { fill: #f0f6ee; stroke: #8dbb85; }
+    .opt  { fill: #eef6f0; stroke: #6aa57f; }
+    .gpu  { fill: #fff; stroke: #9aa5ae; stroke-dasharray: 3 2; }
+    rect { stroke-width: 1.1; }
+    .t { font-size: 9px; font-weight: 700; fill: #2b2f36; }
+    .s { font-size: 7.4px; fill: #4a525c; }
+    .tag { font-size: 6.6px; font-style: italic; fill: #6b7480; }
+    .e { stroke: #5b7fa6; stroke-width: 1.5; fill: none; }
+    .eg { stroke: #2c8a55; stroke-width: 1.4; fill: none; }
+  </style>
+
+  <!-- column labels -->
+  <g font-size="7.4" fill="#6b7480" text-anchor="middle" font-style="italic">
+    <text x="56" y="10">unmodified inputs</text><text x="179" y="10">front ends</text><text x="296" y="10">one model</text>
+    <text x="440" y="10">checks</text><text x="603" y="10">reports</text>
+  </g>
+
+  <!-- inputs -->
+  <g filter="url(#sh)">
+    <rect class="in" x="6" y="20" width="100" height="36" rx="5"/>
+    <rect class="in" x="6" y="72" width="100" height="36" rx="5"/>
+    <rect class="in" x="6" y="124" width="100" height="44" rx="5"/>
+  </g>
+  <text class="t" x="56" y="34" text-anchor="middle">Shaders</text><text class="s" x="56" y="47" text-anchor="middle">Slang / GLSL / HLSL</text>
+  <text class="t" x="56" y="86" text-anchor="middle">Host source</text><text class="s" x="56" y="99" text-anchor="middle">C++ with Vulkan calls</text>
+  <text class="t" x="56" y="138" text-anchor="middle">Host program</text><text class="s" x="56" y="150" text-anchor="middle">the unmodified binary,</text><text class="s" x="56" y="160" text-anchor="middle">linked with <tspan class="m">-lcovvk</tspan></text>
+
+  <!-- front ends -->
+  <g filter="url(#sh)">
+    <rect class="fe" x="124" y="20" width="110" height="36" rx="5"/>
+    <rect class="fe" x="124" y="72" width="110" height="36" rx="5"/>
+    <rect class="fe" x="124" y="118" width="110" height="56" rx="5" style="stroke-width:1.6"/>
+  </g>
+  <text class="t" x="179" y="34" text-anchor="middle">SPIR-V lifter</text><text class="s" x="179" y="47" text-anchor="middle">per-entry-point accesses</text>
+  <text class="t" x="179" y="86" text-anchor="middle">Host reader (libclang)</text><text class="s" x="179" y="99" text-anchor="middle">struct layouts</text>
+  <text class="t" x="179" y="132" text-anchor="middle">Model driver</text>
+  <g class="s" text-anchor="middle"><text x="179" y="144">no GPU; one run records</text><text x="179" y="154">every call as a JSON-lines</text><text x="179" y="164">trace; host writes by page trap</text></g>
+
+  <path class="e" d="M106,38 L122,38" marker-end="url(#a)"/>
+  <path class="e" d="M106,90 L122,90" marker-end="url(#a)"/>
+  <path class="e" d="M106,146 L122,146" marker-end="url(#a)"/>
+
+  <!-- trace + IR -->
+  <g filter="url(#sh)"><rect class="ir" x="252" y="26" width="88" height="142" rx="6"/></g>
+  <text class="t" x="296" y="42" text-anchor="middle">Trace + IR</text>
+  <g class="s" text-anchor="middle">
+    <text x="296" y="58">queues, submits,</text><text x="296" y="69">semaphores, fences</text>
+    <text x="296" y="80">acquire / present</text><text x="296" y="91">per swapchain image</text>
+    <text x="296" y="102">command streams</text><text x="296" y="113">barriers, layouts</text>
+    <text x="296" y="124">host-written pages</text>
+    <text x="296" y="140">shaders, bindings,</text><text x="296" y="151">formats, layouts</text>
+  </g>
+  <path class="e" d="M234,38 L250,52" marker-end="url(#a)"/>
+  <path class="e" d="M234,90 L250,90" marker-end="url(#a)"/>
+  <path class="e" d="M234,146 L250,130" marker-end="url(#a)"/>
+
+  <!-- checks: structure (secondary) on top, timing (the verified check) next to the optimizer it licenses -->
+  <g filter="url(#sh)">
+    <rect class="ck2" x="360" y="20" width="160" height="32" rx="5"/>
+    <rect class="ck" x="360" y="62" width="160" height="114" rx="5" style="stroke-width:1.8"/>
+  </g>
+  <text class="t" x="370" y="33">Structure</text><text class="tag" x="510" y="33" text-anchor="end">secondary</text>
+  <text class="s" x="370" y="45">host/shader layouts, bindings, stage I/O</text>
+  <text class="t" x="370" y="77" style="font-size:9.6px">Timing</text><text class="tag" x="510" y="76" text-anchor="end">the verified check</text>
+  <g class="s">
+    <text x="370" y="91">whole-frame happens-before over the CPU,</text>
+    <text x="370" y="101">every GPU queue and the present of each</text>
+    <text x="370" y="111">swapchain image, across frames in flight</text>
+    <text x="370" y="124">host writes to mapped memory, per page</text>
+    <text x="370" y="137">graphics, compute, mesh shading, ray</text>
+    <text x="370" y="147">tracing (TLAS reads its BLASes); a command</text>
+    <text x="370" y="157">it does not model is reported, not dropped</text>
+    <text x="370" y="170" style="font-style:italic;font-size:7px">proved sound in its stated domain (premises)</text>
+  </g>
+  <path class="e" d="M340,40 L358,36" marker-end="url(#a)"/>
+  <path class="e" d="M340,118 L358,118" marker-end="url(#a)"/>
+
+  <!-- report groups and repairs -->
+  <g filter="url(#sh)"><rect class="out" x="540" y="20" width="126" height="163" rx="5"/></g>
+  <text class="t" x="603" y="34" text-anchor="middle">Report groups</text>
+  <text class="t" x="603" y="45" text-anchor="middle">and checked repairs</text>
+  <g class="s">
+    <text x="548" y="62">raw diagnostics, one per</text><text x="548" y="72">access and frame, cite both</text><text x="548" y="82">origins (line or <tspan class="m">@seq</tspan>)</text>
+    <text x="548" y="98">grouped by site key</text>
+    <text x="548" y="114">narrowest barrier or mask</text><text x="548" y="124">repair, re-checked on the</text><text x="548" y="134">whole frame; groups one</text><text x="548" y="144">repair removes are merged</text>
+    <text x="548" y="158">site- and repair-grouped</text><text x="548" y="167.5">diagnostics; over budget:</text><text x="548" y="177">site groups, no repairs</text>
+  </g>
+  <g stroke="#8dbb85" stroke-width=".8"><line x1="548" y1="88" x2="658" y2="88"/><line x1="548" y1="104" x2="658" y2="104"/><line x1="548" y1="150" x2="658" y2="150"/></g>
+  <path class="e" d="M520,36 L538,36" marker-end="url(#a)"/>
+  <path class="e" d="M520,100 L538,100" marker-end="url(#a)"/>
+  <!-- repair re-check loop -->
+  <path d="M540,140 C531,140 530,152 521,154" stroke="#2c8a55" stroke-width="1" stroke-dasharray="2.5 1.8" fill="none" marker-end="url(#ag)"/>
+  <text x="530" y="186" font-size="6.2" fill="#2c8a55" text-anchor="middle">re-check</text>
+
+  <!-- consequence: barrier removal -->
+  <text x="352" y="214" font-size="7.4" fill="#6b7480" font-style="italic" text-anchor="end">application of the same order:</text>
+  <text x="352" y="225" font-size="7.4" fill="#6b7480" font-style="italic" text-anchor="end">proof-licensed barrier removal</text>
+  <g filter="url(#sh)"><rect class="opt" x="360" y="198" width="160" height="40" rx="5"/></g>
+  <text class="t" x="440" y="212" text-anchor="middle">Barrier optimizer</text>
+  <text class="s" x="440" y="223" text-anchor="middle">remove or narrow one barrier; keep it</text>
+  <text class="s" x="440" y="233" text-anchor="middle">only if the whole frame has no new hazard</text>
+  <path d="M478,198 C484,192 484,184 478,178" class="eg" marker-end="url(#ag)"/>
+  <path d="M402,178 C396,184 396,190 402,196" stroke="#c45b5b" stroke-width="1.4" fill="none" marker-end="url(#ar)"/>
+  <text x="488" y="191" font-size="6.8" fill="#2c8a55">candidate</text>
+  <text x="394" y="191" font-size="6.8" fill="#c45b5b" text-anchor="end">new hazard: reject</text>
+
+  <g filter="url(#sh)"><rect class="out" x="540" y="190" width="126" height="28" rx="5"/></g>
+  <text class="t" x="603" y="202" text-anchor="middle">Proved barrier plan</text><text class="s" x="603" y="213" text-anchor="middle">JSON, keyed by call signature</text>
+  <path d="M520,212 L538,206" class="eg" marker-end="url(#ag)"/>
+  <rect class="gpu" x="540" y="228" width="126" height="28" rx="5"/>
+  <text class="t" x="603" y="240" text-anchor="middle" style="font-size:8.2px">Layer on a real driver</text><text class="s m" x="603" y="251" text-anchor="middle" style="font-size:7px">VK_LAYER_COVENANT_elide</text>
+  <path d="M603,218 L603,226" class="eg" marker-end="url(#ag)"/>
+</svg>
+<div class="caption" id="cap">Fig. 2. <b>Overview.</b> (preview caption)</div>
+</div></body></html>

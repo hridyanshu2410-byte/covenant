@@ -1,0 +1,57 @@
+/* Shared figure style, matched to the RCGP paper (ACM TOG): Libertinus (Linux Libertine fork) + Inconsolata */
+:root {
+  --ink: #2b2f36;
+  --muted: #6b7480;
+  --band: #a9c4d3;
+  --band-dark: #5d7f93;
+  --band-bg: #f3f7fa;
+  --panel-bg: #eef3f7;
+  --panel-border: #b9cbd8;
+  --head-bg: #e3ecf2;
+  --num: #8fb3c6;
+  /* traced identifiers */
+  --c-albedo: #b4532a;
+  --c-rf: #2c6aa8;
+  --c-hdr: #2c8a55;
+  /* code */
+  --kw: #3b5aa0;
+  --ty: #7d6aa8;
+  --fn: #8b3a62;
+  --cm: #8a939c;
+  --str: #6a7d2f;
+  --num-lit: #a0522d;
+  --bad: #c0392b;
+  --ok: #2c8a55;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #fff; }
+body { font-family: 'Libertinus Serif', serif; color: var(--ink); font-size: 9.5px; width: 672px; }
+code, pre, .mono { font-family: 'Inconsolata', monospace; }
+
+.band { display: flex; border: 1px solid var(--panel-border); border-radius: 7px; background: var(--band-bg); overflow: hidden; }
+.band-label { width: 22px; background: var(--band); display: flex; align-items: center; justify-content: center; }
+.band-label span { writing-mode: vertical-rl; transform: rotate(180deg); font-variant: small-caps; font-weight: 600; font-size: 10.5px; letter-spacing: .3px; color: #2f4656; white-space: nowrap; }
+.band-body { flex: 1; padding: 6px; display: grid; gap: 6px; }
+
+.panel { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 5px; overflow: hidden; display: flex; flex-direction: column; }
+.panel h3 { font-size: 9.5px; font-weight: 600; text-align: center; padding: 2.5px 4px 2px; border-bottom: 1px solid var(--panel-border); background: var(--head-bg); white-space: nowrap; }
+.n { display: inline-block; width: 12px; height: 12px; line-height: 12px; border-radius: 50%; background: var(--num); color: #fff; font-size: 8px; font-weight: 700; text-align: center; margin-right: 4px; vertical-align: 1px; font-family: 'Libertinus Sans', sans-serif; }
+.panel pre { font-size: 8.1px; line-height: 1.32; padding: 4px 6px 5px; white-space: pre; flex: 1; }
+.panel .body { padding: 4px 5px; flex: 1; }
+
+.kw { color: var(--kw); } .ty { color: var(--ty); } .fn { color: var(--fn); } .cm { color: var(--cm); font-style: italic; }
+.st { color: var(--str); } .nu { color: var(--num-lit); } .at { color: #7a5c00; }
+.albedo { color: var(--c-albedo); font-weight: 600; }
+.rf { color: var(--c-rf); font-weight: 600; }
+.hdr { color: var(--c-hdr); font-weight: 600; }
+.bad { color: var(--bad); font-weight: 600; }
+.ok { color: var(--ok); font-weight: 600; }
+.dim { color: var(--muted); }
+.hl-bad { background: #f7dcd6; border-radius: 2px; }
+
+.arrow-down { display: flex; justify-content: center; margin: -1px 0 -1px; }
+
+.caption { font-size: 9.6px; line-height: 1.38; text-align: justify; margin-top: 7px; hyphens: auto; }
+.caption b { font-weight: 700; }
+.caption .n { width: 11px; height: 11px; line-height: 11px; font-size: 7.5px; margin: 0 1px; }
+.placeholder { border: 1.2px dashed #c98a2b; background: repeating-linear-gradient(45deg, #fff8ec, #fff8ec 6px, #fdf0da 6px, #fdf0da 12px); color: #8a5a12; }

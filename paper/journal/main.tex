@@ -1,0 +1,1169 @@
+%% COVENANT -- journal version (ACM TOG).
+%% Formal sections: formal.tex (Sections 4-5), elision.tex (Section 8 theorem), appendix-proofs.tex (Appendix A).
+%% Companion: the supplement ("Supplement Sec. X" below).
+\documentclass[acmtog,anonymous,review]{acmart}
+
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage{xspace}
+\usepackage{tikz}
+\graphicspath{{../figures/}}
+\setlength{\emergencystretch}{2em}
+\hypersetup{pdfauthor={},pdfcreator={},pdfsubject={},pdfkeywords={},pdftitle={COVENANT: Schedule-Independent Verification of Vulkan Frame Synchronization}}
+\pdfsuppressptexinfo=-1
+
+\newcommand{\sys}{\textsc{Covenant}\xspace}
+\newcommand{\rcgp}{RCGP\xspace}
+\newcommand{\bench}{GPUBugBench\xspace}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\hbc}{\ensuremath{\rightarrow_{C}}}
+\newcommand{\xspec}{\ensuremath{\Rightarrow_{x}}}
+\newcommand{\mspec}{\ensuremath{\Rightarrow_{m}}}
+\newcommand{\spec}{\ensuremath{\Rightarrow_{\mathit{spec}}}}
+\newcommand{\Haz}{\ensuremath{\mathit{Haz}}}
+\newcommand{\supp}[1]{Supplement~\S#1}
+\newcommand{\posthoc}{\textsuperscript{\textsf{ph}}}
+\newcommand{\relhash}{\code{eb50030d8472}}
+\DeclareRobustCommand{\circled}[1]{\tikz[baseline=(c.base)]\node[circle,fill=black!35,text=white,inner sep=.6pt,font=\sffamily\scriptsize\bfseries](c){#1};}
+%% acmart already defines theorem, corollary, proposition, lemma and definition environments.
+
+\lstdefinestyle{diag}{basicstyle=\ttfamily\scriptsize,columns=fullflexible,
+  breaklines=true,frame=single,framerule=0.3pt,xleftmargin=2pt,xrightmargin=2pt}
+
+\setcopyright{none}
+\acmJournal{TOG}
+\acmVolume{0}
+\acmNumber{0}
+\acmArticle{0}
+\acmYear{2026}
+\acmMonth{0}
+\acmSubmissionID{XXX}
+
+\begin{document}
+
+\title{\textsc{Covenant}: Schedule-Independent Verification of Vulkan Frame Synchronization}
+
+\author{Anonymous Author(s)}
+
+\begin{abstract}
+A Vulkan frame is a concurrent program: the CPU, several GPU queues and a presentation engine share resources, and
+consecutive frames overlap. We present \sys, which checks the synchronization of whole frames of unmodified
+C++/Vulkan programs along the host path that one run executes. A model driver records every call and traps host
+writes to mapped memory. \sys orders the recorded run as one happens-before relation over the host, every queue and
+the presentation engine of each swapchain image, across frames in flight, and reports diagnostics that name the
+failed scope test, grouped by site and by a repair re-checked on the whole frame. We prove, by hand and relative to
+our transcription of the specification, that an accepted trace in a stated domain, which the checker reports for
+every run, is race-free under every device schedule consistent with its synchronization. In two studies on 57
+previously unchecked programs from eight code bases, each with the checker frozen before its first run, \sys found 16
+true root causes, including a host-write race that Khronos synchronization validation does not track; five code
+bases drew no false alarm. On the same recorded traces, the released checker reports 94.5\% of report groups true
+on the 24 programs of the second study whose grouping completes. Differential tests against validation and a
+benchmark of real bugs complete the evaluation.
+\end{abstract}
+
+\begin{CCSXML}
+<ccs2012>
+<concept><concept_id>10010147.10010371</concept_id><concept_desc>Computing methodologies~Computer graphics</concept_desc><concept_significance>500</concept_significance></concept>
+<concept><concept_id>10011007.10011074.10011099</concept_id><concept_desc>Software and its engineering~Software verification and validation</concept_desc><concept_significance>500</concept_significance></concept>
+</ccs2012>
+\end{CCSXML}
+\ccsdesc[500]{Computing methodologies~Computer graphics}
+\ccsdesc[500]{Software and its engineering~Software verification and validation}
+
+\keywords{graphics programming, Vulkan, synchronization, happens-before, static analysis, differential testing, bug benchmark}
+
+\begin{teaserfigure}
+  \includegraphics[width=\textwidth]{fig1-teaser.pdf}
+  \caption{\textbf{One frame, checked whole: a host-write race in SDL3 that synchronization validation does not
+  see.} \circled{1}~SDL3's Vulkan renderer, unmodified (\code{test/testsprite}), runs once against a GPU-free model
+  driver that records every call and traps every CPU store to mapped memory. Each frame it waits for the fence of
+  the command buffer it is about to reuse, four frames back, and then copies the new vertices into
+  \code{vertexBuffers[0]}, of which there is one set for all frames. \circled{2}~\sys orders the recorded run as one
+  happens-before relation over the CPU and the GPU queue. The store before call @1442 is ordered after the fence
+  wait for command buffer~4 only; command buffer~1, whose draw @1139 reads the same buffer, is waited for only in the
+  next frame, so the store and the draw are unordered. \circled{3}~The checker's verbatim diagnostic (the first of
+  166 in 20 frames). Synchronization validation, run on the same program and frames on lavapipe, reports nothing: it
+  does not track host writes to mapped memory. \circled{4}~With one set of vertex buffers per frame in flight the
+  checker reports nothing, and Corollary~\ref{cor:sched} gives race freedom under every device schedule consistent
+  with the recorded synchronization, for the modelled accesses on the recorded host path. Diagnostic from the
+  checker frozen for the studies of \S\ref{sec:eval-fresh}, unchanged in the release; bug SDL-1 of
+  Table~\ref{tab:bugs}; sequence numbers are from the recorded trace.}
+  \label{fig:teaser}
+\end{teaserfigure}
+
+\maketitle
+\hypersetup{pdfauthor={},pdfcreator={},pdfsubject={},pdfkeywords={},pdftitle={COVENANT: Schedule-Independent Verification of Vulkan Frame Synchronization}}
+
+%% ===================================================================
+\section{Introduction}
+\label{sec:intro}
+
+A graphics frame is a concurrent program. The CPU records command buffers and writes mapped memory. One or more GPU
+queues execute the commands. A presentation engine reads finished images on its own clock, and the next frame starts
+before the previous one has finished. Vulkan, Direct3D~12 and Metal leave the ordering of all this to the
+application, which must express it through barriers, semaphores, fences and image layouts.
+
+Mistakes in this ordering rarely fail loudly. A vertex buffer rewritten while the GPU may still read it
+(Figure~\ref{fig:teaser}), a semaphore reused one frame too early, or a swapchain image acquired once too often all
+pass most test runs; the last is the likely cause of a public sample freezing in about 3 of 100 runs
+(\S\ref{sec:motivation}). Each of these bugs spans frames, queues or the presentation engine.
+
+\paragraph{What existing checks cover}
+Khronos synchronization validation~\cite{lunarg2021syncval} (``syncval'') is the standard tool. It runs inside the
+Vulkan loader and reports potential hazards implied by the synchronization the application declares, including
+hazards across command buffers, queues and swapchain operations, not only the hazards that manifest in the observed
+schedule. It does not need a GPU either: on the Khronos mock driver it analyses submitted commands without executing
+them, and we use it that way (\S\ref{sec:eval-wholeframe}). It does not track host accesses to mapped
+memory~\cite{lunarg2021syncval}. Static GPU
+verifiers~\cite{betts2012gpuverify,cogumbreiro2021faial,martinez2026kuiper,bansal2026prism} reason inside one kernel.
+Render graphs~\cite{odonnell2017framegraph,amd2022rps} derive barriers at run time from declared accesses.
+\rcgp~\cite{sivaram2026rcgp} makes structural misuse a compile-time error for programs written in its embedded
+language, within one command recording.
+
+\paragraph{What \sys adds}
+None of \sys's ingredients is individually new: vector clocks, FastTrack-style epochs, GPU-free capture and
+whole-frame reasoning all exist. What we contribute is their integration into one \emph{specified},
+schedule-independent analysis of a captured Vulkan frame, and the evidence that this integration finds bugs and can
+be trusted. Concretely, one analysis covers:
+\begin{itemize}
+\item \textbf{host memory:} CPU stores to mapped memory are captured by page protection and ordered with device
+  work, including stores that leave a value unchanged (\S\ref{sec:capture}); eight of the real bugs we report are
+  host-write races, a class that validation does not track;
+\item \textbf{presentation and overlapping frames:} one presentation queue per swapchain image, acquire and present
+  as operations on it, and every frame in flight in one order (\S\ref{sec:model});
+\item \textbf{actionable diagnostics:} each report names the scope test that failed, and reports are grouped by site
+  and by a repair that was re-checked on the whole frame (\S\ref{sec:algo});
+\item \textbf{checked transformations:} the same decision procedure licenses barrier removal on the recorded
+  execution (\S\ref{sec:elide});
+\item \textbf{a soundness theorem with a full proof} that connects the implemented algorithm, as pseudocode, to a
+  transcription of the specification, with a stated trusted computing base and a domain that the checker reports for
+  every run (\S\ref{sec:model}, Appendix~\ref{app:proofs}).
+\end{itemize}
+
+\paragraph{Scope}
+The guarantee is about the recorded host path, in the verified configuration (spec-strict layout transitions,
+conservative host capture), under premises we state (\S\ref{sec:premises}). Each run's report says whether the run is
+in the guarantee's domain: checking completed, no unmodelled command with a memory effect, and no host write whose
+ordering relies on the host-domain premise (\S\ref{sec:eligible}). Swapchain recreation, resizes and error paths that
+the run did not take are not covered, and neither are accesses outside the model (\S\ref{sec:cover}).
+Semantic conventions such as color encoding or units are outside the synchronization guarantee.
+
+\paragraph{Contributions}
+\begin{enumerate}
+\item \textbf{A semantics of Vulkan host orchestration and a proved checker} (\S\ref{sec:model}--\S\ref{sec:algo}).
+  Soundness of the pairwise algorithm (Theorem~\ref{thm:sound}) and of the fast epoch mode
+  (Lemma~\ref{lem:fast}), with full proofs, including framebuffer-local dependencies, the host-write domain
+  operation and the descriptor-index refinement; conditional precision on region-uniform traces
+  (Proposition~\ref{thm:complete}); and a window theorem that is conditional on periodic continuation
+  (Theorem~\ref{thm:window}).
+\item \textbf{A conservative capture of host writes} by page protection, with a conservativity argument and its
+  measured precision cost (\S\ref{sec:capture}, \S\ref{sec:eval-fresh}).
+\item \textbf{Differential validation against synchronization validation} (\S\ref{sec:eval-sem}): 750 barrier
+  mutants, 13 ray-tracing and mesh-shading programs and 1,251 generated whole-frame programs with semaphores,
+  swapchains, frames in flight and a second queue family, re-run with the released checker.
+\item \textbf{\bench and blind evaluation} (\S\ref{sec:eval-bench}--\S\ref{sec:eval-real}): 166 real application
+  bugs from 105 projects; six blind rounds with frozen checkers; two pre-registered studies of the proved
+  configuration on previously unchecked programs from eight code bases, with every report group triaged by written rules and compared
+  with validation; 54 bugs we judge real in public code. For 9 of them we patched the source, rebuilt and re-checked
+  (11 source-patch cases); 15 programs become clean.
+\end{enumerate}
+Section~\ref{sec:motivation} gives motivating examples, \S\ref{sec:overview} an overview, \S\ref{sec:model} the
+semantics and theorems, \S\ref{sec:algo} the algorithm, \S\ref{sec:impl} the implementation and capture,
+\S\ref{sec:eval} the evaluation, \S\ref{sec:elide} the barrier application and \S\ref{sec:limits} the limitations
+in one place. A supplement holds the capture and \code{UNDEFINED} design notes, the checker snapshots used by each
+study, the per-engine triage, the bug dossier summary and the full results tables. The code, the model driver, the
+tests and the scripts of every experiment are released with the paper.
+
+%% ===================================================================
+\section{Motivating Examples}
+\label{sec:motivation}
+
+\subsection{What a Vulkan frame must get right}
+A Vulkan queue does not execute commands in submission order. Two commands are ordered only by an
+\emph{execution dependency}, or by a chain of them. The earlier command must be in the first synchronization scope
+(the source stages, expanded to logically earlier stages). The later command must be in the second scope (the
+destination stages, expanded to logically later stages).
+A write is visible to a later access only if the dependency also makes it available and visible. Availability
+requires the write to be in the first \emph{access} scope, and visibility requires the later access to be in the
+second. Access scopes contain only the stages named explicitly.
+A layout transition is itself a write, and every earlier write must be made available before it executes, even when
+the old layout is \code{UNDEFINED}. Semaphores order work between queues, fences order the host after the
+device, and a semaphore wait blocks only the stages in its wait mask.
+The presentation engine reads swapchain images concurrently with rendering. At most
+$n_{\mathit{images}} - n_{\mathit{minImages}} + 1$ images may be held at once.
+Shader-level memory models~\cite{tong2024gpuconsistency} formalize what happens inside the GPU. Our concern is the
+command-level orchestration around it.
+
+\subsection{Three bugs that span the frame}
+\paragraph{A semaphore reused across frames}
+\bench case 30 is a typical instance. Its render-finished semaphores are indexed by frame in flight rather than
+by swapchain image. The fence the host waits on proves only that the earlier \emph{submission} has finished, not that
+the \emph{present} that waits on its semaphore has consumed it, so the next signal of that semaphore may be made while
+the semaphore is still signaled. No single command buffer contains the bug: it lives between the queue, the host's
+fence wait and the presentation engine of one swapchain image, two frames apart.
+
+\paragraph{Host writes racing the GPU}
+In the public Sascha Willems Vulkan samples, the per-frame uniform-buffer descriptors of one sample all point at
+buffer~0, while the host rewrites the buffers after waiting on only one frame's fence (SW-T1, \S\ref{sec:eval-bugs}).
+The GPU may still read the buffer the CPU is writing. \sys reports a cross-queue race between the host and the
+graphics queue:
+\begin{lstlisting}[style=diag]
+[timing] timing.cross-queue-race: 'buffer#3' is written on 'host' and read on 'graphics0' with nothing
+  ordering the two. at vkCmdDrawIndexed @seq 350 (...): set 0 binding 0
+    note: other access: host write to buffer#3 (mapped memory#4 +0x0), before call seq 607
+\end{lstlisting}
+Synchronization validation does not track host writes to mapped memory, so it cannot observe this class of race.
+Several such stores write the bytes that are already there; a capture that compares memory snapshots does not see
+them at all (\S\ref{sec:capture}).
+
+\paragraph{A swapchain image acquired once too often}
+In about 3 of 100 runs on a consumer GPU, one public sample of \rcgp~\cite{sivaram2026rcgp} froze inside
+\code{vkAcquireNextImageKHR}. Its runtime treats a suboptimal acquire as a failed one, so the acquired image is
+never presented and the swapchain is never rebuilt; the program can then hold more images than the surface allows,
+and it waits with an infinite timeout. \sys reports the pattern from one trace of a distilled reproduction, recorded
+on a machine with no GPU:
+\begin{lstlisting}[style=diag]
+[timing] timing.swapchain-overacquire: this acquire would hold 3 images of 'swapchain' at once,
+  but only 2 may be held (3 images, minimum 2); it can block forever.
+    at vkAcquireNextImageKHR @seq 115 (swapchain[2])
+\end{lstlisting}
+This is not independent evidence for \sys: the rule was written after we saw the freeze. Like the semaphore reuse
+above, it is a protocol check, justified by a valid-usage rule rather than by the race theorem (\S\ref{sec:protocol}).
+
+\subsection{What existing tools see}
+\label{sec:rcgp}
+Synchronization validation reasons from the declared synchronization of the command stream that the application
+submits, on a real device or the mock driver; it does not see host writes, and its verdicts depend on the device and
+on its configuration (\S\ref{sec:eval-real}). Render graphs prevent the barrier bugs they own, but not those in code
+around them or in their own barrier derivation (VUK-1, \S\ref{sec:eval-bugs}). \rcgp~\cite{sivaram2026rcgp} is a
+C++26 embedded language whose resource contracts, typed modules and combinators make programs that misuse its
+abstractions fail to compile, for every execution. By design its guarantees are scoped (Table~\ref{tab:scope}):
+programs are written in its language, effects cover one recording, and swapchain acquire and present, frames in
+flight and multiple queues are outside its effect algebra. \sys starts at these boundaries and gives the weaker,
+executed-path guarantee for existing code. The two are complementary (\S\ref{sec:eval-rcgp}).
+
+\begin{table}[t]
+\caption{Scope of \rcgp and \sys. The \rcgp column is from its paper, compile-only ports and its source.}
+\label{tab:scope}
+\small
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}lll@{}}
+\toprule
+Property & \rcgp & \sys \\
+\midrule
+Input program & its C++26 eDSL & unmodified Slang/GLSL + C++ \\
+Barriers & render-to-sample: inserted & stage/access checked (Thm.~\ref{thm:sound}) \\
+Guarantee & every execution & executed host path \\
+Multiple queues, ownership & no & yes \\
+Frames in flight, swapchain & no & yes \\
+Host writes to mapped memory & no & yes \\
+When it runs & C++ compile time & after one GPU-free run \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+%% ===================================================================
+\section{Overview}
+\label{sec:overview}
+
+\begin{figure*}[t]
+  \includegraphics[width=\textwidth]{fig-overview.pdf}
+  \caption{\textbf{Overview.} The unmodified host program runs once on the model driver, which records every call and
+  traps host writes to mapped memory by page; shaders and host source add per-entry-point accesses and layouts. The
+  timing check builds one happens-before order over the CPU, every GPU queue and the present of each swapchain image,
+  across frames in flight. In the verified configuration it is proved sound for the recorded host path under the
+  premises of \S\ref{sec:premises}. It covers graphics, compute, mesh-shading and ray-tracing work, and reports any
+  command it does not model. Secondary structure checks share the trace. Raw diagnostics are grouped by site, and each
+  group gets the narrowest barrier or mask repair, kept only if re-checking the whole frame removes the group's
+  hazards and adds none. Barrier removal is an application of the same order (\S\ref{sec:elide}).}
+  \label{fig:overview}
+\end{figure*}
+
+Figure~\ref{fig:overview} shows the pipeline. It has three inputs: shaders in Slang, GLSL or HLSL, compiled to SPIR-V
+with debug information so that diagnostics point at source; the host source, read with libclang for struct layouts;
+and the host binary, which runs unmodified against \code{libcovvk}. This stand-in \code{libvulkan} returns fake handles
+and records a trace of every call (\S\ref{sec:impl}). From the trace, \sys builds an event structure over the host,
+every device queue and one presentation engine per swapchain image (\S\ref{sec:model}), computes its happens-before
+order and reports every conflicting pair it cannot prove ordered (\S\ref{sec:algo}).
+
+\input{formal}
+
+%% ===================================================================
+\section{Implementation}
+\label{sec:impl}
+
+\paragraph{The model driver}
+\code{libcovvk} is a stand-in \code{libvulkan} that returns fake handles and records a JSON-lines trace containing
+object creation (with formats and usages), descriptor writes and command streams, submissions with their semaphores
+and fences, swapchain acquire and present, and host writes to mapped memory (\S\ref{sec:capture}). Shaders are lifted
+from SPIR-V, and the C++ host is read with libclang for struct layouts.
+
+\subsection{Host-write capture}
+\label{sec:capture}
+Host writes are the part of the trace that a recording driver does not see as calls, so they need their own
+argument (premise A2-H). The full design, its tests and its counts are in \supp{C}.
+
+\emph{Mechanism.} The driver allocates each mappable \code{VkDeviceMemory} as an anonymous mapping and, at
+\code{vkMapMemory}, makes it read-only. The first store to a page raises a fault; the driver's handler marks the
+page dirty, records the faulting thread, makes that page writable and returns, so the store is retried and succeeds.
+Every entry point of the driver takes the driver lock and, before anything else, flushes: it collects the dirty pages,
+re-protects the region \emph{before} reading its bytes (so a store racing the flush lands in this record or faults
+into the next), and emits one host-write record. Only then is the call's own record written.
+
+\emph{Placement.} Let $C_1, C_2, \dots$ be the calls in lock order. Every store to a trapped page between the flush of
+$C_{k-1}$ and that of $C_k$ is in the record emitted at $C_k$, and the record becomes host write events placed
+between $C_{k-1}$ and $C_k$ on the host queue. Every operation that orders host and device work is itself a call
+(submission, fence and semaphore waits, idle waits, acquire), so it lies wholly before or after that interval: the
+record is on the same side of every synchronizing call as the store it stands for.
+
+\emph{What is charged.} In \emph{conservative} capture, the default, each dirty page is charged to every buffer
+or image bound to the memory that overlaps the page, without looking at its bytes. A store that writes the value
+already present, or that is undone before the next call, still faults and is still an access. In \emph{observed}
+capture, only the bytes that differ from a shadow copy are charged; it misses those stores and is outside the
+theorems.
+
+\emph{Preconditions.} The argument needs four conditions: the driver's fault handler is in effect (P1, checked; a
+replaced handler or an untrapped mapping is reported, and a clean verdict then excludes those writes); stores go
+through the mapping the driver returned (P2, not checkable); each store is ordered between its two bounding calls in
+trace order (P3, which holds for one thread and is checked as far as the trap allows: a fault from a thread other than
+the one making the surrounding calls is reported); and the bytes are bound when the interval ends (P4). Host
+\emph{reads} of mapped memory are not trapped and are not events.
+
+\emph{Cost.} Page granularity charges a page to neighbours that the store did not touch. Where a program
+sub-allocates host-visible memory below page size while earlier sub-allocations are in flight, this produces false
+alarms, which we measure in \S\ref{sec:eval-fresh} and \S\ref{sec:eval-posthoc}. The observed mode avoids them,
+outside the theorem.
+
+\paragraph{From trace to events}
+\begin{itemize}
+\item \textbf{Submissions.} A submission is preceded by a host signal that the queue waits on. Then come each
+  batch's waits, the commands of its command buffers as recorded at submit time, its signals, and the fence.
+\item \textbf{Draws.} Draws read their bound descriptors and their vertex, index and indirect buffers, and they
+  write their attachments. Byte ranges come from descriptor ranges, dynamic offsets and index ranges.
+\item \textbf{Shader accesses.} A per-entry-point analysis of the SPIR-V call graph yields each shader's reads and
+  writes and classifies storage bindings as atomic-only, atomically allocated slots, or plain. A descriptor access is
+  charged at the stages whose entry point uses the binding; the set layout's stage flags are only the fallback when no
+  entry point is known. A descriptor-array read is charged to every written element, unless the guard conditions of
+  \S\ref{sec:guards} hold and the element is selected by host-written index bytes.
+\item \textbf{Semaphores.} Each signal of a binary semaphore is a separate instance. A timeline wait is matched
+  first against the initial value, then against the first sufficient signal.
+\item \textbf{Swapchain.} \code{vkAcquireNextImageKHR} places three events on $\mathit{present}{:}i$: a wait for
+  the previous present of image $i$, a read of the image, and the acquire signal. \code{vkQueuePresentKHR} places
+  the present-semaphore wait, a read in the present layout and a ``presented'' signal on the same presentation
+  queue.
+\item \textbf{Compute, mesh shading and ray tracing.} Dispatches and mesh-task draws access their descriptors at the
+  compute, task and mesh stages; indirect and count buffers are read at \code{DRAW\_INDIRECT}. An acceleration
+  structure is the byte range of its backing buffer. A build writes its destination, reads and writes its scratch
+  range, and reads its inputs and, for a top-level build, every bottom-level structure its instances reference
+  (A-RT1). \code{vkCmdTraceRaysKHR} reads its shader-binding-table regions and its descriptors at the ray-tracing
+  stage.
+\item \textbf{Stage order.} Logically earlier and later stages follow the synchronization pipelines of the Vulkan
+  registry. Expansion applies to execution scopes only.
+\item \textbf{Events and ownership.} \code{vkCmdWaitEvents} is a barrier whose first scope contains only what precedes
+  the latest \code{vkCmdSetEvent} of that event on the queue (A-EV1). Queue-family ownership is tracked per byte
+  range, and per subresource for images; a read of elements last written on another family without a release and
+  acquire of that range is reported.
+\item \textbf{Unmodelled commands.} The driver records every command it does not implement with its command buffer
+  and position, and the checker emits \code{timing.unmodelled-command} when that buffer is submitted. The verdict
+  makes no claim for such a command.
+\end{itemize}
+
+\subsection{Structure checks (secondary)}
+\label{sec:structure}
+The same trace and IR support a few structural checks, which carry no guarantee: stage interfaces, host/shader struct
+layouts (\code{structure.host-layout}), bindings used by an entry point but not bound (\code{structure.missing-binding}),
+push-constant ranges and framebuffer extents. Blind, they detected 6 of 21 structure bugs (\S\ref{sec:eval-bench}).
+
+%% ===================================================================
+\section{Evaluation}
+\label{sec:eval}
+
+The evaluation asks four questions: is the checker's semantics right (E1, \S\ref{sec:eval-sem}); how much of \bench
+does it detect blind (E2, \S\ref{sec:eval-bench}); how precise is the proved configuration on previously unchecked code
+(E3, \S\ref{sec:eval-fresh}); and what did the earlier studies find (E4, \S\ref{sec:eval-real}).
+
+\paragraph{Provenance}
+Every study below was run with a checker snapshot frozen, by source hash, before the study's first run. We call such
+results \emph{fresh} and report them as scored; a checker defect found during a study was fixed only after it. A result
+of a later checker on code already seen is \emph{post-hoc} and is marked \posthoc{} in tables. The checker that the
+theorems of \S\ref{sec:model} describe is the release (source hash \relhash); Table~\ref{tab:release}
+gives its results on every corpus of this section, re-run on the recorded traces. The snapshot of each study is
+listed in \supp{E}.
+
+\begin{table*}[t]
+\caption{The released checker (source hash \relhash, verified configuration) on every corpus, re-run on the
+recorded traces. All rows are post-hoc: every corpus was seen before the release was fixed. \emph{In domain}: runs that are guarantee-eligible (\S\ref{sec:eligible}): checking completed, no
+unmodelled command with a memory effect, no host write that relies on premise A-HOST. Report groups are
+true / technicality / unresolved / false alarm. \emph{Incomplete}: grouping stopped at its budget and gives site
+groups without repairs; no incomplete report counts as clean.}
+\label{tab:release}
+\small
+\begin{tabular}{@{}lrrp{0.52\textwidth}@{}}
+\toprule
+Corpus & runs & in domain & Release result \\
+\midrule
+Test suite & 378 & -- & all pass: 2,550 random frames against the reference semantics, 300 with host writes, the
+minimal frames of Appendix~\ref{app:counter}, regression frames \\
+Barrier mutants (\S\ref{sec:eval-sem}) & 750 & 750 & 95.9\% agreement with validation (86 / 633 / 31 / 0); per-mutant
+diagnostics unchanged \\
+Ray tracing and mesh shading & 15 & 15 & 12 of 13 programs agree with validation; codes and counts unchanged \\
+Whole-frame suite, regenerated & 1,251 & 1,251 & 97.9\% hazard agreement; 0 verdict changes \\
+\bench reproductions & 228 & -- & blind timing: strict 29 / 35, root cause 33 / 35; 8 of 98 blind fixed variants
+draw a diagnostic; statuses and codes of all 114 cases as with the second fresh-study snapshot \\
+Study 1 traces, conservative & 32 & 32 & 130 / 10 / 2 / 1,026 groups, 11.1\% true; grouping complete \\
+Study 1 traces, observed & 32 & -- & 130 / 10 / 2 / 0 groups, 91.5\% true (outside the verified configuration) \\
+Study 2 traces, conservative & 25 & 25 & 24 programs complete: 260 / 1 / 8 / 6 groups, 94.5\% of 275 true;
+\code{gtk\_path\_walk} incomplete: 35 site groups, 22 / 0 / 12 / 1 \\
+Study 2 traces, observed & 25 & -- & identical to conservative \\
+Repaired programs & 15 & 15 & no diagnostic in either mode \\
+Archived sample, engine and adjudication traces & 13 & 13 & no diagnostic of the second fresh-study snapshot lost;
+four minimal traces gain 2 automatic-transition pairs each; one trace recorded without dependency flags gains 172
+framebuffer-local pairs (flags read as local) \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+%% -------------------------------------------------------------------
+\subsection{E1: Semantics, soundness and differential validation}
+\label{sec:eval-sem}
+
+\paragraph{Reference semantics}
+\code{timing\_ref} is an executable, closure-based transcription of the definitions in \S\ref{sec:model}, written
+independently of the checker's data structures: it computes $\spec$ by closing the link relation of
+Definition~\ref{def:spec} and lists every unordered conflicting pair. The test suite compares the release with it on
+2,550 random frames in the verified configuration (17 generator settings $\times$ 150 seeds, covering signal stage
+masks, relays through a third queue and through the host, host-signalled waits, load and store operations, atomic
+accesses, framebuffer-local dependencies and automatic transitions). On every frame, no race of the reference is
+missed by the pairwise mode, every epoch-mode pair is a pairwise pair, and every reference race has a flagged event in
+epoch mode (criterion E of Lemma~\ref{lem:fast}); the checker is stricter than the reference only on the generator
+setting with partial region coverage, which is the region cut of Proposition~\ref{thm:complete}. A further 300 random
+frames with host writes check that the epoch mode raises the host-domain warning on every pair the pairwise mode
+does. The reference shares the checker's reading of the specification, so this agreement tests the implementation
+against the transcription, not the transcription itself. The suite also holds the minimal frames of
+Appendix~\ref{app:counter} and one regression frame for each implementation error the reference has exposed, for
+example \code{ALL\_COMMANDS} in a later barrier taken to contain an earlier transition, or a wait with an empty stage
+mask taken to order something. The release passes all 378 tests of its suite.
+
+\paragraph{Barrier mutants against synchronization validation}
+\begin{figure*}[t]
+  \includegraphics[width=\textwidth]{fig-barriers.pdf}
+  \caption{\textbf{Barrier mutants and proved plans.} (a) Of 111 recorded barrier calls in three
+  microbenchmarks, the proved plans of \S\ref{sec:elide} remove 63 and narrow 45; the 3 kept are host-readback
+  barriers that the optimizer never touches. (b) The 750 random barrier mutants checked by \sys and by Khronos
+  synchronization validation (\code{0ad67fd}, lavapipe): no mutant is reported by validation only. ``Checker only''
+  mutants remove the barrier after an \code{atomicAdd} (a write that validation still misses) or narrow a readback
+  transition to a stage that excludes the copy. The released checker gives the same diagnostics on every mutant as
+  the snapshot shown.}
+  \label{fig:barriers}
+\end{figure*}
+We generated 750 random barrier plans for three headless single-queue workloads, each removing or narrowing barrier
+structs within the recorded masks, and ran each under validation at the commit pinned for every later study
+(\code{0ad67fd}, full synchronization settings, lavapipe) and through the checker frozen for the first fresh study;
+the release gives identical diagnostics on every mutant (Figure~\ref{fig:barriers}b, Table~\ref{tab:release}).
+Mutant-level agreement is 95.9\%: 86 both safe, 633 both hazardous, 31 checker only and \textbf{none validation only}.
+Thirty of the 31 checker-only mutants remove the barrier between an \code{atomicAdd} into a histogram and the
+dispatch that reads it, a read-after-write race (an atomic read-modify-write is a write) that validation misses,
+confirmed by a minimal reproduction; the last narrows a readback transition to \code{dstStageMask = ALL\_GRAPHICS},
+which does not contain the copy that follows. These workloads have no semaphores, swapchain or host writes; the
+whole-frame test below covers those.
+
+\paragraph{Ray tracing and mesh shading}
+Thirteen raw-Vulkan programs on one queue, run under validation (HEAD-max, lavapipe) and under \sys, give 12 equal
+verdicts. In the thirteenth, a top-level build reads a bottom-level structure whose build is not made available to it;
+only \sys reports it, because validation records only the instance buffer of a top-level build. Every correct program
+is clean under both tools. The release gives the same codes and counts in all 15 modes of this test.
+
+\paragraph{Whole-frame differential test}
+\label{sec:eval-wholeframe}
+A second harness covers what the mutants lack: three hand-written workloads of six frames each (an offscreen pass
+blitted to the swapchain, an async-compute frame on two timeline semaphores, and a staging-ring upload with a shared
+depth buffer), in five configurations with two or three frames in flight and, for the timeline workload, a second,
+compute-only queue family with ownership transfers. In every frame the host waits on an earlier frame, writes mapped
+memory, acquires and presents. A generator mutates semaphore waits and signals, per-frame indexing, fence waits,
+presents, every barrier and both halves of each ownership transfer, for 1,251 programs in all. Each runs under \sys
+and under validation (HEAD \code{0ad67fd}, full synchronization settings) on lavapipe with a real X11 surface; the
+multi-queue configuration ran on the Khronos mock driver, patched to give the second family a compute queue, where
+validation analyses the submitted commands without executing them. Findings are normalized to (class, object) keys and
+every disagreement is classified by explicit rules (Table~\ref{tab:wholeframe}).
+
+\begin{table}[t]
+\caption{Whole-frame differential test, 1,251 programs, regenerated and re-checked with the release (all 1,251
+guarantee-eligible). Agreement: share of programs on which both tools report a finding or neither does. Pairs:
+(program, object) for hazards, (program, finding) for all classes. Frozen: the checker frozen before the test (fresh).
+The two release columns differ only in whether the \code{acquire-first-use} warning is scored as a hazard. Lower part:
+the remaining disagreements of the middle column, by cause.}
+\label{tab:wholeframe}
+\small
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+& frozen & \multicolumn{2}{c}{release} \\
+\cmidrule(l){3-4}
+first-acquire scored as hazard & -- & no & yes \\
+\midrule
+agreement, hazards & 88.4\% & 97.9\% & 98.3\% \\
+agreement, all finding classes & 84.3\% & 95.4\% & 95.8\% \\
+hazard pairs: both / \sys only / validation only & 1,132 / 17 / 322 & 1,440 / 32 / 14 & 1,454 / 65 / 0 \\
+all pairs: both / \sys only / validation only & 1,270 / 413 / 1,199 & 2,353 / 478 / 116 & 2,367 / 511 / 102 \\
+\midrule
+\multicolumn{4}{@{}l}{\emph{reported by \sys only (478)}} \\
+\multicolumn{3}{@{}l}{\quad host-write race; missing ownership acquire (validation limits)} & 205 + 3 \\
+\multicolumn{3}{@{}l}{\quad same root cause under another object or code (key mapping)} & 201 \\
+\multicolumn{3}{@{}l}{\quad model driver's acquire order; lavapipe hung or crashed} & 51 + 4 \\
+\multicolumn{3}{@{}l}{\quad write-after-write without a destination access (strict reading)} & 14 \\
+\multicolumn{4}{@{}l}{\emph{reported by validation only (116)}} \\
+\multicolumn{3}{@{}l}{\quad unwaited acquire as a message of its own (both report the race)} & 75 \\
+\multicolumn{3}{@{}l}{\quad surface minimum image count 3 on lavapipe vs.\ 2} & 23 \\
+\multicolumn{3}{@{}l}{\quad first use of a never-presented image} & 18 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\emph{Fresh result and release.} The checker frozen before the test agreed with validation on 88.4\% of the
+programs on hazards. The disagreements exposed six errors in \sys, all fixed since, each a case that validation caught
+and \sys missed: a binary semaphore signalled again while a signal was pending was not reported; neither was a
+timeline signal whose value did not increase; the sync2 transfer stages \code{COPY}, \code{BLIT} and \code{CLEAR} were
+merged into \code{TRANSFER}; the stage mask of a sync2 semaphore signal was ignored; command buffers, fences and acquire
+semaphores reused while pending were not reported; and grouping split one over-acquire site. We regenerated all 1,251
+programs and checked them with the release (validation's stored verdicts are reused): agreement is 97.9\% on hazards,
+and every program is guarantee-eligible. Of the 116 remaining validation-only finding pairs, 75 are an unwaited
+acquire that validation reports as a message of its own while both tools report the resulting race, 23 come from
+lavapipe's surface allowing one fewer held image, and 18 are first uses of a never-presented image, which the release
+reports as an \code{acquire-first-use} warning; scored as a hazard, it leaves no validation-only hazard pair (98.3\%).
+The traces, the per-program results and a script that re-checks them are part of the artifact.
+
+\emph{What \sys adds, and what validation adds.} \sys alone reports 205 races between host writes and GPU reads of an
+earlier frame still in flight, and three reads of an exclusive buffer on a queue family that never acquired it;
+validation checks only that an acquire matches a pending release. Fourteen pairs are a modelling choice: \sys
+requires a memory dependency for a write-after-write. The other way, validation's model of the acquire as an access
+was what \sys lacked for never-presented images. Neither tool needs a race to manifest: on the mock driver,
+validation gives the same findings as on lavapipe in 967 of the 989 completed single-queue runs.
+
+\emph{Limits of this test.} The workloads are small and hand-written, the mutation catalogue is designed rather than
+mined, there is one swapchain per program and no recreation, events or ray tracing, and the second queue family was
+never executed concurrently. The programs use dynamic rendering, no framebuffer-local dependency, no descriptor
+array and no host write after a device write, so they do not exercise those parts of the model. The key mapping can misattribute a disagreement within a class: 201 pairs are the same
+root cause under another object or code. We claim no speed advantage: on these programs a lavapipe run with validation
+takes a median 0.081\,s and \sys 0.092\,s. What \sys adds here is coverage.
+
+\paragraph{Window measurements}
+Of the 187 stored sample traces, 138 are periodic with a fence bound ($N = 1$ for 26, 2 for 85, 3 for 27). On them,
+checking only the first $w + N + 2$ frames found 1,229 of the 1,262 normalized diagnostic sites of the full traces;
+the 33 missing sites are \code{unmodelled-command} warnings from stubbed commands, and no race or protocol site was
+missing. These are measurements on the traces. They are not instances of Theorem~\ref{thm:window}, whose bound $M =
+w + p + \max(N, G+1) - 1$ the window analysis does not compute (\S\ref{sec:window}).
+
+%% -------------------------------------------------------------------
+\subsection{E2: Blind detection on \bench}
+\label{sec:eval-bench}
+
+\begin{figure}[t]
+  \includegraphics[width=\columnwidth]{fig-gpubugbench.pdf}
+  \caption{\textbf{\bench.} 166 real bugs from 105 projects, by kind: the 126 bugs of the first collection
+  (79 projects) and 40 collected fresh for blind rounds 5 and 6 (hatched). Filled bars are the first-collection bugs
+  that \rcgp's contracts can express (23 of 126). This paper's guarantee concerns the timing bugs; the benchmark keeps
+  all three kinds.}
+  \label{fig:bench}
+\end{figure}
+
+\paragraph{The benchmark}
+Existing GPU bug collections cover CUDA synchronization~\cite{wu2020simulee}, CUDA
+numerics~\cite{rathnasuriya2025numerical}, shader compilers~\cite{donaldson2017graphicsfuzz,xiao2025shadiv} and
+WebGPU implementations~\cite{wong2025webglitch}; none targets application graphics code. \bench follows the Defects4J
+recipe~\cite{just2014defects4j}: we searched issue trackers by validation-message strings, fix phrases and
+convention-related phrases, read every issue, pull request or commit page, and kept a bug only if it was real and lived
+in application, engine or sample code. It has 166 bugs from 105 projects (Figure~\ref{fig:bench}) in three kinds:
+\emph{timing} (synchronization), \emph{structure} (host/shader layout, bindings, interfaces) and \emph{meaning}
+(semantic conventions). The first collection, 126 bugs from 79 projects (48 timing, 27 structure, 51 meaning), is the
+basis of a taxonomy (\supp{H}) and of 74 distilled buggy/fixed reproductions in Slang and C++/Vulkan. Swapchain or
+semaphore misuse accounts for 15 of its 48 timing bugs, and about half (24 of 48) span frames or queues. The other 40
+bugs were collected fresh, each with a merged upstream fix, and reproduced blind for rounds 5 and 6.
+\emph{Threats.} Validation-message queries favour Vulkan timing reports, most projects are small, root causes were
+read from issue pages, and reproductions keep the upstream root cause but are not upstream code.
+
+\paragraph{Protocol}
+Before each round the checker was frozen (by source hash from round 3 on), and the outcome of every case was predicted
+and timestamped before the run. Round 2 was written by a separate party that never ran the checker; rounds 3--6 were
+written without reading checker code, and rounds 5 and 6 used bugs collected fresh from public trackers. After each
+round, misses became general rules and the round's cases became development data.
+
+\paragraph{Metrics}
+The preregistered headline is \emph{strict paired-detection success}: a case counts only if its buggy variant reports
+every expected diagnostic code \emph{and} its fixed variant reports nothing. It is stricter than bug-detection recall:
+a real report under a different code, or any diagnostic on the fixed variant, is a failure. We keep it unchanged, and
+add two measures whose case keys were fixed before any post-hoc re-run: \emph{root-cause detection} (the buggy
+variant reports at least one timing diagnostic on the case's root-cause resource, whatever its code), and
+\emph{fixed-variant diagnostics} (fixed variants that report anything).
+
+\begin{table}[t]
+\caption{Blind detection on \bench, as run: each round scored by the checker frozen for it (fresh). Timing: strict
+paired-detection success and root-cause detection. Structure and meaning are outside the synchronization guarantee and
+are given for completeness (strict). Fixed: fixed variants (all categories) with any diagnostic / with a timing
+diagnostic. Pred.: predictions that held.}
+\label{tab:blind}
+\small
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+& \multicolumn{2}{c}{timing} & & & & \\
+\cmidrule(lr){2-3}
+Round (cases) & strict & root cause & struct. & meaning & fixed & pred. \\
+\midrule
+1 (17--29) & 3/7 & 4/7 & 1/2 & 2/4 & 1 / 1 & 13/13 \\
+2 (30--44) & 4/7 & 4/7 & 2/4 & 0/4 & 2 / 0 & 13/15 \\
+3 (45--59) & 3/6 & 3/6 & 1/3 & 0/6 & 0 / 0 & 14/15 \\
+4 (60--74) & 3/5 & 4/5 & 1/3 & 0/7 & 8 / 5 & 13/15 \\
+5 (75--94) & 5/6 & 5/6 & 0/5 & 0/9 & 2 / 1 & 17/20 \\
+6 (95--114) & 3/4 & 4/4 & 1/4 & 0/12 & 1 / 0 & 14/20 \\
+\midrule
+total & \textbf{21/35} & 24/35 & 6/21 & 2/42 & 14 / 7 & 84/98 \\
+Wilson 95\% & \textbf{44--74\%} & 52--81\% & 14--50\% & 1--16\% & & \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{figure}[t]
+  \includegraphics[width=\columnwidth]{fig-heldout.pdf}
+  \caption{\textbf{Blind detection, as run.} Left: timing cases per blind round; strict paired-detection successes
+  (dark), cases whose root cause was reported (light), all timing cases (outline). Right: pooled rates with Wilson
+  95\% intervals. Structure and meaning are outside the synchronization guarantee (grey).}
+  \label{fig:heldout}
+\end{figure}
+
+\paragraph{Results}
+Table~\ref{tab:blind} and Figure~\ref{fig:heldout} give all six rounds. Strict paired-detection success on timing is
+21 of 35 (60\%, Wilson 95\% interval 44--74\%), and root-cause detection 24 of 35 (69\%, 52--81\%). The three cases
+with the root cause found but no strict success are 28 and 63, detected with a fixed variant that is not clean, and
+98, a buffer returned to a decoder pool before the copy that reads it has finished, reported as a cross-queue race
+instead of its expected \code{free-while-in-use} code. Eleven timing cases were missed entirely; the misses were
+synchronization not yet modelled (semaphore stage masks, ownership pairs, object lifetime, stencil-only aspects) and
+rules that did not fire.
+Fourteen of 98 fixed variants (14\%, 9--23\%) drew some diagnostic, seven of them a timing diagnostic: cases 28 and 63
+(above); 94, a structure case whose binding the checker charged at a stage whose entry point does not use it (the
+release charges a binding only at the stages whose entry point uses it); and 65, 66, 68 and 69, which report a true race in the shared harness that the
+cases' fixes do not touch (\supp{H}). The 21 of 35 pools six checkers, developed between rounds, so it
+is evidence about the development sequence, not an estimate of one checker's recall. Predictions held in 84 of 98
+cases, a statement about predictability, not coverage.
+
+Outside the synchronization guarantee, the structure checks detected 6 of 21 structure bugs. An earlier component
+that tried to infer semantic conventions detected 2 of 42 meaning bugs blind, and none of 21 in the last two rounds,
+after two redesigns; we make no claim about conventions and keep those bugs in the benchmark (\S\ref{sec:limits}).
+
+\paragraph{The release on \bench (post-hoc)}
+After round 6, all 114 reproductions are development data. Re-run with the release, strict paired detection succeeds
+on 29 of the 35 blind timing cases and the root cause is found in 33; 8 of the 98 blind fixed variants draw a
+diagnostic, 6 of them a timing diagnostic (cases 61, 62, 65, 66, 68 and 69; \supp{H}). These numbers are tuned, not blind; the step from 21 and 24 as run is development between rounds.
+
+\paragraph{\rcgp}
+\label{sec:eval-rcgp}
+For every first-collection bug we asked whether \rcgp's contract language rules it out through its typed API, from its
+API and source, confirmed by 35 compile-only ports compiled by its own compiler. \rcgp can express 23 of the 126: 22
+of 27 structure bugs, 1 of 48 timing bugs and none of the meaning bugs. Head to head on the 98 blind cases, \rcgp rules
+out 17, \sys detects 29 under strict scoring (all categories), and together they cover 40: \rcgp alone catches 11,
+all structure, and \sys alone 23. The comparison is one of scope, not a contest; ports, verdict changes and \rcgp's own
+samples are in \supp{H}.
+
+%% -------------------------------------------------------------------
+\subsection{E3: The proved configuration on previously unchecked code}
+\label{sec:eval-fresh}
+
+\paragraph{Design}
+Two studies measure the configuration the theorems cover (strict \code{UNDEFINED} transitions, conservative capture)
+on workloads \sys had not been run on before, with prior exposure disclosed (below). For each, a protocol fixing the programs, the run length, the triage rules
+and the metrics was written before the checker was frozen by source hash and before any program was checked; every
+\code{check.json} carries the frozen hash. Each program ran unmodified under the model driver for 20 presents and was
+checked in conservative capture (primary) and observed capture. Report groups were triaged by written, mechanical
+rules into true bug, technicality, false alarm or \emph{unresolved} (the verdict depends on a reading of the
+specification we cannot settle), and into two families: \emph{race} diagnostics, about unordered accesses, and
+\emph{protocol} diagnostics, about the use of semaphores, fences and swapchain images. A group takes the most
+consequential class of its members. A checker defect found during triage is not fixed in the frozen checker; it is
+counted as it fell and fixed only for the next study. The baseline is synchronization validation (VVL \code{0ad67fd},
+all synchronization checks enabled) on lavapipe, on the same programs and number of presents, with two exceptions:
+one wgpu program crashes under lavapipe and has no validation result, and the mpv runs could not be limited to 20
+presents and play their test video to the end. Comparisons with validation are over the 56 programs it completed.
+
+\emph{Study 1} froze a checker snapshot and ran 32 programs from four code bases: the Qt~6.4 rendering hardware interface (14 Qt Quick
+3D and Qt Quick examples), wgpu (15 examples), Dear ImGui (2 Vulkan backends) and vkcube. \emph{Study 2} froze a
+later snapshot, which fixed the three defects study~1 exposed and modelled two more commands, and ran 25 programs
+from four others: GTK~4.14 (9 programs of its Vulkan renderer), vkmark (7 scenes), mpv~0.37 with libplacebo~6.338
+(4 renderer configurations) and the GStreamer~1.24 Vulkan plugins (5 pipelines). The programs were chosen from a
+bring-up run that recorded only whether a program starts and presents; programs that render only on demand or need a
+compiled module were excluded, so the sample is conditioned on workloads this capture procedure can run and is not
+representative of arbitrary applications. Prior exposure: Dear ImGui's Vulkan backend had been linked into two
+earlier programs as an overlay, and a libplacebo change had been considered (and rejected) as an earlier benchmark
+case; neither was checked. The protocols, the disclosures and every per-program number are in \supp{I}. All 57
+programs were checked in both modes; 56 were grouped with the frozen checkers (Cost, below).
+
+\begin{table}[t]
+\caption{The proved configuration on previously unchecked code, as frozen (study 2: 24 of 25 programs grouped). Report groups true / technicality / false alarm
+(/ unresolved) and the share that is true; causes: distinct root causes in the same classes.}
+\label{tab:fresh}
+\small
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}llrrrr@{}}
+\toprule
+Study & family & conservative & true & observed & true \\
+\midrule
+1 (32) & race & 44 / 12 / 1270 & 3.3\% & 44 / 12 / 205 & 16.9\% \\
+ & protocol & 86 / 0 / 701 & 10.9\% & 86 / 0 / 701 & 10.9\% \\
+ & all & 130 / 12 / 1971 & 6.2\% & 130 / 12 / 906 & 12.4\% \\
+ & causes & 5 / 3 / 4 & 41.7\% & 5 / 3 / 3 & 45.5\% \\
+\midrule
+2 (24) & race & 229 / 0 / 1048 / 13 & 17.8\% & \multicolumn{2}{l}{identical} \\
+ & protocol & 31 / 0 / 0 & 100\% & \multicolumn{2}{l}{identical} \\
+ & all & 260 / 0 / 1048 / 13 & 19.7\% & \multicolumn{2}{l}{identical} \\
+ & causes & 11 / 2 / 2 / 2 & 64.7\% & \multicolumn{2}{l}{identical} \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{figure}[t]
+  \includegraphics[width=\columnwidth]{fig-precision.pdf}
+  \caption{\textbf{The proved configuration on previously unchecked code}, by code base: share of timing report groups
+  that are true bugs, technicalities, unresolved and false alarms, with conservative capture (solid, the theorem's
+  configuration) and observed capture (dotted). Each study's checker was frozen before the study's first run.
+  \dag: programs outside the premises (an unmodelled command; one wgpu program, all four mpv programs).
+  \ddag: \code{gtk\_path\_walk}, checked but not grouped (memory), not in the bar.}
+  \label{fig:precision}
+\end{figure}
+
+\paragraph{Precision}
+Table~\ref{tab:fresh} and Figure~\ref{fig:precision} give the results as frozen. They are not uniformly good, and we
+report them as they fell. In study~1, 6.2\% of report groups were true. Two causes produced almost every false alarm.
+Qt writes only the current frame's slot of each dynamic uniform buffer, after waiting for that slot's fence; the
+conservative capture takes each host write to cover its whole page, which the slot in flight shares (1,026 groups,
+all 14 Qt programs, none in observed capture). And three checker defects, a timeline counter query not treated as a
+host wait, whole-image layouts treated as unbounded ranges, and a combined depth format treated as color, produced all
+of wgpu's 945 groups. With observed capture and the three defects fixed, the same traces give 130 / 12 / 0, but that
+number is post-hoc, which is why study~2 exists.
+In study~2, 19.7\% of groups and 64.7\% of causes were true. vkmark, GStreamer and mpv produced 87 groups,
+all true. Every false alarm is GTK's and has two causes. GTK's renderer binds all of a frame's images in one
+descriptor array and selects one per draw instance through a vertex attribute; \sys charges a read to every written
+element of a statically used binding, which is sound but here wrong 1,042 times, since only the dynamically used
+descriptors count; the release removes this cause (\S\ref{sec:eval-release}). Six more groups are uploads into disjoint rectangles of one texture atlas, which \sys models per
+subresource. In study~2 observed capture gives exactly the conservative result: on these code bases, the proof costs
+no precision. Thirteen GTK groups are unresolved: they depend on whether a render pass's automatic layout transitions
+are ordered with a later barrier and with each other, which the specification does not state (\S\ref{sec:limits}).
+
+\paragraph{What a developer reads}
+Grouping shrinks the output, but it is not one report per mistake. In conservative capture, the 28,370 group members
+of study~1 fall into 2,113 groups and 12 causes, and the 189,900 of study~2 into 1,321 groups and 17 causes. A
+developer of one program sees on average 3.7 groups per true cause in study~1 and 4.4 in study~2; only 4 of 35 and
+25 of 59 program--cause pairs produce a single group. Most repetition comes from per-frame and per-image structure: a
+Dear ImGui example recreates its swapchain every frame under the model driver and shows its one bug in 20 groups, and
+GTK's missing render-before-present ordering appears in 15 groups per program. False-alarm causes repeat far
+more (the descriptor-array over-approximation: up to 927 groups in one program). Cause-level numbers in this section are our manual consolidation,
+not something the tool shows; we did not measure how long diagnosis takes.
+
+\paragraph{From report to clean run}
+To show the workflow end to end, we patched the source of every true cause in four projects (vkmark, GStreamer,
+Dear ImGui, and SDL3 from E4), rebuilt each program with its original flags and re-ran it with the same command. There
+are 11 source-patch cases covering nine causes: one per cause, plus one case per project that applies all of its
+patches together (vkmark and GStreamer). We re-checked every patched run with the release in conservative capture
+(\supp{I}). For each case, the patched run has no diagnostic of the repaired cause and no diagnostic kind the
+original lacked, and every remaining diagnostic belongs to another listed cause. Applying all patches of a project
+leaves 15 programs with no diagnostic in either capture mode and no synchronization-validation message: all seven
+vkmark scenes (1,124 diagnostics before, five causes, 18 files changed), all five GStreamer pipelines (495 before, two
+one-line patches), both ImGui examples (40 before, a 75-line deletion) and SDL's sprite test (166 before). With the
+release, all 15 have no diagnostic in either capture mode, raise no model warning, and are guarantee-eligible in the
+verified configuration; re-tracing each three more times gives the same result.
+These are source repairs in the sense of \S\ref{sec:eval-bugs}: evidence through re-running, not through
+Lemma~\ref{lem:repair}.
+
+The same check tests upstream repairs. For each of the nine causes already changed upstream we distinguish an
+\emph{initial fix attempt} (a commit that changes the implicated pattern but, re-run, leaves diagnostics of the
+cause), a \emph{commit changing the pattern} (read in the source, not re-run) and a \emph{verified complete repair}
+(re-run, no diagnostic of the cause). We re-ran vkmark's two commits. Both are initial fix attempts: the
+uniform-buffer commit (\code{fd2d798}) leaves 136 of the cause's 152 diagnostics, because it rewrites image $i$'s
+buffer once acquire returns $i$, which does not show the host that the frame that read it has finished, and in one
+scene it drops a fragment stage from a descriptor layout, which vkmark corrected later; the acquire commit
+(\code{956e145}) leaves 119 diagnostics, and validation still reports its semaphore error. The other seven are
+commits changing the pattern.
+
+\paragraph{Premises}
+We report for each program whether a capture or coverage violation was \emph{detected}, which is weaker than
+establishing every premise. Of the capture premises (\S\ref{sec:capture}), P1 (the trap is in effect) is checked; P2
+(stores go through the returned mapping) is assumed, since no trace can show it; and P3 (one host order) is checked
+only as far as the trap reveals, at the first store to each page between two calls. The model premises of
+Table~\ref{tab:assume} are assumed. No program raised a capture warning. In the frozen runs, five programs used
+commands the frozen checker did not model: wgpu's mipmap example (query result copies, which the second study's
+checker models) and the four mpv configurations (timestamp queries, which have no memory effect on the checked
+resources). The release reports, for each run, whether it is in the guarantee's domain
+(Table~\ref{tab:release}).
+
+\paragraph{What validation sees}
+Validation found the same root causes as \sys in study~1 (5 shared, none unique to either tool). In study~2 the tools
+share 10 true causes, and one is unique to \sys: vkmark rewrites its uniform buffer with \code{memcpy} every frame
+without waiting for the frame that reads it, a host-write race that validation does not track. Validation is unique
+on none, and it reported no synchronization false alarm in either study; it is silent on every false-alarm and
+unresolved cause of \sys. Both tools report potential hazards implied by the declared synchronization without
+needing them to manifest. On this evidence, \sys adds host-write capture and an explicit correctness argument for
+its stated domain, not a larger set of findings on device work.
+
+\paragraph{The bugs}
+The 16 true causes of the two studies are listed in \supp{I}. For nine of them the project's current source has a
+commit that changes the implicated pattern (Qt's acquire- and present-semaphore reuse, vkcube's present semaphore,
+vkmark's acquire semaphore and its uniform-buffer race, libplacebo's barrier that does not chain to an external
+semaphore wait, and GTK's three swapchain bugs). All nine commits predate our analysis, landing 11 to 27 months before
+the studies, and five of them name an earlier issue report; they corroborate the triage and were not caused by us.
+As shown above, two of them are initial fix attempts and the other seven were read, not re-run; \supp{I} lists, per
+cause, the tested revision, the commit, its date and its label. Seven causes are still present in the current
+sources: Dear ImGui transitions swapchain images before acquiring them; Qt makes a texture visible only to the vertex
+stage and samples it in the fragment shader; vkmark reuses one present semaphore, its clear scene's barrier does not
+chain to the acquire wait, and its depth image is shared across frames with only a color dependency; GStreamer waits
+for the acquire semaphore at \code{BOTTOM\_OF\_PIPE}, so the wait blocks nothing, and makes a sampled image visible to
+input-attachment reads only. Two of these, ImGui's and vkmark's present semaphore, already have open reports and
+proposed fixes by other users.
+
+%% -------------------------------------------------------------------
+\subsection{The release on the studies' traces}
+\label{sec:eval-release}
+After the two studies we changed the checker in four ways: framebuffer-local dependencies are modelled with position
+tokens (Definition~\ref{def:spec}); two layout transitions on one queue are exempt only if one is explicit (E5); a
+descriptor-array read is narrowed to the elements its index bytes select when the guard conditions of
+\S\ref{sec:guards} hold; and grouping has a memory budget. The release also reports the host-domain warning and each
+run's eligibility (\S\ref{sec:eligible}). All numbers in this subsection are post-hoc: they re-check the traces the
+studies recorded, with the release. On these traces the release loses no true group of the frozen runs.
+
+\emph{Study 1} (32 programs, all grouped completely): in conservative capture, 130 / 10 / 2 / 1,026 groups (true /
+technicality / unresolved / false alarm), 11.1\% true; in observed capture, 130 / 10 / 2 / 0, 91.5\% true. Every
+false alarm is Qt's page-granular host capture. The two unresolved groups are pairs of automatic render-pass
+transitions in two Qt programs, the question of \S\ref{sec:limits}. All 15 wgpu programs report nothing.
+
+\emph{Study 2} (25 programs): grouping completes on 24 of them, which give 260 / 1 / 8 / 6 groups, so 94.5\% of these
+275 groups are true (19.7\% when frozen). The 25th, \code{gtk\_path\_walk}, reaches the grouping budget and is reported
+\emph{incomplete}: 35 site groups without repairs, of which 22 are true (the same three GTK causes), 12 unresolved and
+1 a false alarm, with all 15,595 diagnostics kept; it is not in the 94.5\%. The false alarms of the 24 programs fall
+from 1,048 groups to 6 because a draw that selects its texture with a flat per-instance index whose bytes the host
+wrote, with no racing write, is charged only the elements those bytes select; every other indexing keeps the
+over-approximation. The six that remain are texture-atlas uploads into disjoint rectangles of one image.
+
+\emph{Domain.} On all 114 runs (57 programs, two capture modes) the release raises no host-domain warning. In
+conservative capture all 57 runs are in the
+guarantee's domain: checking completed, no unmodelled command has a memory effect (the timestamp queries of the four
+mpv programs have none), and no host write relies on premise A-HOST. The observed-capture runs are outside the
+verified configuration by definition. Checking is complete for all 57 programs; reporting is complete for 56, the
+exception being \code{gtk\_path\_walk}.
+
+\emph{Cost.} Checking one program in one capture mode takes 0.01--10\,s for vkmark, GStreamer and mpv and up to a
+few minutes for the GTK programs (Table~\ref{tab:cost}). The largest, \code{gtk\_path\_walk} (308,815 recorded calls,
+40,100 host writes in 20 frames), needs about 8\,GB to group; the frozen checker exceeded the container's 15\,GB, so
+the frozen results of Table~\ref{tab:fresh} exclude it.
+
+\begin{table}[t]
+\caption{Cost on the largest study-2 programs, conservative capture, one core, with the checker frozen for study~2
+and with the release: wall-clock seconds and peak resident
+memory of the check and of grouping. $^\ast$The frozen checker's grouping was killed at the 15\,GB limit; the release's
+grouping stops at its budget and reports \emph{incomplete}.}
+\label{tab:cost}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+program, checker & check s & check MB & group s & group MB \\
+\midrule
+\code{gtk\_iconscroll}, frozen & 170 & 2,033 & 571 & 2,489 \\
+\code{gtk\_iconscroll}, release & 118 & 1,685 & 75 & 268 \\
+\code{gtk\_widget\_factory}, frozen & 51 & 770 & 37 & 132 \\
+\code{gtk\_widget\_factory}, release & 50 & 752 & 23 & 70 \\
+\code{gtk\_path\_walk}, frozen & 719 & -- & -- & $>$15,000$^\ast$ \\
+\code{gtk\_path\_walk}, release & 469 & 7,487 & 1,620 & 8,353$^\ast$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%% -------------------------------------------------------------------
+\subsection{E4: Earlier studies}
+\label{sec:eval-real}
+
+Before the verified configuration existed, earlier checker snapshots were run on sample collections, tutorials and
+three engine pairs. These results are reported as they ran, each with the snapshot frozen for it; \supp{E} lists the
+snapshots and \supp{F} every triaged group.
+
+\paragraph{Development data: two sample collections and a render graph}
+We ran all 99 SaschaWillems/Vulkan samples, the 49 Khronos\-Group/\-Vulkan-\-Samples that record work under the model
+driver, and, once ray tracing and mesh shading were modelled, 9 further Khronos ray-tracing and mesh-shading samples,
+unmodified for 10 frames (157 programs; the 27 ray-tracing, mesh-shading and compute samples we examined in detail are
+these 9 and 18 of the 99 Sascha Willems samples), plus the 78 tests of the vuk render-graph library. Every report was
+triaged against the specification and the source. These samples became development data as soon as we fixed the
+false-alarm causes they revealed (at the study snapshot 53 of 154 Sascha Willems report groups and 164 of 271 Khronos
+ones were false alarms). They yielded 26 root causes that we judge real, including six host-write races (T1--T6), a
+semaphore signal submitted with \code{stageMask = 0} so that its first scope is empty (KS-1), the ray-traced storage
+image transitioned with no source access in all nine Sascha Willems ray-tracing samples (SW-13) and three Khronos
+ones, and a bug in vuk's own barrier derivation (VUK-1). Validation reports some of these and misses others; it cannot
+see the host races.
+
+\begin{table*}[t]
+\caption{One diagnostic per kind of bug (shortened with ``...''), as the release reports it on the stored traces.}
+\label{tab:diag-examples}
+\scriptsize
+\begin{tabular}{@{}p{0.11\textwidth}p{0.15\textwidth}p{0.70\textwidth}@{}}
+\toprule
+Kind & Source & Diagnostic \\
+\midrule
+Missing barrier & ks/dynamic\_rendering (K3) & \texttt{[timing] timing.missing-barrier: 'swapchain[0]' is written and then read on queue 'graphics0' with no barrier in between. at vkCmdBeginRendering @seq 179 (...) (load op LOAD of color attachment swapchain[0]); note: earlier access: vkCmdBeginRendering @seq 164 (...) (load op CLEAR ...)} \\
+Host-write race & sw/dynamic\-uniformbuffer (T1) & \texttt{[timing] timing.cross-queue-race: 'buffer\#3' is written on 'host' and read on 'graphics0' with nothing ordering the two. at vkCmdDrawIndexed @seq 350 (...): set 0 binding 0; note: other access: host write to buffer\#3 (mapped memory\#4 +0x0), before call seq 607} \\
+Present / acquire & sw/dynamicrendering\-multisampling (T9a) & \texttt{[timing] timing.wait-stage-scope: the layout transition of 'swapchain[0]' is not ordered after the earlier read on 'present:swapchain[0]': the semaphore wait that orders the queues only blocks later stages, and this barrier's first scope (TOP\_OF\_PIPE) does not chain to it. note: include the wait's stage in the barrier's srcStageMask (for an acquired swapchain image: COLOR\_ATTACHMENT\_OUTPUT)} \\
+Ray tracing & sw/raytracing\-basic (SW-13) & \texttt{the earlier write (RAY\_TRACING\_SHADER, SHADER\_STORAGE\_WRITE) is not made available before the layout transition of 'image\#5' (to 'transfer\_src'): the transition is ordered after the write by an execution dependency (the first synchronization scope ALL\_COMMANDS holds RAY\_TRACING\_SHADER), but the barrier's first access scope does not hold the write: srcAccessMask (NONE) does not include SHADER\_STORAGE\_WRITE. ... fix: add SHADER\_STORAGE\_WRITE to srcAccessMask (with RAY\_TRACING\_SHADER in srcStageMask)} \\
+Render graph & vuk test \emph{lift compute 2} (VUK-1) & \texttt{[timing] timing.barrier-scope: the barrier on 'buffer\#1' does not cover this access: the earlier written (TRANSFER, TRANSFER\_WRITE) and this read (COMPUTE\_SHADER, UNIFORM\_READ) are not both in its stage/access masks. at vkCmdDispatch @seq 40 (...): set 0 binding 1} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\paragraph{Tutorials and three engine pairs}
+\label{sec:eval-engine}
+Each of these studies, too, froze its checker and triage protocol before its first scored run, and each study's false
+alarms were then fixed, so a study is fresh only for the checker frozen before it (Table~\ref{tab:engines}).
+On Khronos' Vulkan-Tutorial and vulkan-guide, the checker found three bugs in vulkan-guide chapters 5--6 (VG-1 to VG-3); 12 of
+its 13 technicality groups are one per-chapter pattern. On vkQuake and Diligent, the false alarms were mostly host
+writes into per-frame halves of ring buffers charged to the whole buffer; the true groups are three bugs: vkQuake's
+indirect-draw and index buffers are rewritten by the next frame's compute dispatches while the previous frame's draws
+may still read them (VQ-1), its render pass has no outgoing dependency (VQ-2), and Diligent's state tracker does not
+count depth writes as writes (VD-1). On SDL3 and bgfx, all 13 false alarms came from one checker defect (a semaphore
+wait with stage mask \code{ALL\_COMMANDS} was not allowed to order a layout transition in the same batch); the true
+groups are SDL-1 (Figure~\ref{fig:teaser}). On Granite and VulkanSceneGraph, the checker reported no false alarm; the five bugs
+are VulkanSceneGraph's semaphores waiting at \code{BOTTOM\_OF\_PIPE} by default (VSG-1), unordered consecutive transfer
+submits (VSG-2), and three bugs in its examples (VSG-3 to VSG-5); 3 of the 12 programs were unchecked because the
+frozen checker aborted on push constants declared for \code{VK\_SHADER\_STAGE\_ALL}. Validation found one bug the
+checker missed (VD-2, the first transition of a never-presented swapchain image), which a first-acquire rule added
+after that study now reports; validation's 16
+write-after-write hazards in Granite's ambient-occlusion chain, on images bound through descriptor update templates
+that \sys does not model, show that \sys is incomplete.
+
+\begin{table}[t]
+\caption{Earlier studies: timing precision of the checker frozen before each study, on code it had never been run on. Groups: report
+groups true / technicality / false alarm; ``true'' and ``actionable'' (true or technicality) are shares of groups.
+Causes: distinct root causes, true / technicality / false alarm. Raw: share of raw diagnostics that are true.}
+\label{tab:engines}
+\small
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+Study (programs) & groups & true & actionable & causes & raw \\
+\midrule
+Tutorials (43) & 11 / 13 / 1 & 44.0\% & 96.0\% & 3 / 2 / 1 & 96.0\% \\
+vkQuake, Diligent (4) & 8 / 0 / 44 & 15.4\% & 15.4\% & 3 / 0 / 7 & 97.9\% \\
+SDL3, bgfx (12) & 2 / 0 / 13 & 13.3\% & 13.3\% & 1 / 0 / 1 & 57.2\% \\
+Granite, VSG (12; 9 checked) & 8 / 12 / 0 & 40.0\% & 100\% & 5 / 1 / 0 & 39.3\% \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\paragraph{Re-running the earlier corpora (post-hoc)}
+\label{sec:eval-posthoc}
+We re-ran the earlier corpora in the verified configuration; all of it is post-hoc, and the full table is in
+\supp{H}. Conservative capture finds what observed capture cannot, the same-value host-write races T2--T5 in four
+Sascha Willems samples, and it costs false alarms where host memory is sub-allocated below page size while neighbours
+are in flight (+24 groups in vulkan-guide, +23 in vkQuake and Diligent, whose result falls from 7 / 2 / 11 of 20
+groups to 7 / 2 / 34 of 43). All 12 Granite and VulkanSceneGraph programs now run. \code{vsg\_depthpeel} reports one
+group we leave unresolved: whether a render pass's automatic final transition, whose implicit outgoing dependency has
+an empty second scope, is ordered before a later pass's load operation (\S\ref{sec:limits}); \sys reports the pair.
+Of these corpora, 13 traces are archived; the release re-checks them without losing a diagnostic
+(Table~\ref{tab:release}).
+
+\paragraph{A disagreement in the accept direction}
+On VSG-5, validation reports 19 cross-frame write-after-write pairs that \sys finds ordered, so here \sys's verdict
+is the more permissive one, and a clean verdict could rest on it. The ordering is a chain from frame $k$'s depth store
+through the \code{EXTERNAL}$\to$0 dependency of the library's window pass ($\mathsf{LATE\_FRAGMENT\_TESTS}$,
+\code{DEPTH\_STENCIL\_ATTACHMENT\_WRITE}) into frame $k{+}1$'s depth transition. The specification states that the
+first synchronization scope of such a dependency includes the commands submitted before the render pass, and that its
+first access scope is limited by the source stage and access masks only, not to the pass's attachments (render-pass
+chapter, external dependencies); with these clauses the chain exists. Validation itself accepts the same pair when the
+window pass's dependency is replaced by a pipeline barrier with identical masks (minimal reproduction in \supp{F}),
+which suggests that it applies an external subpass dependency only to the pass's own attachments. Since the cited text
+decides the case, no accepted ordering in our results rests on an unresolved reading (\S\ref{sec:limits}).
+
+\paragraph{The bugs}
+\label{sec:eval-bugs}
+Over all studies we judge 54 bugs to be real: 26 in the samples and vuk, 3 in the tutorials, 9 in the earlier engine
+studies and 16 in the two fresh studies. This triage is ours. We prepared 11 historical dossiers, one for each of the
+11 strongest bugs of the earlier studies (Table~\ref{tab:bugs}), each with the affected revision, the code, the frozen diagnostic, the
+validation messages on the same frames where validation can see the bug, a specification argument with a concrete bad
+schedule, a repair, and the result after the repair.
+
+\emph{Three kinds of repair evidence.} We distinguish them because they carry different guarantees. A
+\emph{synthesized repair} widens masks or inserts a barrier without a transition; Lemma~\ref{lem:repair} shows it adds
+no race under the specification, and the grouper checks it on the recorded frame. A \emph{trace-checked repair} is
+any edit applied to the recorded trace and re-checked on the whole frame by event pairs. A \emph{source repair}
+changes the program, for example from one shared buffer to one per frame; it changes the program's resources and
+accesses, is outside the lemma, and is evidence only through rebuilding, re-running and re-checking. The dossiers'
+repairs are source repairs: after rebuilding and re-running, \sys's count on the bug is 0, validation's count is 0
+where validation can see the bug, and no new diagnostic kind appears. Eight of the 11 dossiers are corroborated by
+validation on the same resource and command pair; the other three are host-write races, which validation does not
+track. VSG-3 and VSG-5 are in vsgExamples, not in the library. The dossiers are distinct from the 11 source-patch cases
+of \S\ref{sec:eval-fresh}, which cover nine causes of the fresh studies (SDL-1 is in both). The dossier summary is in
+\supp{G}.
+
+\begin{table}[t]
+\caption{The 11 historical dossiers. Syncval: validation reports the same resource and command pair (n/a: a host-write
+race, which validation does not track). Repair: \sys count before $\to$ after, with the snapshot frozen for the third
+engine study; validation in parentheses.}
+\label{tab:bugs}
+\scriptsize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}llllr@{}}
+\toprule
+Bug & Project & Class & Syncval & Repair \\
+\midrule
+KS-1 & Vulkan-Samples & signal with \code{stageMask = 0} & yes & 99 $\to$ 0 (11 $\to$ 0) \\
+KS-3 & Vulkan-Samples & no barrier between two rendering instances & yes & 40 $\to$ 0 (8 $\to$ 0) \\
+SW-T1 & Sascha Willems & host write to a UBO in flight & n/a & 500 $\to$ 0 \\
+SW-T6 & Sascha Willems & host write after the compute submit & n/a & 2 $\to$ 0 \\
+SDL-1 & SDL3 & host write to vertex buffers in flight & n/a & 166 $\to$ 0 \\
+VUK-1 & vuk & render graph derives a storage read & yes & 1 $\to$ 0 (1 $\to$ 0) \\
+VSG-1 & VulkanSceneGraph & semaphore waited at \code{BOTTOM\_OF\_PIPE} & yes & 19 $\to$ 0 (18 $\to$ 0) \\
+VSG-3 & vsgExamples & no barrier, compute write to vertex input & yes & 58 $\to$ 0 (19 $\to$ 0) \\
+VSG-5 & vsgExamples & depth clear vs.\ layout transition & yes & 120 $\to$ 0 (39 $\to$ 0) \\
+VD-1 & DiligentCore & depth write not a write state & yes & 114 $\to$ 0 (14 $\to$ 0) \\
+VQ-1 & vkQuake & indirect buffers rewritten in flight & yes & 302 $\to$ 0 (19 $\to$ 0) \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+%% ===================================================================
+\section{Verified Barrier Transformations}
+\label{sec:elide}
+
+Because the checker decides hazard-freedom for the whole recorded frame, it can serve as the oracle of a barrier
+optimizer. This is an application of the verifier, not a headline result; the measurements are summarized here,
+with details in \supp{H}.
+
+\input{elision}
+
+\paragraph{Method and lesson}
+A greedy search visits barrier calls in recording order and tries removal, then narrower masks built from the accesses
+around each occurrence, keeping a candidate when the whole frame reports no new racing event pair. Barriers with
+\code{HOST} stages, ownership transfers and barriers around unmodelled commands are pinned; layout transitions are
+only narrowed. The premise is checked on racing event pairs, not on diagnostic keys: a key comparison lets one
+existing witness hide new races (on one Khronos sample, a key-based plan adds 1,560 races under the reference
+semantics). Likewise the strengthened frame charges the presentation engine's read of an image from its acquisition
+on, not from its first present. A proof-licensed transformation is only as sound as the frame and the comparison its
+premise is checked on.
+
+\paragraph{Measurements}
+\label{sec:eval-elide}
+On three headless microbenchmarks we wrote with a full barrier after every pass, the plans remove 63 of 111 recorded
+barrier calls and narrow 45 (Figure~\ref{fig:barriers}a); GPU-time measurements on one consumer GPU are in
+\supp{H} and are not a claim of this paper. On eight unmodified samples the prover removes none of 414 per-frame barrier calls:
+318 sit between accesses that already race and are pinned, and the other 96 are transitions it proved necessary.
+
+%% ===================================================================
+\section{Limitations}
+\label{sec:limits}
+We collect here the limitations stated next to the claims they affect.
+
+\paragraph{Scope of the guarantee}
+Every guarantee is relative to the executed host path, in the verified configuration, for runs in the domain the
+checker reports (\S\ref{sec:eligible}). Other driver responses, swapchain recreation and error paths are not covered.
+Multithreaded host code is modelled as one host queue; capture precondition P3 is checked only as far as the trap
+allows, and Granite and vkQuake trigger its warning in every program, so their clean pairs are outside the premise.
+Host reads of mapped memory are not events, aliasing of distinct resources is not modelled, and shader device-address
+accesses, query results, the inputs of host acceleration-structure builds, descriptor update templates, push
+descriptors and unmodelled commands are outside the model; unmodelled commands are reported. A host write whose
+ordering after device work relies on the host-domain premise (A-HOST) draws a warning and takes the run out of the
+domain; the model driver exposes only host-coherent memory, so non-coherent memory, which needs explicit flushes and
+invalidations, is not covered.
+
+\paragraph{The proofs}
+The proofs are by hand, not mechanized, and relative to our transcription of the specification. The executable
+reference shares that transcription; the differential tests test it, but only on small or designed programs. The
+proofs are for the algorithm as pseudocode; the code is trusted and tested (\S\ref{sec:tcb}). The window theorem is
+conditional on periodic continuation, which no trace establishes, and the window numbers we report are measurements.
+Proposition~\ref{thm:complete} needs region-uniform traces, which the checker does not construct.
+
+\paragraph{Protocol checks}
+The present-semaphore check approximates ``after the acquisition's signal'' by host order and does not model present
+fences. The over-acquire count is exact only for the recorded order.
+
+\paragraph{Precision}
+Conservative capture costs precision on programs that sub-allocate host-visible memory below page size while
+neighbours are in flight (Qt: 1,026 false-alarm groups in study~1). The observed mode avoids it but is outside the
+theorem. A descriptor-array read is narrowed only when its index is a flat vertex attribute with host-written,
+race-free bytes; indices from push constants, uniforms, storage buffers or indirect draws widen to every element.
+Images are modelled per subresource, so writes into disjoint rectangles of one atlas overlap. Precision on unseen
+code therefore depends on the code base's idioms: in the frozen studies, five of eight code bases drew no false alarm
+and three were dominated by them. Grouping the largest program stays within its memory budget only by reporting an
+incomplete grouping, with site groups and no repairs.
+
+\paragraph{Unresolved questions of the specification}
+Whether a render pass's automatic final layout transition is ordered before later work by a dependency whose source
+stage is \code{COLOR\_ATTACHMENT\_OUTPUT}, or by the transitions of a later render pass, is not stated by the
+specification. \sys reads the text literally and reports these pairs; validation accepts them. Both readings lie in
+the report direction for \sys: they can only add reports, never remove one, so no clean verdict depends on them. The
+unresolved GTK and Qt groups and \code{vsg\_depthpeel} depend on this question, and we count none of them as bugs.
+The one disagreement in the accept direction, VSG-5, is decided by the cited text (\S\ref{sec:eval-real}).
+
+\paragraph{Evidence}
+The evidence for the verified configuration is two studies of eight code bases, 20 frames each, on the paths a GPU-free
+run takes. Each study is fresh only for the checker frozen before it; the release's results on the same traces are
+post-hoc. The triage is ours, by written rules that we wrote. The blind \bench result pools six checkers, developed
+between rounds. Recall on real code was not measured. The 54 bugs are our triage; 11 have historical dossiers, 8 of
+them corroborated by validation, and nine causes had already been changed upstream before our analysis. The
+barrier-removal measurements come from three microbenchmarks we wrote.
+
+\paragraph{Semantic conventions}
+An earlier component of \sys tried to infer conventions such as color encoding and units, and failed blind (2 of 42).
+Conventions are outside this paper's claims.
+
+%% ===================================================================
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{Graphics programming systems}
+Spark~\cite{foley2011spark}, Spire~\cite{he2016spire}, Shader Components~\cite{he2017shadercomponents},
+Slang~\cite{he2018slang} and staged metaprogramming~\cite{seitz2019staged} make shader code modular across stages and
+with the host. Braid~\cite{sampson2017braid} types the CPU/GPU stage boundary.
+RenderKernel~\cite{yang2024renderkernel} type-checks buffer usage and formats in a DSL.
+Dr.Jit~\cite{jakob2022drjit} and Halide~\cite{raganKelley2013halide} hide scheduling behind a compiler.
+\rcgp~\cite{sivaram2026rcgp} declares resource contracts and makes misuse unrepresentable at compile time; \sys
+checks existing code across queues and frames, with a weaker, executed-path guarantee.
+
+\paragraph{GPU verification and race detection}
+GPUVerify~\cite{betts2012gpuverify}, Faial~\cite{cogumbreiro2021faial}, Kuiper~\cite{martinez2026kuiper},
+Descend~\cite{kopcke2024descend}, Prism~\cite{bansal2026prism} and GPUMC~\cite{gpumc2025} reason inside kernels.
+BARRACUDA~\cite{eizenberg2017barracuda}, iGUARD~\cite{kamath2021iguard} and SuperCollider~\cite{supercollider2026}
+detect CUDA races dynamically. Tong et al.~\cite{tong2024gpuconsistency} formalize GPU memory models, including
+Vulkan's. We use vector clocks~\cite{lamport1978time,mattern1989virtual} and FastTrack-style
+epochs~\cite{flanagan2009fasttrack}. What is new is the event model of a graphics frame they run on, which treats the
+presentation engine as a queue and host stores to mapped memory as captured accesses, and the proof that connects the
+implemented algorithm to it.
+
+\paragraph{Resource state and synchronization}
+Typestate~\cite{strom1986typestate,garcia2014typestate,revocable2026typestate} and fractional
+permissions~\cite{boyland2003fractional} underlie per-resource state. TypeSec~\cite{bicanic2025typesec} applies
+typestate to OpenCL buffers. Render graphs~\cite{odonnell2017framegraph,amd2022rps} derive barriers at run time.
+Synchronization validation~\cite{lunarg2021syncval} checks the declared synchronization of the submitted command
+stream, across command buffers, queues and swapchain operations, on a real device or the mock driver; \sys
+complements it with host-write capture, an explicit correctness argument for a stated domain, and checked repairs
+and transformations. Blade~\cite{malyshau2026blade} measures how much dropping barrier tracking recovers, without a
+correctness guarantee.
+
+\paragraph{Bug benchmarks}
+Defects4J~\cite{just2014defects4j} set the recipe. GPU-related collections cover CUDA~\cite{wu2020simulee,
+rathnasuriya2025numerical}, shader compilers~\cite{donaldson2017graphicsfuzz,xiao2025shadiv}, WebGPU
+implementations~\cite{wong2025webglitch}, WGSL uniformity~\cite{leejones2026uniformity} and visual glitches in canvas
+games~\cite{macklon2022canvas}.
+
+%% ===================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+\sys treats a graphics frame as what it is, a concurrent program, and checks its synchronization from one GPU-free run
+of the unmodified program: host memory, presentation and overlapping frames in one specified order, with diagnostics
+that name the failed scope test and repairs that are re-checked. For a run in its stated domain, which the checker
+reports, an accepted trace is race-free under every device schedule consistent with its synchronization, for the
+modelled accesses on the recorded host path, by a complete proof written by hand and relative to our transcription of
+the specification. Blind, frozen checkers achieved strict paired detection on 21 of 35 timing bugs and found the root
+cause of 24. On eight code bases not checked before, the frozen checkers found 16 true root causes, one of which
+validation cannot see, with no false alarm on five code bases. On the same traces, the release reports 94.5\% of
+report groups true on the 24 programs of the second study whose grouping completes. Patching nine of the causes makes
+15 programs clean under both \sys and validation. What remains is to narrow sub-page host writes, to settle the open
+questions of the specification, to measure recall on real code and to run on GPUs with several concurrent queues.
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{refs}
+
+\appendix
+\input{appendix-proofs}
+
+\end{document}

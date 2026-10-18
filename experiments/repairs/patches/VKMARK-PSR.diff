@@ -1,0 +1,374 @@
+Case:     VKMARK-PSR
+Project:  vkmark
+Upstream: https://github.com/vkmark/vkmark
+Revision: ab6e6f3
+Paths:    relative to the source root
+Files:    14 changed, +42/-35
+          src/scenes/clear_scene.cpp
+          src/scenes/clear_scene.h
+          src/scenes/cube_scene.cpp
+          src/scenes/cube_scene.h
+          src/scenes/desktop_scene.cpp
+          src/scenes/desktop_scene.h
+          src/scenes/effect2d_scene.cpp
+          src/scenes/effect2d_scene.h
+          src/scenes/shading_scene.cpp
+          src/scenes/shading_scene.h
+          src/scenes/texture_scene.cpp
+          src/scenes/texture_scene.h
+          src/scenes/vertex_scene.cpp
+          src/scenes/vertex_scene.h
+Cause:    one render-finished (submit) semaphore per scene is signalled every frame while a present may still wait on it (semaphore reuse)
+Repair:   one submit semaphore per swapchain image, indexed by the acquired image (a port of vkmark pull request #89, commit a20e3f3, to ab6e6f3)
+Apply:    git apply VKMARK-PSR.diff   (from the source root; this header is ignored by git apply)
+
+diff --git a/src/scenes/clear_scene.cpp b/src/scenes/clear_scene.cpp
+index 495a881..0c218a7 100644
+--- a/src/scenes/clear_scene.cpp
++++ b/src/scenes/clear_scene.cpp
+@@ -49,7 +49,8 @@ void ClearScene::setup(VulkanState& vulkan_, std::vector<VulkanImage> const& ima
+     command_buffers = vulkan->device().allocateCommandBuffers(command_buffer_allocate_info);
+     command_buffer_fences.resize(command_buffers.size());
+ 
+-    submit_semaphore = vkutil::SemaphoreBuilder{*vulkan}.build();
++    for (auto i = 0u; i < images.size(); ++i)
++        submit_semaphores.push_back(vkutil::SemaphoreBuilder{*vulkan}.build());
+ 
+     if (options_["color"].value == "cycle")
+     {
+@@ -77,7 +78,7 @@ void ClearScene::teardown()
+ {
+     vulkan->device().waitIdle();
+ 
+-    submit_semaphore = {};
++    submit_semaphores.clear();
+     for (auto const& fence : command_buffer_fences)
+     {
+         if (fence)
+@@ -164,7 +165,7 @@ VulkanImage ClearScene::draw(VulkanImage const& image)
+     vk::PipelineStageFlags mask = vk::PipelineStageFlagBits::eColorAttachmentOutput;
+     auto const submit_info = vk::SubmitInfo{}
+         .setSignalSemaphoreCount(1)
+-        .setPSignalSemaphores(&submit_semaphore.raw)
++        .setPSignalSemaphores(&submit_semaphores[image.index].raw)
+         .setCommandBufferCount(1)
+         .setPCommandBuffers(&command_buffers[image.index])
+         .setWaitSemaphoreCount(image.semaphore ? 1 : 0)
+@@ -173,7 +174,7 @@ VulkanImage ClearScene::draw(VulkanImage const& image)
+ 
+     vulkan->graphics_queue().submit(submit_info, command_buffer_fences[image.index]);
+ 
+-    return image.copy_with_semaphore(submit_semaphore);
++    return image.copy_with_semaphore(submit_semaphores[image.index]);
+ }
+ 
+ void ClearScene::update()
+diff --git a/src/scenes/clear_scene.h b/src/scenes/clear_scene.h
+index 6d12c4b..26fe760 100644
+--- a/src/scenes/clear_scene.h
++++ b/src/scenes/clear_scene.h
+@@ -44,7 +44,7 @@ private:
+     VulkanState* vulkan;
+     std::vector<vk::CommandBuffer> command_buffers;
+     std::vector<vk::Fence> command_buffer_fences;
+-    ManagedResource<vk::Semaphore> submit_semaphore;
++    std::vector<ManagedResource<vk::Semaphore>> submit_semaphores;
+     vk::ClearColorValue clear_color;
+     bool cycle;
+ };
+diff --git a/src/scenes/cube_scene.cpp b/src/scenes/cube_scene.cpp
+index 9fb7e95..709628f 100644
+--- a/src/scenes/cube_scene.cpp
++++ b/src/scenes/cube_scene.cpp
+@@ -78,7 +78,8 @@ void CubeScene::setup(
+     setup_framebuffers(vulkan_images);
+     setup_command_buffers();
+ 
+-    submit_semaphore = vkutil::SemaphoreBuilder{*vulkan}.build();
++    for (auto i = 0u; i < vulkan_images.size(); ++i)
++        submit_semaphores.push_back(vkutil::SemaphoreBuilder{*vulkan}.build());
+     rotation = {45.0f, 45.0f, 10.0f};
+ }
+ 
+@@ -86,7 +87,7 @@ void CubeScene::teardown()
+ {
+     vulkan->device().waitIdle();
+ 
+-    submit_semaphore = {};
++    submit_semaphores.clear();
+     vulkan->device().freeCommandBuffers(vulkan->command_pool(), command_buffers);
+     framebuffers.clear();
+     image_views.clear();
+@@ -113,11 +114,11 @@ VulkanImage CubeScene::draw(VulkanImage const& image)
+         .setPWaitSemaphores(&image.semaphore)
+         .setPWaitDstStageMask(&mask)
+         .setSignalSemaphoreCount(1)
+-        .setPSignalSemaphores(&submit_semaphore.raw);
++        .setPSignalSemaphores(&submit_semaphores[image.index].raw);
+ 
+     vulkan->graphics_queue().submit(submit_info, {});
+ 
+-    return image.copy_with_semaphore(submit_semaphore);
++    return image.copy_with_semaphore(submit_semaphores[image.index]);
+ }
+ 
+ void CubeScene::update()
+diff --git a/src/scenes/cube_scene.h b/src/scenes/cube_scene.h
+index 9783b24..b4e9458 100644
+--- a/src/scenes/cube_scene.h
++++ b/src/scenes/cube_scene.h
+@@ -72,7 +72,7 @@ private:
+     std::vector<ManagedResource<vk::ImageView>> image_views;
+     std::vector<ManagedResource<vk::Framebuffer>> framebuffers;
+     std::vector<vk::CommandBuffer> command_buffers;
+-    ManagedResource<vk::Semaphore> submit_semaphore;
++    std::vector<ManagedResource<vk::Semaphore>> submit_semaphores;
+ 
+     vk::DeviceMemory uniform_buffer_memory;
+     vk::DescriptorSetLayout descriptor_set_layout;
+diff --git a/src/scenes/desktop_scene.cpp b/src/scenes/desktop_scene.cpp
+index 1e9ea30..cfd5a2c 100644
+--- a/src/scenes/desktop_scene.cpp
++++ b/src/scenes/desktop_scene.cpp
+@@ -214,14 +214,15 @@ void DesktopScene::setup(
+     setup_framebuffers(vulkan_images);
+     setup_command_buffers();
+ 
+-    submit_semaphore = vkutil::SemaphoreBuilder{*vulkan}.build();
++    for (auto i = 0u; i < vulkan_images.size(); ++i)
++        submit_semaphores.push_back(vkutil::SemaphoreBuilder{*vulkan}.build());
+ }
+ 
+ void DesktopScene::teardown()
+ {
+     vulkan->device().waitIdle();
+ 
+-    submit_semaphore = {};
++    submit_semaphores.clear();
+     vulkan->device().freeCommandBuffers(vulkan->command_pool(), command_buffers);
+     framebuffers.clear();
+     image_views.clear();
+@@ -249,11 +250,11 @@ VulkanImage DesktopScene::draw(VulkanImage const& image)
+         .setPWaitSemaphores(&image.semaphore)
+         .setPWaitDstStageMask(&mask)
+         .setSignalSemaphoreCount(1)
+-        .setPSignalSemaphores(&submit_semaphore.raw);
++        .setPSignalSemaphores(&submit_semaphores[image.index].raw);
+ 
+     vulkan->graphics_queue().submit(submit_info, {});
+ 
+-    return image.copy_with_semaphore(submit_semaphore);
++    return image.copy_with_semaphore(submit_semaphores[image.index]);
+ }
+ 
+ void DesktopScene::update()
+diff --git a/src/scenes/desktop_scene.h b/src/scenes/desktop_scene.h
+index a5fab05..2f59c25 100644
+--- a/src/scenes/desktop_scene.h
++++ b/src/scenes/desktop_scene.h
+@@ -71,5 +71,5 @@ private:
+     std::vector<ManagedResource<vk::ImageView>> image_views;
+     std::vector<ManagedResource<vk::Framebuffer>> framebuffers;
+     std::vector<vk::CommandBuffer> command_buffers;
+-    ManagedResource<vk::Semaphore> submit_semaphore;
++    std::vector<ManagedResource<vk::Semaphore>> submit_semaphores;
+ };
+diff --git a/src/scenes/effect2d_scene.cpp b/src/scenes/effect2d_scene.cpp
+index 2fe2235..33234ce 100644
+--- a/src/scenes/effect2d_scene.cpp
++++ b/src/scenes/effect2d_scene.cpp
+@@ -109,14 +109,15 @@ void Effect2DScene::setup(
+ 
+     update_uniforms();
+ 
+-    submit_semaphore = vkutil::SemaphoreBuilder{*vulkan}.build();
++    for (auto i = 0u; i < vulkan_images.size(); ++i)
++        submit_semaphores.push_back(vkutil::SemaphoreBuilder{*vulkan}.build());
+ }
+ 
+ void Effect2DScene::teardown()
+ {
+     vulkan->device().waitIdle();
+ 
+-    submit_semaphore = {};
++    submit_semaphores.clear();
+     vulkan->device().freeCommandBuffers(vulkan->command_pool(), command_buffers);
+     framebuffers.clear();
+     image_views.clear();
+@@ -142,11 +143,11 @@ VulkanImage Effect2DScene::draw(VulkanImage const& image)
+         .setPWaitSemaphores(&image.semaphore)
+         .setPWaitDstStageMask(&mask)
+         .setSignalSemaphoreCount(1)
+-        .setPSignalSemaphores(&submit_semaphore.raw);
++        .setPSignalSemaphores(&submit_semaphores[image.index].raw);
+ 
+     vulkan->graphics_queue().submit(submit_info, {});
+ 
+-    return image.copy_with_semaphore(submit_semaphore);
++    return image.copy_with_semaphore(submit_semaphores[image.index]);
+ }
+ 
+ void Effect2DScene::update()
+diff --git a/src/scenes/effect2d_scene.h b/src/scenes/effect2d_scene.h
+index 4845a3f..860259e 100644
+--- a/src/scenes/effect2d_scene.h
++++ b/src/scenes/effect2d_scene.h
+@@ -74,7 +74,7 @@ private:
+     std::vector<ManagedResource<vk::ImageView>> image_views;
+     std::vector<ManagedResource<vk::Framebuffer>> framebuffers;
+     std::vector<vk::CommandBuffer> command_buffers;
+-    ManagedResource<vk::Semaphore> submit_semaphore;
++    std::vector<ManagedResource<vk::Semaphore>> submit_semaphores;
+ 
+     vk::DeviceMemory uniform_buffer_memory;
+     vk::DescriptorSetLayout descriptor_set_layout;
+diff --git a/src/scenes/shading_scene.cpp b/src/scenes/shading_scene.cpp
+index fa496ba..da208c0 100644
+--- a/src/scenes/shading_scene.cpp
++++ b/src/scenes/shading_scene.cpp
+@@ -93,7 +93,8 @@ void ShadingScene::setup(
+     setup_framebuffers(vulkan_images);
+     setup_command_buffers();
+ 
+-    submit_semaphore = vkutil::SemaphoreBuilder{*vulkan}.build();
++    for (auto i = 0u; i < vulkan_images.size(); ++i)
++        submit_semaphores.push_back(vkutil::SemaphoreBuilder{*vulkan}.build());
+     rotation = 0.0;
+ }
+ 
+@@ -101,7 +102,7 @@ void ShadingScene::teardown()
+ {
+     vulkan->device().waitIdle();
+ 
+-    submit_semaphore = {};
++    submit_semaphores.clear();
+     vulkan->device().freeCommandBuffers(vulkan->command_pool(), command_buffers);
+     framebuffers.clear();
+     image_views.clear();
+@@ -130,11 +131,11 @@ VulkanImage ShadingScene::draw(VulkanImage const& image)
+         .setPWaitSemaphores(&image.semaphore)
+         .setPWaitDstStageMask(&mask)
+         .setSignalSemaphoreCount(1)
+-        .setPSignalSemaphores(&submit_semaphore.raw);
++        .setPSignalSemaphores(&submit_semaphores[image.index].raw);
+ 
+     vulkan->graphics_queue().submit(submit_info, {});
+ 
+-    return image.copy_with_semaphore(submit_semaphore);
++    return image.copy_with_semaphore(submit_semaphores[image.index]);
+ }
+ 
+ void ShadingScene::update()
+diff --git a/src/scenes/shading_scene.h b/src/scenes/shading_scene.h
+index d46f428..35aaade 100644
+--- a/src/scenes/shading_scene.h
++++ b/src/scenes/shading_scene.h
+@@ -79,7 +79,7 @@ private:
+     std::vector<ManagedResource<vk::ImageView>> image_views;
+     std::vector<ManagedResource<vk::Framebuffer>> framebuffers;
+     std::vector<vk::CommandBuffer> command_buffers;
+-    ManagedResource<vk::Semaphore> submit_semaphore;
++    std::vector<ManagedResource<vk::Semaphore>> submit_semaphores;
+ 
+     vk::DeviceMemory uniform_buffer_memory;
+     vk::DescriptorSetLayout descriptor_set_layout;
+diff --git a/src/scenes/texture_scene.cpp b/src/scenes/texture_scene.cpp
+index 04a8207..567c2c5 100644
+--- a/src/scenes/texture_scene.cpp
++++ b/src/scenes/texture_scene.cpp
+@@ -96,7 +96,8 @@ void TextureScene::setup(
+     setup_framebuffers(vulkan_images);
+     setup_command_buffers();
+ 
+-    submit_semaphore = vkutil::SemaphoreBuilder{*vulkan}.build();
++    for (auto i = 0u; i < vulkan_images.size(); ++i)
++        submit_semaphores.push_back(vkutil::SemaphoreBuilder{*vulkan}.build());
+     rotation = 0.0f;
+ }
+ 
+@@ -104,7 +105,7 @@ void TextureScene::teardown()
+ {
+     vulkan->device().waitIdle();
+ 
+-    submit_semaphore = {};
++    submit_semaphores.clear();
+     vulkan->device().freeCommandBuffers(vulkan->command_pool(), command_buffers);
+     framebuffers.clear();
+     image_views.clear();
+@@ -134,11 +135,11 @@ VulkanImage TextureScene::draw(VulkanImage const& image)
+         .setPWaitSemaphores(&image.semaphore)
+         .setPWaitDstStageMask(&mask)
+         .setSignalSemaphoreCount(1)
+-        .setPSignalSemaphores(&submit_semaphore.raw);
++        .setPSignalSemaphores(&submit_semaphores[image.index].raw);
+ 
+     vulkan->graphics_queue().submit(submit_info, {});
+ 
+-    return image.copy_with_semaphore(submit_semaphore);
++    return image.copy_with_semaphore(submit_semaphores[image.index]);
+ }
+ 
+ void TextureScene::update()
+diff --git a/src/scenes/texture_scene.h b/src/scenes/texture_scene.h
+index 7e0dca2..fb3b424 100644
+--- a/src/scenes/texture_scene.h
++++ b/src/scenes/texture_scene.h
+@@ -82,7 +82,7 @@ private:
+     std::vector<ManagedResource<vk::ImageView>> image_views;
+     std::vector<ManagedResource<vk::Framebuffer>> framebuffers;
+     std::vector<vk::CommandBuffer> command_buffers;
+-    ManagedResource<vk::Semaphore> submit_semaphore;
++    std::vector<ManagedResource<vk::Semaphore>> submit_semaphores;
+ 
+     vk::DeviceMemory uniform_buffer_memory;
+     vk::DescriptorSetLayout descriptor_set_layout;
+diff --git a/src/scenes/vertex_scene.cpp b/src/scenes/vertex_scene.cpp
+index 0fd7fe7..88a61b9 100644
+--- a/src/scenes/vertex_scene.cpp
++++ b/src/scenes/vertex_scene.cpp
+@@ -95,7 +95,8 @@ void VertexScene::setup(
+     setup_framebuffers(vulkan_images);
+     setup_command_buffers();
+ 
+-    submit_semaphore = vkutil::SemaphoreBuilder{*vulkan}.build();
++    for (auto i = 0u; i < vulkan_images.size(); ++i)
++        submit_semaphores.push_back(vkutil::SemaphoreBuilder{*vulkan}.build());
+     rotation = 0.0;
+ }
+ 
+@@ -103,7 +104,7 @@ void VertexScene::teardown()
+ {
+     vulkan->device().waitIdle();
+ 
+-    submit_semaphore = {};
++    submit_semaphores.clear();
+     vulkan->device().freeCommandBuffers(vulkan->command_pool(), command_buffers);
+     framebuffers.clear();
+     image_views.clear();
+@@ -132,11 +133,11 @@ VulkanImage VertexScene::draw(VulkanImage const& image)
+         .setPWaitSemaphores(&image.semaphore)
+         .setPWaitDstStageMask(&mask)
+         .setSignalSemaphoreCount(1)
+-        .setPSignalSemaphores(&submit_semaphore.raw);
++        .setPSignalSemaphores(&submit_semaphores[image.index].raw);
+ 
+     vulkan->graphics_queue().submit(submit_info, {});
+ 
+-    return image.copy_with_semaphore(submit_semaphore);
++    return image.copy_with_semaphore(submit_semaphores[image.index]);
+ }
+ 
+ void VertexScene::update()
+diff --git a/src/scenes/vertex_scene.h b/src/scenes/vertex_scene.h
+index 828a00c..00f7bf9 100644
+--- a/src/scenes/vertex_scene.h
++++ b/src/scenes/vertex_scene.h
+@@ -79,7 +79,7 @@ private:
+     std::vector<ManagedResource<vk::ImageView>> image_views;
+     std::vector<ManagedResource<vk::Framebuffer>> framebuffers;
+     std::vector<vk::CommandBuffer> command_buffers;
+-    ManagedResource<vk::Semaphore> submit_semaphore;
++    std::vector<ManagedResource<vk::Semaphore>> submit_semaphores;
+ 
+     vk::DeviceMemory uniform_buffer_memory;
+     vk::DescriptorSetLayout descriptor_set_layout;

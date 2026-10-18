@@ -1,0 +1,1390 @@
+%% COVENANT -- anonymous supplement, cited by the journal and the dual-track versions ("Supplement Sec. X").
+%% Section letters are fixed: A overview, B traces to the formal model, C capture, D UNDEFINED,
+%% E checker snapshots and rounds, F per-engine triage, G dossier summary, H full results tables,
+%% I the two fresh studies.
+\documentclass[acmtog,anonymous,review]{acmart}
+
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{xspace}
+\usepackage{tikz}
+\usepackage{xr}
+\externaldocument[P-]{../journal/main}
+\graphicspath{{../figures/}}
+\setlength{\emergencystretch}{3em}
+\pdfsuppressptexinfo=-1
+
+\newcommand{\sys}{\textsc{Covenant}\xspace}
+\newcommand{\rcgp}{RCGP\xspace}
+\newcommand{\bench}{GPUBugBench\xspace}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\xspec}{\ensuremath{\Rightarrow_{x}}}
+\newcommand{\mspec}{\ensuremath{\Rightarrow_{m}}}
+\newcommand{\spec}{\ensuremath{\Rightarrow_{\mathit{spec}}}}
+\newcommand{\Haz}{\ensuremath{\mathit{Haz}}}
+\newcommand{\posthoc}{\textsuperscript{\textsf{ph}}}
+\newcommand{\relhash}{\code{eb50030d8472}}
+\DeclareRobustCommand{\circled}[1]{\tikz[baseline=(c.base)]\node[circle,fill=black!35,text=white,inner sep=.6pt,font=\sffamily\scriptsize\bfseries](c){#1};}
+
+\setcopyright{none}
+\acmJournal{TOG}
+\acmVolume{0}
+\acmNumber{0}
+\acmArticle{0}
+\acmYear{2026}
+\acmMonth{0}
+\acmSubmissionID{XXX}
+\settopmatter{printacmref=false}
+\renewcommand\footnotetextcopyrightpermission[1]{}
+
+\begin{document}
+
+\title{\textsc{Covenant}: Schedule-Independent Verification of Vulkan Frame Synchronization --- Supplementary Material}
+\author{Anonymous Author(s)}
+
+\begin{abstract}
+This supplement accompanies the paper. It contains the translation from traces to events, with the treatment of
+framebuffer-local dependencies and of pairs of layout transitions (\S B; the formal model, the algorithm and the
+proofs are stated only in the paper); the design and evidence for host-write capture (\S C) and for spec-strict
+transitions from \code{UNDEFINED} (\S D); the checker snapshots, what each study exposed, and the frozen blind rounds
+(\S E); the per-study and per-engine triage (\S F); a summary of the 11 historical evidence dossiers (\S G); the full
+results tables (\S H); and the protocols, triage rules and full results of the two fresh studies of the proved
+configuration (\S I). Every number carries the checker snapshot and its provenance.
+\end{abstract}
+
+\maketitle
+\hypersetup{pdfauthor={},pdfcreator={},pdfsubject={},pdfkeywords={},pdftitle={COVENANT: Supplementary Material}}
+
+\appendix
+
+%% ===================================================================
+\section{Overview and Provenance}
+\label{sup:overview}
+
+\paragraph{How to read this supplement}
+Section letters are fixed and are cited by the paper as ``Supplement~\S X''. Lettered sections point inside this
+supplement; numbered definitions, lemmas, theorems, figures and appendices point to the paper, which holds the only
+statement of the formal model and the proofs.
+
+\paragraph{Provenance}
+A result is \emph{fresh} when the checker snapshot was frozen, by source hash, before the study's first run, and the
+result is used as scored. It is \emph{dev} (development data) when the checker was developed on that code or on
+findings from it. It is \emph{post-hoc} when a later checker re-ran code already seen; post-hoc results are marked
+\posthoc{} in tables. Fresh results are the primary evidence. The theorems of the paper describe one checker, the
+release, in its verified configuration (Tables~\ref{tab:s-versions} and~\ref{tab:s-configs}). The other snapshots are
+named by their role: the snapshot frozen for a study, the first snapshot of the verified configuration (frozen after
+every blind round and every earlier engine study, so all its results are post-hoc), and the snapshots frozen before
+each of the two fresh studies (\S I).
+
+\begin{table}[htbp]
+\caption{Checker snapshots. The hash is the SHA-1 over the sorted checker sources and the benchmark runner, as the
+checker prints it.}
+\label{tab:s-versions}
+\scriptsize
+\begin{tabular}{@{}p{0.27\columnwidth}p{0.15\columnwidth}p{0.48\columnwidth}@{}}
+\toprule
+Snapshot (role) & source hash & used for \\
+\midrule
+blind-round snapshots & per round & blind rounds 1--6, each frozen before its round (fresh) \\
+tutorial-study snapshot & \code{8c006a42543b} & tutorial study and engine study 1 (fresh); early reference-semantics, barrier-mutant and ray-tracing/mesh tests (dev) \\
+engine-study-2 snapshot & \code{d13c9184ac04} & engine study 2 (fresh); whole-frame differential test after its fixes (dev) \\
+engine-study-3 snapshot & \code{2f74a46b1341} & engine study 3 (fresh); the dossier counts \\
+first snapshot of the verified configuration & \code{45f2ce1a5046} & post-hoc re-runs of the earlier corpora \\
+fresh-study-1 snapshot & \code{7cb216ed5753} & fresh study 1 (32 programs); barrier mutants on the pinned validation commit (post-hoc) \\
+fresh-study-2 snapshot & \code{76e393826ae9} & fresh study 2 (25 programs); the source-patch cases \\
+\textbf{the release} & \relhash & the configuration the paper's theorems describe; all post-hoc re-runs in the paper's release table; the regenerated whole-frame test \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\caption{Configurations of the checker. Only the verified configuration, the default, is covered by the theorems.
+The other switches are opt-in and can be combined; each is recorded in the report's metadata. ``Unrecorded subpass
+flags'': how a trace from a driver that did not record subpass-dependency flags is read.}
+\label{tab:s-configs}
+\small
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}lllll@{}}
+\toprule
+Configuration & from \code{UNDEFINED} & host-write capture & unrecorded subpass flags & theorems \\
+\midrule
+\textbf{verified} (default) & strict & conservative (pages) & local & \textbf{yes} \\
+observed capture & strict & observed (bytes) & local & no \\
+heuristic \code{UNDEFINED} relaxation (R1, opt-in) & relaxed & conservative & local & no \\
+legacy global subpass flags (opt-in) & strict & conservative & global & no \\
+\bottomrule
+\end{tabular}}
+\end{table}
+\begin{sloppypar}
+The switches are the environment variables \code{COVENANT\_HOST\_CAPTURE=observed},
+\code{COVENANT\_HEURISTIC\_DISCARD=1} and \code{COVENANT\_LEGACY\_SUBPASS\_FLAGS=global}. The snapshots of
+Table~\ref{tab:s-versions} other than the release read no subpass-dependency flags at all (\S\ref{sup:fblocal}); for
+them, ``verified configuration'' means strict transitions and conservative capture.
+\end{sloppypar}
+
+%% ===================================================================
+\section{From Traces to the Formal Model}
+\label{sup:formal}
+
+The formal model, the verification algorithm, the theorems and every proof are stated once, in the paper (Sections~4
+and~5, Section~8 and Appendix~A), and are not repeated here, so that the submission has a single statement of its
+guarantees. In particular, the paper makes no claim about reusing a barrier plan beyond the recorded execution, and a
+repair is accepted only when the whole frame, compared by racing event pairs, reports no pair that the original frame
+did not (paper, Section~5). This section adds the translation from the trace to events, how framebuffer-local
+dependencies are read, the matrix of transition pairs, and the lesson of the barrier optimizer. Numbered references
+to definitions, lemmas, theorems and figures point to the paper.
+
+\subsection{From Trace to Events}
+\label{sec:impl}
+The model driver \code{libcovvk} is a stand-in \code{libvulkan} that returns fake handles and records a JSON-lines
+trace: object creation (with formats and usages), descriptor writes and command streams, submissions with their
+semaphores and fences, swapchain acquire and present, and host writes to mapped memory (\S\ref{sec:capture}). Shaders
+are lifted from SPIR-V, and the C++ host is read with libclang for struct layouts.
+\begin{itemize}
+\item \textbf{Submissions.} A submission is preceded by a host signal that the queue waits on. Then come each
+  batch's waits, the commands of its command buffers as recorded at submit time, its signals, and the fence.
+\item \textbf{Draws.} Draws read their bound descriptors and their vertex, index and indirect buffers, and write
+  their attachments. Byte ranges come from descriptor ranges, dynamic offsets and index ranges.
+\item \textbf{Shader accesses.} A per-entry-point analysis of the SPIR-V call graph yields each shader's reads and
+  writes and classifies storage bindings as atomic-only, atomically allocated slots, or plain. A descriptor access is
+  charged at the stages whose entry point uses the binding; the set layout's stage flags are only the fallback when
+  no entry point is known. (The snapshots up to engine study 3 charged every stage the layout granted, which is sound
+  but caused a false alarm on \bench case 94.)
+\item \textbf{Descriptor arrays.} A direct draw's read of a sampled-image array is narrowed to the elements its index
+  can select when the index is a flat 32-bit vertex attribute, passed through at most four shift/mask operations,
+  whose bytes the host wrote before the submission, that no device command writes and that no host write races
+  (paper, \S\ref{P-sec:guards}); otherwise every written element is read. The guard is re-decided whenever a frame is
+  re-checked. The snapshots of both fresh studies read every written element in all cases, which is sound and is the
+  false-alarm cause GTK-DESC of study~2 (\S I).
+\item \textbf{Semaphores.} Each signal of a binary semaphore is a separate instance. A timeline wait is matched first
+  against the initial value, then against the first sufficient signal.
+\item \textbf{Swapchain.} \code{vkAcquireNextImageKHR} places three events on $\mathit{present}{:}i$: a wait for the
+  previous present of image $i$, a read of the image, and the acquire signal. \code{vkQueuePresentKHR} places the
+  present-semaphore wait, a read in the present layout and a ``presented'' signal on the same presentation queue.
+\item \textbf{Compute, mesh shading and ray tracing.} Dispatches and mesh-task draws access their descriptors at the
+  compute, task and mesh stages; indirect and count buffers are read at \code{DRAW\_INDIRECT}. An acceleration
+  structure is the byte range of its backing buffer. A build writes its destination, reads and writes its scratch
+  range, and reads its inputs and, for a top-level build, every bottom-level structure its instances reference
+  (A-RT1). \code{vkCmdTraceRaysKHR} reads its shader-binding-table regions and its descriptors at the ray-tracing
+  stage.
+\item \textbf{Stage order.} Logically earlier and later stages follow the synchronization pipelines of the Vulkan
+  registry. Expansion applies to execution scopes only.
+\item \textbf{Events and ownership.} \code{vkCmdWaitEvents} is a barrier whose first scope contains only what precedes
+  the latest \code{vkCmdSetEvent} of that event on the queue (A-EV1). Queue-family ownership is tracked per byte
+  range, and per subresource for images.
+\item \textbf{Unmodelled commands.} The driver records every command it does not implement with its command buffer
+  and position, and the checker emits \code{timing.unmodelled-command} when that buffer is submitted. The verdict
+  makes no claim for such a command.
+\end{itemize}
+\emph{Structure checks} (secondary, no guarantee) use the same trace: stage interfaces, host/shader struct layouts,
+bindings used but not bound, push-constant ranges and framebuffer extents.
+
+\subsection{Framebuffer-local dependencies}
+\label{sup:fblocal}
+The model driver records the \code{dependencyFlags} of every subpass dependency and barrier. A link with
+\code{BY\_REGION}, or \code{VIEW\_LOCAL} with view offset 0, keeps its global meaning for a stage pair that involves a
+stage outside framebuffer space; for two framebuffer-space accesses it orders only attachment accesses at the same
+position (the same image view base; a single-sample input-attachment read counts); storage, sampled and uniform
+accesses are never ordered by it. A non-zero view offset orders no framebuffer-space pair. A chain with a local link is
+local (paper, Definition~\ref{P-def:spec} and \S\ref{P-sec:fblocal}). \code{VIEW\_LOCAL} is treated like
+\code{BY\_REGION}, which is stricter than the specification. A trace from a driver that did not record subpass flags is
+read as local, the weaker reading, with a note in the report; the opt-in legacy switch reads such flags as global and
+leaves the verified configuration (Table~\ref{tab:s-configs}).
+
+The snapshots frozen for the earlier studies, including both fresh studies, read no dependency flags and gave every
+dependency its global meaning. On a frame with a \code{BY\_REGION} or \code{VIEW\_LOCAL} dependency they can therefore
+accept a pair that the release reports. The
+release's results on the traces of both fresh studies are in \S\ref{sup:release-posthoc}.
+
+\subsection{Transition pairs}
+\label{sup:ltpairs}
+Two layout transitions of one image are exempt from the race check (exemption E5 of Definition~\ref{P-def:spec}, rule
+R-LT) only when they are on one queue and at least one of them is performed by an image memory barrier, because only
+then does the specification order them. Table~\ref{tab:s-ltmatrix} gives every kind of pair, the specification text
+that decides it, and how the checker treats it. Ordering among transitions adds no chain: ``an application must not
+rely on ordering of image layout transitions to influence ordering of other commands''.
+
+\begin{table}[h]
+\caption{Pairs of layout transitions on one image with no dependency chain between them (synchronization.adoc
+262--269, Vulkan-Docs \code{v1.4.365}). ``Automatic'': a transition performed by a render pass; ``explicit'': one
+performed by an image memory barrier.}
+\label{tab:s-ltmatrix}
+\scriptsize
+\begin{tabular}{@{}p{2.9cm}p{2.5cm}p{1.1cm}l@{}}
+\toprule
+pair & specification & fresh-study snapshots & release \\
+\midrule
+explicit / explicit, one queue & ``in submission order'' & exempt & exempt \\
+explicit / automatic, one queue & ``including those performed by render passes'' & exempt & exempt \\
+automatic / automatic, one queue & not covered & exempt & \textbf{checked} \\
+any pair on two queues & ``submitted to the same queue'' & checked & checked \\
+transition / other command & ``must not rely on'' & no edge & no edge \\
+\bottomrule
+\end{tabular}
+\end{table}
+Each row has a unit test, and the third row a litmus program (two render passes with and without explicit external
+dependencies). Checking automatic/automatic pairs reports new pairs in four GTK and two Qt programs of the fresh
+studies and in \bench case 45; no diagnostic site is lost. Whether two automatic transitions are in fact ordered is
+one of the questions the specification leaves open (\S\ref{sup:vsg5}); the checker reports them, which is the report
+direction.
+
+\subsection{Verified Barrier Transformations}
+\label{sec:elide}
+Because the checker decides hazard-freedom for the whole recorded frame, it can serve as the oracle of a barrier
+optimizer. A greedy search visits barrier calls in recording order and, for each, tries removal and then narrower
+masks built from the stages and flags of the accesses around each occurrence, keeping a candidate when the whole
+frame, with all changes accepted so far, reports no hazard beyond those of the original frame. Barriers with
+\code{HOST} stages, ownership transfers, masks the trace could not name and the barriers around unmodelled commands are
+pinned; layout transitions are only narrowed. The release compares the frames by racing event pairs, matched by
+identity, and re-verifies both plans pairwise. The measurements of \S\ref{sec:eval-elide} were made with an early
+optimizer and checker (development data), which compared diagnostic keys rather than event pairs; they were not
+re-run with the release.
+
+\paragraph{The soundness lesson}
+Running the early optimizer on eight unmodified samples exposed two gaps between its implementation and the theorem's
+premise, both fixed since. \emph{Existing hazards mask new ones:} on a frame that already races, ``no new
+diagnostic'' is not monotone, because one existing witness can hide new races. Without a guard the optimizer narrowed
+all 93 per-frame transitions of one Khronos sample, and that plan creates 1,560 new races under the reference
+semantics; the optimizer now pins every barrier between the two accesses of an existing hazard. \emph{The
+presentation engine's read before the first acquire:} the strengthened frame charged that read only from an image's
+first present on, so the optimizer narrowed an acquire transition's source stage below the semaphore's wait stage, and
+validation reports the resulting write-after-read hazard. The strengthened frame now places a presentation-engine read
+before every acquire signal.
+
+
+%% ===================================================================
+\section{Host-Write Capture}
+\label{sec:capture}
+
+Host writes to mapped memory are the part of the trace that a recording driver does not see as calls, so they need
+their own argument: premise A2-H of Table~\ref{P-tab:assume}. This section gives the mechanism, the conservativity
+argument, its exact preconditions, the tests, and the measured precision cost of the conservative default. Every
+measurement here was made with the first snapshot of the verified configuration and is post-hoc.
+
+\subsection{Mechanism}
+The model driver allocates every mappable \code{VkDeviceMemory} as an anonymous private mapping and, at
+\code{vkMapMemory}, registers it as a \emph{trap region} and makes it read-only. The first store to a page of a
+read-only region raises \code{SIGSEGV}; the driver's handler marks that page dirty in the region's bitmap, records the
+faulting thread (the first four distinct ones per interval, then an overflow flag), makes \emph{that page} writable and
+returns, so the store is retried and succeeds. Later stores to the same page in the same interval do not fault.
+
+Every Vulkan entry point of the driver takes the driver lock and, before anything else, flushes. For each region with
+dirty pages the flush (1) collects the dirty page offsets and clears their bits; (2) re-protects the whole region
+read-only \emph{before} looking at its bytes, so that a store racing the flush either lands before the re-protect and
+is in this record, or faults and is in the next one; and (3) emits one host-write record with the memory object, the
+dirty pages, the page size, the faulting threads, the threads of the previous and the current call, the number of live
+threads, and the byte runs that differ from the driver's shadow copy of the mapping. Only then is the call's own record
+written. \code{vkFreeMemory} unregisters the region; the driver's own writes into a mapping (the read-back of a
+device-to-host copy) update the shadow and do not mark pages. The trace ends with a final flush.
+
+\subsection{Capture intervals and event placement}
+Let $C_1, C_2, \dots$ be the calls in the order the driver lock serializes them. The capture interval $I_k$ is the time
+between the end of $C_{k-1}$'s flush and the start of $C_k$'s. Every host store to a trapped page during $I_k$ is in the
+record emitted at the start of $C_k$: the page is read-only at the start of $I_k$, because the previous flush
+re-protected it and only a fault re-opens a page, so the first store faults, and a later store hits a page already
+marked. The record becomes host write events (stage \code{HOST}, access \code{HOST\_WRITE}) placed on the host queue
+after $C_{k-1}$ and before $C_k$.
+
+Every operation that orders host work against device work is a call on the host queue: submission (host to device),
+fence and semaphore waits, completion queries that observe completion, queue and device idle waits, and acquire
+(device to host). Each is some $C_j$, so it lies wholly before or after any interval. Placing the write inside $I_k$
+puts it on the same side of every such call as the actual store, provided the store is ordered with the calls in trace
+order (P3 below).
+
+\subsection{What is charged}
+\emph{Conservative} capture, the default: for each dirty page, every buffer or image bound to the memory object
+that overlaps the page receives a host write of its bytes inside the page (an image: its whole subresource set).
+Byte contents are not consulted. A binding made by the very next call (the bump-allocator pattern) is included.
+\emph{Observed} capture (opt-in; the only mode of the snapshots frozen for the tutorial study and the three engine
+studies): only byte runs that differ from the shadow are charged (runs closer
+than 16 bytes merged; past the run budget, whole pages from the truncation point), and a page shared by a fresh
+allocation and an older neighbour is charged to the fresh one only.
+
+\subsection{Conservativity argument}
+Let $\mathit{St}$ be the host stores to mapped device memory and $\mathit{Ev}$ the host write events produced. The
+theorem needs: for every store $s \in \mathit{St}$ to byte $b$ of a binding $R$, an event $w \in \mathit{Ev}$ that writes
+$b$ of $R$ and lies on the host queue between the same two calls as $s$, so that it is related to every device event as
+$s$ is. Given P1--P4:
+\begin{itemize}
+\item \emph{Seen.} $s$ happens in some interval $I_k$ (P3). Its page $p$ is read-only at the start of $I_k$. If $s$ is
+  the first store to $p$ in $I_k$, it faults and marks $p$ (P1: the handler receives the fault; P2: the store goes
+  through the trapped mapping); otherwise an earlier store marked $p$. So $p$ is in the record of $C_k$.
+\item \emph{Charged.} In conservative mode every byte of every binding overlapping $p$ is written by an event of that
+  record, so $b$ of $R$ is (P4).
+\item \emph{Placed.} The record's events lie between $C_{k-1}$ and $C_k$ on the host queue, as $s$ does.
+\end{itemize}
+Hence $\mathit{Ev}$ over-approximates $\mathit{St}$ in content (whole pages, all overlapping bindings) and is exact in
+position up to the interval, which is all that host happens-before can distinguish. A same-value store, and a store
+restored within the interval, fault and are therefore accesses. \emph{In observed mode the argument fails at
+``Charged''}: a store that leaves the bytes unchanged produces no byte run and no event; that mode is outside the
+theorem.
+
+Not covered: host \emph{reads} of mapped memory are not trapped and are not events, so a device write racing a host
+read is not reported; kernel stores on the application's behalf (\code{read(2)} into a mapping) fail with
+\code{EFAULT} while the page is protected, which changes behaviour rather than escaping silently; memory mapped through
+a path the driver does not see is outside P2.
+
+\subsection{Preconditions}
+\begin{itemize}
+\item \textbf{P1 (trap installed).} The driver's handler is in effect and the mapping is a trap region. Checked: the
+  driver re-reads the handler at every flush and records a capture warning if the application replaced it; a mapping
+  that could not be trapped is recorded as untracked. Both become \code{timing.unmodelled} warnings, so a clean
+  verdict says that it does not cover those writes.
+\item \textbf{P2 (stores through the mapping).} Stores go through the pointer \code{vkMapMemory} returned, or pointers
+  derived from it. Not checkable from the trace.
+\item \textbf{P3 (one ordering thread).} Each store is ordered, in host happens-before, between the two calls that
+  bound its interval in trace order. It holds when stores and calls are made by one thread. Checked as far as the trap
+  allows: a record whose faulting thread differs from the thread of either bounding call, or whose thread list
+  overflowed, is reported (``host writes from a thread other than the one making the surrounding Vulkan calls'').
+  Records made while the process had more than one thread are counted but not reported, because only the first store
+  per page faults.
+\item \textbf{P4 (binding known).} The bytes belong to a buffer or image bound at that offset by the end of the
+  interval, or by the call that ends it.
+\end{itemize}
+
+\subsection{Tests}
+Unit tests with synthetic records check both modes: the default is conservative; a page-only record is charged in
+both modes; a record with an empty byte diff is charged in conservative mode only; a store into the neighbouring buffer
+of the same page is charged to both buffers in conservative mode and to the neighbour only in observed mode; a
+cross-thread record and an untracked mapping are reported. An end-to-end probe on the model driver uses one coherent
+host-visible allocation holding two 256-byte buffers, \code{src} and \code{nbr}, in one page; a copy reads \code{src},
+and the store under test is made after the submit and before the fence wait (Table~\ref{tab:s-probe}). A trace test
+checks that the racing record of the \code{same} and \code{restore} probes has an empty byte diff and one dirty page.
+
+\begin{table}[htbp]
+\caption{Host-capture probes on the model driver.}
+\label{tab:s-probe}
+\small
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}llccc@{}}
+\toprule
+Probe & what the store does & race? & conservative & observed \\
+\midrule
+\code{ok} & no store before the wait & no & clean & clean \\
+\code{changed} & a different value into \code{src} & yes & reported & reported \\
+\code{same} & the value \code{src} already holds & yes & \textbf{reported} & missed \\
+\code{restore} & a different value, then the original back & yes & \textbf{reported} & missed \\
+\code{neighbour} & into \code{nbr} only (same page) & no & reported (page cost) & clean \\
+\code{thread} & \code{changed}, from a second thread & yes & reported + P3 warning & reported \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\subsection{Precision cost of the conservative default}
+Table~\ref{tab:s-capcost} compares conservative with observed capture on the same trace files, both with the first
+snapshot of the verified configuration; everything else is equal. Raw counts are timing diagnostics; groups are timing report groups.
+
+\begin{table*}[t]
+\caption{Conservative versus observed capture, first snapshot of the verified configuration\posthoc, same traces. GPUBugBench status: detected / fixed
+variant not clean / expected miss / missed.}
+\label{tab:s-capcost}
+\small
+\begin{tabular}{@{}p{0.2\textwidth}p{0.13\textwidth}p{0.13\textwidth}p{0.48\textwidth}@{}}
+\toprule
+Corpus & observed & conservative & what the difference is \\
+\midrule
+GPUBugBench, 114 cases & 81 / 1 / 2 / 30 & 78 / 4 / 2 / 30 & \textbf{recall gain scored as a loss}: 65, 66 and 68 become fixed-not-clean and 69 gains a code on both variants. All four are a true same-value race in the shared harness (two frames in flight, one uniform buffer, the host rewrites the unchanged camera after waiting only its own frame's fence). Blind timing columns unchanged (29 / 33 of 35) \\
+Whole-frame, 1,251 programs & 97.9\% / 95.4\% & 97.9\% / 95.4\% & no host write races in a way the modes distinguish \\
+RT / mesh, 15 modes & 15 / 15 & 15 / 15 & none \\
+Stored samples, 28 (earlier driver) & 30,244 raw, 113 / 7 groups & same & earlier traces have no page-only records \\
+Sascha T1--T6, newly recorded traces & 502 host-race raw & 1,607 & \textbf{recall gain}, all same-value stores: T2 0$\to$8, T3 0$\to$4, T4 0$\to$9, T5 0$\to$576, T6 2$\to$10, T1 500$\to$1,000 (the view uniform buffer) \\
+Tutorials, 43 traces & 3,291 raw / 22 groups & 9,606 / 58 & \textbf{precision cost} (+6,315 raw / +36 groups; +24 scored false-alarm groups), all in vulkan-guide chapters 5 and 6: the per-frame scene buffer is a fresh 240-byte allocation in a page that also holds the in-flight frames' scene buffers and the material constants \\
+SDL3 + bgfx, 12 & 221 / 21 / 0 & 221 / 21 / 0 & none \\
+Granite + VSG, 12 & 1,060 / 13 / 9 & 1,060 / 13 / 9 & one P3 warning per Granite program in both modes \\
+Diligent GLTFViewer & 126 / 4 / 2 & 136 / 14 / 2 & \textbf{precision cost}, +10 groups: the staging ring sub-allocates each upload next to earlier uploads a copy may still read; all page neighbours \\
+vkQuake, 3 timedemos & 71,104 raw / 14 groups & 81,161 / 27 & \textbf{precision cost}, +13 groups, all false alarms: the lightstyle uniform buffer is double-buffered by dynamic offset and every changed byte lies in the half the GPU does not read (4); the lights buffer is a page neighbour (3); the two halves of the visibility buffer, selected by a push-constant offset, share a page (6). Of the added raw, 9,800 are same-value records, most on the bmodel ring, joining existing false-alarm groups \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\paragraph{Reading}
+Conservative capture is what the theorem needs. On these corpora it buys the same-value detections (Sascha T2--T5,
+more of T6 and T1, and the true harness race in \bench 65, 66, 68 and 69). Its cost is page-granularity false alarms in
+programs that sub-allocate host-visible memory below page size while earlier sub-allocations are in flight. vkQuake and
+Diligent fall from 7 true / 2 technicalities / 11 false alarms of 20 groups to 7 / 2 / 34 of 43. Observed capture
+reproduces the host-write results of the engine-study-3 snapshot exactly, but is outside the theorem.
+
+\subsection{Record counts}
+Table~\ref{tab:s-records} counts how often the observed mode would have been blind (records whose page faulted but
+whose byte diff is empty) and how often P3 is at stake. Traces made by the earlier driver of the sample and tutorial
+studies have no page-only records and no thread fields.
+
+\begin{table}[htbp]
+\caption{Host-write records, conservative mode, loaded by the first snapshot of the verified configuration. Driver:
+the earlier driver of the sample and tutorial studies, or the current one.}
+\label{tab:s-records}
+\scriptsize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+Traces (driver) & traces & records & same-value & cross-thread (reported) & while $>1$ thread \\
+\midrule
+stored Sascha (earlier) & 22 & 1,234 & 0 & 0 & 0 \\
+stored Khronos (earlier) & 6 & 152 & 0 & 0 & 0 \\
+tutorials (earlier) & 43 & 907 & 79 & 0 & 0 \\
+Sascha T1--T6 (current) & 6 & 191 & 88 & 0 & 0 \\
+SDL3 (current) & 6 & 715 & 231 & 0 & 0 \\
+bgfx (current) & 6 & 12,151 & 1,145 & 0 & 12,151 \\
+Granite (current) & 4 & 3,205 & 840 & 182 & 3,205 \\
+VSG (current) & 8 & 105 & 26 & 0 & 0 \\
+Diligent (current) & 1 & 94 & 72 & 0 & 94 \\
+vkQuake (current) & 3 & 14,645 & 5,304 & 4,964 & 14,645 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+Same-value records are frequent wherever a program rewrites constants every frame; they matter only when the buffer is
+in flight, the T1--T6 pattern. Cross-thread records occur only in Granite and vkQuake, which fill mapped memory from
+worker threads; each of their programs carries one P3 warning, so its clean pairs are outside P3.
+
+%% ===================================================================
+\section{Transitions from \texttt{UNDEFINED}}
+\label{sup:undefined}
+
+\subsection{Two readings, and what the specification says}
+A write followed by an image layout transition from \code{UNDEFINED} can be read in two ways. Under the
+\emph{relaxed} reading (R1), the transition needs only an execution dependency on the write, since the old contents are
+discarded. Under the \emph{strict} reading, it needs a memory dependency: the write must be made available before the
+transition. The snapshots frozen for the tutorial study and the three engine studies applied R1 by default, while the
+reference semantics of that period was strict, so their agreement with the reference holds only where R1 never
+applies. The verified configuration is strict.
+
+The specification does not allow R1. Its section on image layout transitions states that transitions ``may perform
+read and write accesses on all memory bound to the image subresource range, so applications \emph{must} ensure that all
+memory writes have been made available before a layout transition is executed'', with no exception for
+\code{UNDEFINED}. \code{UNDEFINED} as an old layout only implies that ``the contents of the image subresource need not be
+preserved'', a statement about the contents after the transition, not about ordering the transition's own writes.
+Queue-family ownership transfers carry the same availability rule, and the Vulkan synchronization examples state that
+a write-after-write through a transition from \code{UNDEFINED} still needs a memory dependency. The bad schedule R1
+hides is a write-after-write on the image's memory: the earlier write, not made available, can land after the
+transition has rewritten the subresource for its new layout.
+
+\subsection{What the checker does}
+\begin{itemize}
+\item \textbf{Default (verified configuration): spec-strict.} A write before any layout transition must be made
+  available by the transition's own barrier (first access scope: \code{srcStageMask} $\times$ \code{srcAccessMask} on
+  that resource) or by a dependency chain whose first link does so.
+\item \textbf{Opt-in heuristic.} An environment switch restores R1 for every harness; the report's metadata then
+  records the heuristic and that the configuration is not verified.
+\item \textbf{Diagnostics} name the failed scope (``is not made available before the layout transition \dots{} (from
+  \code{UNDEFINED})'') and add, for \code{UNDEFINED}: ``the old contents may be discarded, but the earlier write must
+  still be made available, or it can land after the transition.''
+\item \textbf{Grading.} Report grouping grades a group a \emph{technicality} when every hazard in it concerns contents
+  that are discarded anyway (the later access is a transition from \code{UNDEFINED}, or a load/store operation is
+  \code{DONT\_CARE}). They are reported, but kept apart from errors.
+\item \textbf{Final-layout transitions.} The trace translation starts a render pass's automatic transition to its
+  final layout from the attachment's current layout. Hazard detection in the verified configuration does not depend
+  on the old layout.
+\end{itemize}
+Nine unit tests cover the behaviour: the minimal case (write, barrier with \code{srcAccessMask = 0}, transition from
+\code{UNDEFINED}) is reported by default and accepted under the heuristic; the default is recorded in the metadata; a
+full memory dependency is clean; no execution dependency is a hazard in both modes; a defined old layout needs
+availability in both modes; the access after the transition is still checked; a semaphore can carry the memory
+dependency; and the reference defaults to strict.
+
+\subsection{Effect on the earlier corpora}
+Table~\ref{tab:s-undef} isolates the effect of strict transitions: the verified configuration against the heuristic
+relaxation, both with conservative capture and both with the first snapshot of the verified configuration (post-hoc).
+The difference is the same under observed capture on every corpus. That snapshot started final-layout transitions
+from \code{UNDEFINED}; this does not change the strict column's hazard sets, but under the heuristic it made every
+final-layout transition a discard, which the heuristic column includes.
+
+\begin{table*}[t]
+\caption{Effect of spec-strict transitions from \code{UNDEFINED}, first snapshot of the verified configuration\posthoc.
+Engines: raw timing / report groups / technicality groups.}
+\label{tab:s-undef}
+\small
+\begin{tabular}{@{}p{0.27\textwidth}p{0.14\textwidth}p{0.14\textwidth}p{0.37\textwidth}@{}}
+\toprule
+Corpus & strict (verified) & heuristic (R1) & effect of strict transitions \\
+\midrule
+\bench 114 (det. / unclean / exp. / missed) & 78 / 4 / 2 / 30 & 78 / 4 / 2 / 30 & none on status or code sets; raw counts differ in 3 buggy variants \\
+Whole-frame, hazard / all-key agreement & 97.9\% / 95.4\% & 97.9\% / 95.4\% & 0 programs change \\
+RT / mesh, 15 modes & 15 / 15 & 15 / 15 & 0 codes change; texts name the scope \\
+Stored root causes (28 samples) & 24 IDs + T17 & 24 IDs + T17 & 0 lost; 356 diagnostics at new sites in 14 samples \\
+\quad report groups error / technicality & 113 / 7 & 125 / 5 & merges in 7 samples \\
+Tutorials (raw / groups) & 9,606 / 58 & 9,606 / 58 & none \\
+SDL3 + bgfx & 221 / 21 / 0 & 221 / 21 / 0 & none \\
+Granite, 4 & 589 / 4 / 8 & 519 / 6 / 6 & +70 raw, 16--19 per program, technicality \\
+VSG, 8 & 471 / 9 / 1 & 431 / 9 / 0 & +40 raw, +1 technicality group (\code{vsg\_depthpeel}) \\
+Diligent & 136 / 14 / 2 & 136 / 14 / 2 & none \\
+vkQuake, 3 timedemos & 81,161 / 27 / 0 & 81,161 / 27 / 0 & none \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\subsection{Triage of the diagnostics strict mode adds}
+All added diagnostics are \code{timing.barrier-scope} of the form ``the earlier write (S, A) is not made available
+before the layout transition \dots'', in three shapes.
+\begin{itemize}
+\item[(a)] \emph{A \code{DONT\_CARE} store or an attachment write, then a transition from \code{UNDEFINED}, with no
+  \code{srcAccessMask} for the write.} Stored Sascha Willems samples (\code{deferred}, \code{deferredmultisampling},
+  \code{deferredshadows}, \code{hdr}: 27 each; \code{ssao}, \code{subpasses}: 45 each; four others 18 each;
+  \code{multiview} 9; \code{inputattachments} 27 of 47), Khronos \code{mobile\_nerf} (22), and all four Granite programs
+  (16--19 each, on the depth prepass, after the previous frame's \code{DONT\_CARE} store). True by the specification,
+  technicality in effect: the store operation is an attachment write, the transition needs it made available, and the
+  effect is limited to contents that are then discarded.
+\item[(b)] \emph{Ordering through a semaphore relay} (\code{synchronization\_2}, 8). Because a sync2 signal's stage
+  mask limits every hop of a relay, the swapchain transition is the reported partner. The defect is KS-1, already in
+  the list.
+\item[(c)] \emph{Render-pass final-layout transitions} (\code{inputattachments} 20, \code{vsg\_depthpeel} 40). A
+  \code{CLEAR} or \code{DONT\_CARE} write in the last subpass, then the automatic transition to the final layout, with a
+  subpass-to-external dependency whose \code{srcAccessMask} lacks the depth write. True by the specification,
+  technicality (\code{DONT\_CARE}). In this snapshot the messages of these 60 diagnostics say ``from
+  \code{UNDEFINED}'' and the group's technicality reason names the transition rather than the \code{DONT\_CARE} store,
+  because the translation then started final-layout transitions from \code{UNDEFINED}.
+\end{itemize}
+
+\paragraph{Group merges and site retention}
+In four Sascha Willems samples, two error groups become one under strict transitions, because the synthesized repair
+adds the write to the transition barrier's \code{srcAccessMask}, which also removes the downstream hazards. The
+root-cause labelling rules of the sample study match message text, and the texts changed, so root causes are
+compared by diagnostic site: every site that the engine-study-3 snapshot reports with a root-cause label is still
+reported in every configuration, for each of the 24 labelled root-cause identifiers.
+
+\subsection{VSG-5}
+Synchronization validation reports 19 cross-frame write-after-write pairs on VSG-5 (the previous frame's depth store
+against this frame's transition from \code{UNDEFINED}) that \sys does not report. They are not an effect of R1: strict
+mode does not report them either, and \code{vsg\_rtt} gives the same 120 hazards strict or relaxed. \sys finds each
+pair ordered by a chain through the window render pass's external depth dependency. This is the one disagreement with
+validation in the accept direction that turns on a reading of the specification; the specification text decides it in \sys's favour, and the chain, the cited
+clauses and a minimal reproduction are in \S\ref{sup:vsg5}. Every question we leave unresolved lies in the report
+direction.
+
+%% ===================================================================
+\section{Checker Snapshots and Frozen Rounds}
+\label{sup:history}
+
+\subsection{What each study exposed}
+Every study was scored by a checker snapshot frozen, by source hash, before its first run (Table~\ref{tab:s-versions}).
+A checker defect found during a study was not fixed in that study's snapshot; it was fixed before a later snapshot,
+with a unit test. Table~\ref{tab:s-exposed} lists what each study, and each piece of development work between the
+studies, exposed in the checker, and the first snapshot that carries the fix. The release carries every fix in the
+table and passes all 378 tests of its suite (paper, \S\ref{P-sec:eval-sem}).
+
+\begin{table*}[t]
+\caption{What each study exposed: checker defects and missing modelling found in triage or by tests, and the first
+snapshot that carries the fix. Cause codes are those of \S F and \S I.}
+\label{tab:s-exposed}
+\scriptsize
+\begin{tabular}{@{}p{0.2\textwidth}p{0.56\textwidth}p{0.18\textwidth}@{}}
+\toprule
+Study & defects found in triage & fixed before \\
+\midrule
+reference semantics (dev) & eight checker defects, each with a minimal frame on which the checker was silent or wrong, e.g.\ a layout transition not checked against later accesses; a semaphore wait chained through a barrier on another resource ignored, although execution dependencies are global; a wait with an empty stage mask taken to order something; \code{SHADER\_READ} taken to include \code{UNIFORM\_READ}; \code{ALL\_COMMANDS} in a later barrier taken to contain an earlier transition. Load/store operations became accesses, and external subpass dependencies are handled one at a time & tutorial-study snapshot \\
+barrier mutants (dev; \S\ref{sec:eval-sem}) & two checker defects: access scopes stage-expanded like execution scopes; structs of one barrier call allowed to chain into each other & tutorial-study snapshot \\
+sample collections and vuk (dev; \S F) & 11 systematic false-alarm causes (bindings declared but not used in an entry point, no array-layer tracking, page-granular host writes in sub-allocated memory, atomics treated as races, among others); ray tracing, mesh shading, events, rule R-LT and per-range ownership not yet modelled & during development (page granularity is again the default under conservative capture, \S C); modelling by blind round 6 \\
+blind rounds 1--6 (fresh; \S\ref{sup:rounds}) & 11 timing cases missed entirely: synchronization not yet modelled (semaphore stage masks, ownership pairs, object lifetime, stencil-only aspects) and rules that did not fire; each miss became a general rule & the next round's snapshot \\
+tutorials (fresh) & one false-alarm cause (FA-M: per-thread dispatches write disjoint ranges of one buffer; validation reports the same) & engine-study-2 snapshot \\
+whole-frame differential test (fresh; \S\ref{sec:eval-wholeframe}) & six checker defects: a binary semaphore signalled again while a signal was pending not reported; a timeline signal whose value did not increase not reported; the sync2 stages \code{COPY}, \code{BLIT} and \code{CLEAR} merged into \code{TRANSFER}; a sync2 semaphore-signal stage mask ignored; command buffers, fences and acquire semaphores reused while pending not reported; grouping split one over-acquire site & engine-study-2 snapshot \\
+engine study 1: vkQuake, Diligent (fresh) & false alarms from: shader index ranges not following push constants and dynamic offsets; depth accesses not following the depth-test state; inexact byte spans of truncated host-write records; late attribution of host writes; grouping split per recording command buffer. Missed (validation only): the first use of a never-presented swapchain image not ordered after its acquire (VD-2; rule \code{timing.acquire-first-use}) & engine-study-2 snapshot \\
+engine study 2: SDL3, bgfx (fresh) & one checker defect behind all 13 false alarms (FA-WA): a semaphore wait with stage mask \code{ALL\_COMMANDS} not allowed to order a layout transition in the same batch, although the specification puts every command of the batch in the wait's second scope. Fixed, it removes exactly these 13 groups and two on one Khronos sample, and changes nothing on \bench, the tutorials, the whole-frame programs, vkQuake or Diligent. The same snapshot lets a \code{BOTTOM\_OF\_PIPE} semaphore signal cover an ownership release & engine-study-3 snapshot \\
+engine study 3: Granite, VulkanSceneGraph (fresh) & one checker defect: push constants declared for \code{VK\_SHADER\_STAGE\_ALL} abort the check (CHK-PS; 3 programs unchecked). Missed (validation only): 16 write-after-write hazards on storage images bound through descriptor update templates, which are not modelled (a model limit, not fixed) & first snapshot of the verified configuration \\
+formal model and re-examination of the earlier results (dev) & relaxed transitions from \code{UNDEFINED} by default (R1, \S D); observed host capture misses same-value stores (\S C); a sync2 signal stage mask did not limit every hop of a relay (third queue, host), in the checker and in the reference; a host-signalled timeline wait lost its stage mask; an atomic access could stand in for what it is ordered after; a shadow entry did not outlive a signal (found by a random frame); a binding charged at every stage its layout grants (\bench case 94); diagnostics did not name the failed scope test; elision compared diagnostic keys rather than event pairs & first snapshot of the verified configuration \\
+post-hoc re-runs with that snapshot (\S D) & final-layout transitions of render passes started from \code{UNDEFINED} (in the verified configuration only messages and technicality reasons; under the heuristic, hidden hazards); repairs verified by diagnostic keys, so an existing witness could hide a new race & fresh-study-1 snapshot \\
+fresh study 1 (fresh; \S I) & three checker defects: timeline counter query not treated as a host wait (FA-CQ); whole-image layouts as unbounded ranges (FA-WL); combined depth format \code{X8\_D24} treated as colour (FA-X8). Bring-up of the study's programs found one model-driver defect, fixed before the study's freeze; bring-up of study~2 needed \code{vkCmdClearAttachments} and \code{vkCmdCopyQueryPoolResults} & fresh-study-2 snapshot \\
+fresh study 2 (fresh; \S I) & one precision cause: a descriptor-array read charged to every written element (GTK-DESC, \S B); grouping of the largest program exceeded the memory limit & the release \\
+model audit after both fresh studies (dev) & subpass-dependency flags not read: every dependency given its global meaning (\S\ref{sup:fblocal}); two automatic render-pass transitions on one queue exempt from each other although the specification's ordering sentence does not cover them (\S\ref{sup:ltpairs}); in the epoch mode, the read key ignored the framebuffer position, so a stand-in could be ordered locally where the entry it replaced is not; host writes relying on the host-domain premise not flagged; guarantee eligibility not reported per run & the release \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\subsection{The frozen blind rounds}
+\label{sup:rounds}
+\paragraph{Protocol}
+Before each round the checker was frozen and the outcome of every case was predicted and timestamped before the run.
+Round 1 was written after the checker was frozen. Round 2 was written by a separate party that never ran the checker.
+Rounds 3 and 4 were written without reading any checker code; the case author knew only the list of diagnostic codes.
+Rounds 5 and 6 each used 20 bugs collected fresh from public trackers, each with a merged upstream fix, built blind
+without reading checker code (round 6 also without reading the paper); round 6 ran on the checker with ray tracing,
+mesh shading and R-LT. After each round, misses became general rules and the round's cases became development data.
+
+\paragraph{Metrics}
+\emph{Strict paired-detection success}: the buggy variant reports every expected code and the fixed variant is clean.
+\emph{Root-cause detection}: the buggy variant reports at least one timing diagnostic on the case's root-cause resource,
+whatever its code. \emph{Fixed-variant diagnostics}: any diagnostic on the fixed variant. The root-cause keys were fixed
+from each case's expected finding and debug names before any post-hoc result was seen. Intervals are Wilson 95\%.
+
+\begin{table*}[t]
+\caption{Blind rounds, as run (fresh): each round scored by the checker frozen for it.}
+\label{tab:s-rounds}
+\small
+\begin{tabular}{@{}lrrrrrrr@{}}
+\toprule
+Round (cases) & cases & timing & strict (timing) & root cause (timing) & fixed, any diagnostic & fixed, timing & timing raw on fixed \\
+\midrule
+1 (17--29) & 13 & 7 & 3 & 4 & 1 & 1 & 3 \\
+2 (30--44) & 15 & 7 & 4 & 4 & 2 & 0 & 0 \\
+3 (45--59) & 15 & 6 & 3 & 3 & 0 & 0 & 0 \\
+4 (60--74) & 15 & 5 & 3 & 4 & 8 & 5 & 12 \\
+5 (75--94) & 20 & 6 & 5 & 5 & 2 & 1 & 7 \\
+6 (95--114) & 20 & 4 & 3 & 4 & 1 & 0 & 0 \\
+\midrule
+total & 98 & 35 & 21 (60.0\%, 43.6--74.4) & 24 (68.6\%, 52.0--81.4) & 14 (14.3\%, 8.7--22.6) & 7 (7.1\%, 3.5--14.0) & 22 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+Root cause found but not strict: 28 and 63 (detected, fixed variant not clean) and 98 (the host race on the decoder
+buffer is reported, under another code). Timing cases missed entirely: 17, 19, 20 (known misses) and 32, 36, 38, 45, 47,
+50, 61, 78. Fixed variants with a timing diagnostic: 28 and 63 (timing cases); 65, 66, 68 and 69 (round-4 meaning cases;
+both variants report the same host-write race in the shared harness); and 94 (a structure case; a binding charged at a
+stage whose entry point does not use it). Predictions held in 13/13, 13/15, 14/15, 13/15, 17/20 and 14/20 cases. Round
+5, on 20 bugs from 16 projects (13 new to the benchmark), found 5 of 6 timing bugs; the miss needs host-side availability
+after a fence wait. In all categories, strict detection was 29 of 98 (30\%, 21--39\%).
+
+\paragraph{Post-hoc re-run in the verified configuration}
+All 114 cases were built, traced and checked with the first snapshot of the verified configuration; the other
+configurations, and the engine-study-3 snapshot, re-check the same traces, so the checker is the only variable
+(Table~\ref{tab:s-roundsph}). The timing columns are the same in every row: the same 29 strict detections and 33 root
+causes. The step from 21 and 24 as run to 29 and 33 is development between rounds, made after each round was seen, not
+an effect of the configuration. Remaining strict misses: 47, 50, 61, 62, 78, 98; root-cause misses: 50, 78. Fixed
+variants: 71 and 73 draw the same convention warning everywhere; 61 is a \code{signal-stage-scope} on the present
+semaphore outside the case's fix; 62 is the first-acquire technicality; 94 (engine-study-3 snapshot only) was the
+stage-attribution false alarm; 65, 66, 68 and 69 (conservative capture) are the true harness race. The release gives
+the same statuses and codes on all 114 cases.
+
+\begin{table}[htbp]
+\caption{Blind timing cases and fixed variants, re-run on traces recorded for the first snapshot of the verified
+configuration (post-hoc), per configuration; the first row re-checks the same traces with the engine-study-3
+snapshot.}
+\label{tab:s-roundsph}
+\scriptsize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+Configuration & strict & root cause & fixed, any & fixed, timing & timing raw \\
+\midrule
+engine-study-3 snapshot & 29 & 33 & 5 & 3 (61, 62, 94) & 18 \\
+\textbf{verified} & 29 & 33 & 8 & 6 (61, 62, 65, 66, 68, 69) & 24 \\
+observed capture & 29 & 33 & 4 & 2 (61, 62) & 16 \\
+heuristic R1 & 29 & 33 & 8 & 6 & 24 \\
+heuristic R1, observed capture & 29 & 33 & 4 & 2 & 16 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+%% ===================================================================
+\section{Per-Study and Per-Engine Triage}
+\label{sup:triage}
+
+\paragraph{Common protocol}
+For each fresh study, the checker and a triage protocol were frozen before the first scored run. Every timing report
+group was triaged against the specification and the source as TRUE (a real bug), TECH (a real violation without
+practical effect, e.g.\ on contents discarded anyway, or a universally tolerated pattern), FA (false alarm), DRV (an
+artefact of the model driver; excluded from denominators) or UNRESOLVED. \code{timing.unmodelled-command} warnings are
+listed but not scored. Synchronization validation (HEAD \code{0ad67fd}, all synchronization checks on, lavapipe) on the
+same frames is supporting evidence only.
+
+\subsection{Tutorials (fresh)}
+All 36 chapter programs of Khronos' Vulkan-Tutorial (\code{baf622df}) and the 7 chapters of vulkan-guide
+(\code{dcf72a8b}) built and ran unmodified for 10 frames; 29 record frame work and were checked. \sys reported 25 report
+groups in 8 programs (Table~\ref{tab:s-tut}).
+
+\begin{table*}[t]
+\caption{Tutorial study, snapshot frozen for it (fresh).}
+\label{tab:s-tut}
+\small
+\begin{tabular}{@{}llrrp{0.5\textwidth}@{}}
+\toprule
+Cause & class, code & groups & raw & evidence \\
+\midrule
+VG-1 & TRUE, stale-barrier & 2 & 11 & chapter 5 transitions the draw image with a stale \code{oldLayout} (fixed upstream in chapters 3--4 only) \\
+VG-2 & TRUE, missing-barrier & 3 & 3,135 & chapter 6: compute writes the draw image, rendering then loads and writes it, no barrier \\
+VG-3 & TRUE, wrong-layout & 6 & 62 & chapter 6 renders the UI into the swapchain image declared \code{GENERAL} \\
+TECH-S & TECH, present-semaphore-reuse & 13 & 63 & render semaphore per frame in flight, re-signalled after the frame fence only \\
+FA-M & FA, missing-barrier & 1 & 70 & per-thread dispatches write disjoint ranges of one buffer; validation reports the same 70 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+Result: 11 / 13 / 1 of 25 groups (44\% true, 96\% actionable); by raw diagnostic 96.0\% true; by cause 3 / 2 / 1.
+Validation produced no device-level message on any vulkan-guide program for a reason not found (a 60-line reproduction
+of VG-1 is reported by the same validator build), so VG-1 to VG-3 rest on source, trace and specification. Under the
+engine-study-2 and engine-study-3 snapshots (dev), grouping gives 6 / 13 / 0 of 19 with no finding lost.
+
+\subsection{vkQuake and Diligent (fresh)}
+vkQuake (\code{749b4fd}; three timedemos, 107--182 presents) and Diligent's glTF viewer (\code{efe5da2}, 20 frames).
+\begin{itemize}
+\item \textbf{TRUE (VQ-1 + VQ-2)}, one repair group per demo: the indirect-argument and index buffers exist once and the
+  next frame's compute rewrites them while the previous frame's indirect draws may read them (VQ-1; validation: 39 / 39
+  / 19 write-after-read); and the scene render pass has no outgoing dependency, so final transitions of the shared depth
+  and transparency attachments are unordered with the next frame (VQ-2; validation reports the mechanism on another
+  attachment). One synthesized repair covers both, so they share a group.
+\item \textbf{TRUE (VD-1)}, five groups: Diligent's state tracker does not count depth writes as writes, so
+  consecutive dynamic-rendering instances get no depth barrier (validation: 9 read-after-write, 5 write-after-write).
+\item \textbf{FA}: host writes into per-frame halves of ring buffers charged to the whole buffer and split into one group
+  per recording command buffer (FA-R, the bulk); disjoint storage-image regions of one dispatch sequence (FA-M, shared
+  with validation); a depth write charged with the depth test disabled (FA-DT); a page fallback on a truncated host
+  record (FA-PG); and three non-timing causes.
+\item \textbf{DRV}: one cause (late attribution of host writes), excluded.
+\item \textbf{Validation only}: VD-2, the first transition of a never-presented swapchain image not ordered after the
+  acquire; the first-acquire rule of the engine-study-2 snapshot closes it.
+\end{itemize}
+Result (timing): 8 / 0 / 44 of 52 groups (15.4\%); 97.9\% of raw diagnostics true, because one true group carries
+almost all of them; by cause 3 / 0 / 7. Under the engine-study-2 and engine-study-3 snapshots (dev): 7 / 2 / 11 of 20.
+
+\paragraph{Verified configuration (post-hoc)}
+On newly recorded traces, the engine-study-3 snapshot and the first snapshot of the verified configuration with
+observed capture give 7 / 2 / 11 of 20 (vkQuake 3 / 0 / 11 of 14, Diligent 4 / 2 / 0 of 6). The verified configuration
+gives 7 / 2 / 34 of 43 (vkQuake 3 / 0 / 24 of 27, Diligent 4 / 2 / 10 of 16); the 23 new
+groups are conservative-capture false alarms classified in Table~\ref{tab:s-capcost}. Every vkQuake timedemo also
+carries one P3 warning (worker-thread host writes).
+
+\subsection{SDL3 and bgfx (fresh)}
+SDL3 (\code{e4af6f8}, two Vulkan back ends, 6 programs) and bgfx (\code{73183be}, 6 programs), 20 presents each.
+\begin{itemize}
+\item \textbf{TRUE (SDL-1)}, 2 groups (two directions of one race, 166 raw): SDL's Vulkan renderer keeps its vertex
+  buffers globally rather than per frame, restarts at index 0 every frame and copies into the mapped buffer with no
+  wait; the only wait is on the fence of the frame \code{swapchainImageCount} frames back, while later frames that
+  draw from the same buffer are pending. Validation does not see host writes.
+\item \textbf{FA (FA-WA)}, 13 groups: one per SDL program with the defect and two per bgfx program
+  (\code{wait-stage-scope} and \code{acquire-first-use}). A semaphore wait with stage mask \code{ALL\_COMMANDS} was not
+  allowed to order a layout transition in the same batch. Validation is silent, matching the specification.
+\end{itemize}
+Result: 2 / 0 / 13 of 15 (13.3\%); raw 57.2\% true; by cause 1 / 0 / 1. Under the engine-study-3 snapshot (dev):
+2 / 0 / 0 of 2; in every configuration of the first snapshot of the verified configuration (post-hoc): the same. Structure and meaning (outside the paper's claims): 17 groups, all false
+alarms, four causes.
+
+\subsection{Granite and VulkanSceneGraph (fresh)}
+Granite (\code{fb178c8}, 4 programs) and VulkanSceneGraph (\code{2feabc6}) with vsgExamples (8 programs); 3 programs
+aborted under the snapshot frozen for the study (CHK-PS), so 9 were checked.
+\begin{itemize}
+\item \textbf{VulkanSceneGraph, 8 groups, all TRUE, 5 causes.} VSG-1 (library): the semaphore wrapper's default wait
+  stage is \code{BOTTOM\_OF\_PIPE}, so the consumer-completed semaphores order nothing (validation: 18
+  write-after-read per program). VSG-2 (library): two consecutive transfer submits write the same destination buffers
+  with nothing ordering them (validation silent; on lavapipe's single queue the submissions differ). VSG-3 (example):
+  a compute write to a vertex buffer and the vertex-input read are separated only by a colour-only subpass dependency
+  (validation: 19 read-after-write). VSG-4 (example): a pre-copy barrier starts at \code{TOP\_OF\_PIPE}, an empty first
+  scope (validation silent on this pair). VSG-5 (example): a depth clear is not ordered after the render pass's own depth
+  layout transition (validation: 19 + 19 write-after-write; validation's further 19 cross-frame pairs are discussed in
+  \S\ref{sup:vsg5}).
+\item \textbf{Granite, 12 groups, all TECH, one cause.} The deferred-lighting pass takes the G-buffer as read-only input
+  attachments and still declares \code{storeOp STORE}; the specification makes the store an attachment write, so the
+  write-after-write needs a memory dependency, but nothing writes those attachments during the pass, so the store
+  writes back the bytes already there.
+\end{itemize}
+Result: 8 / 12 / 0 of 20 (40.0\%; 100\% actionable); by cause 5 / 1 / 0; raw 334 / 516 / 0 (39.3\%). Validation's 16
+write-after-write hazards in Granite's ambient-occlusion chain, on storage images bound through descriptor update
+templates (not modelled), are a recall gap of \sys. The three windowed Granite programs crash on lavapipe, so only the
+headless one has a validation baseline.
+
+\paragraph{Verified configuration (post-hoc)}
+With CHK-PS fixed (first snapshot of the verified configuration), all 12 programs run. Granite: 4 programs, each 1
+error and 2 technicality groups, all TECH (the same root plus the strict-\code{UNDEFINED} pairs on the depth prepass).
+VulkanSceneGraph, the five programs checked before: 8 groups, hazard pair sets identical to the study's snapshot
+(epoch 151 = 151, pairwise 224 = 224), all TRUE. The three that the study's snapshot could not check:
+\code{vsg\_gltf} and \code{vsg\_shadow} report nothing; \code{vsg\_depthpeel} reports one technicality group (40 raw,
+render-pass final-layout transitions, \S D) and one error group we leave unresolved (60 raw). Its window render pass
+ends with the implicit dependency, whose second scope is empty, and a second render pass in the same command buffer then
+loads and writes the swapchain image. \sys reads the final transition to the present layout as unordered with those
+accesses; validation accepts them (Table~\ref{tab:s-vsg5}: also when the final transition is done by a pipeline barrier
+with \code{dstStageMask = BOTTOM\_OF\_PIPE}), so validation lets a later dependency's first scope include an earlier
+transition whose own dependency has an empty second scope, which the cited clauses do not say. With an explicit exit
+dependency at \code{COLOR\_ATTACHMENT\_OUTPUT}, both tools are clean. The question needs a ruling; it is in the report
+direction, and we do not count the group as a bug. Result: 8 / 13 / 0 / 1 of 22.
+
+\subsubsection{VSG-5: the disagreement in the accept direction}
+\label{sup:vsg5}
+Synchronization validation reports 19 cross-frame write-after-write pairs on VSG-5 (\code{vsgrendertotexture}): the
+previous frame's depth store against this frame's transition of the depth image from \code{UNDEFINED}. \sys finds
+each pair ordered, in the strict and in the relaxed reading of \S D. Of the disagreements with validation that turn on
+a reading of the specification, this is the one in the accept direction (the other pairs that validation alone reports
+are unmodelled API features, driver differences, or findings both tools report under different keys; \S F and \S H): here \sys's verdict is the more permissive one,
+and a clean verdict could rest on it.
+
+\emph{The chain.} (1) The library's window render pass, recorded after the example's offscreen pass in the same command
+buffer, has an \code{EXTERNAL}$\to$0 depth dependency with source stages
+\code{EARLY\_FRAGMENT\_TESTS|LATE\_FRAGMENT\_TESTS} and source access \code{DEPTH\_STENCIL\_ATTACHMENT\_WRITE}, with no
+resource restriction; the store of frame $k$ is in its first access scope. (2) The next frame's offscreen pass has an
+\code{EXTERNAL}$\to$0 dependency with \code{srcStageMask FRAGMENT\_SHADER}, whose first synchronization scope includes
+the logically earlier \code{EARLY\_FRAGMENT\_TESTS}; this dependency carries the transition. (3) The chain condition
+holds through \code{EARLY\_FRAGMENT\_TESTS}, so the store happens before the transition and is available to it.
+
+\emph{The specification} (Vulkan-Docs \code{193ebe195f47}) decides the case. In the render pass chapter, external
+subpass dependencies: with \code{srcSubpass = VK\_SUBPASS\_EXTERNAL}, ``the first synchronization scope includes
+commands that occur earlier in submission order than the \code{vkCmdBeginRenderPass}'', limited only by
+\code{srcStageMask} (renderpass.adoc 3693--3706); the first access scope ``is limited to accesses in the pipeline stages
+determined by the source stage mask'' and to the access types in the source access mask (3723--3728), and nothing
+limits it to the render pass's own attachments; the transition away from \code{initialLayout} happens after the
+availability operations of every \code{EXTERNAL}$\to$\code{dstSubpass} dependency (3975--3979). The chain condition of
+synchronization.adoc (94--96: the second synchronization scope of one dependency intersects the first synchronization
+scope of the next) then holds through \code{EARLY\_FRAGMENT\_TESTS}. With these clauses the chain exists and the 19 pairs
+are ordered.
+
+\emph{Minimal reproduction.} One headless program on one queue, render passes with load and store operations only (no
+draws, no shaders), with every frame recorded into one command buffer, so that consecutive frames are ordered only by
+what they record (Table~\ref{tab:s-vsg5}). Validation's verdict on the cross-frame pair changes from 2 reports to 0
+when the window pass's dependency is replaced by a pipeline barrier with identical stage and access masks, while the
+specification gives the two the same first synchronization and access scopes. This suggests that validation applies an
+external subpass dependency only to the accesses of the pass's own attachments. Both tools agree on VSG-5's main finding
+(the depth clear is not ordered after the depth layout transition) in every variant.
+
+\begin{table}[htbp]
+\caption{Minimal reproductions of the two disagreements with validation (validation \code{0ad67fd}, lavapipe; \sys:
+fresh-study-1 snapshot). VSG-5: load-operation pairs + store-operation pairs, and cross-frame pairs.
+\code{vsg\_depthpeel}: pairs of pass~1's final transition with pass~2's load and store.}
+\label{tab:s-vsg5}
+\scriptsize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}lll@{}}
+\toprule
+variant & validation & \sys \\
+\midrule
+\multicolumn{3}{@{}l}{\emph{VSG-5: offscreen depth pass A, then the window pass B, per frame}} \\
+as recorded & 3 + \textbf{2 cross-frame} & 3 + 3, \textbf{0 cross-frame} \\
+pass B removed & 3 + 2 cross-frame & 3 + 3, cross-frame reported \\
+pass B replaced by a barrier with the same masks & 3, \textbf{0 cross-frame} & 3 + 3, 0 cross-frame \\
+\midrule
+\multicolumn{3}{@{}l}{\emph{\code{vsg\_depthpeel}: pass 1 with the implicit exit dependency, then pass 2}} \\
+as recorded & \textbf{0} & \textbf{2} \\
+explicit \code{COLOR\_ATTACHMENT\_OUTPUT} exit dependency & 0 & 0 \\
+final transition by a barrier to \code{BOTTOM\_OF\_PIPE} & \textbf{0} & \textbf{2} \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\emph{Ablation on the recorded trace} (first snapshot of the verified configuration). Unablated, \code{vsg\_rtt} gives
+120 diagnostics in both readings of \S D. With the 20 window-pass dependencies removed from the model, the strict
+reading gives 716 diagnostics (317 with a store-operation partner) and the relaxed one 678 (298), so the strict reading
+reports 19 store-operation to transition pairs that the relaxed one does not: without the window pass's dependency,
+\sys reports the pairs that validation reports.
+
+\emph{Consequence.} The cited text decides VSG-5 in \sys's favour, so we count validation's 19 cross-frame pairs as
+probable validation false positives; VSG-5's main finding (20 load-operation versus transition pairs) is reported by
+both tools. No accepted ordering in our results rests on an unresolved reading of the specification: every question we
+leave unresolved, \code{vsg\_depthpeel} (above and Table~\ref{tab:s-vsg5}) and the pairs of automatic render-pass
+transitions in GTK and Qt (\S I), lies in the report direction. There \sys reports the pair and validation accepts it,
+so the question can only add reports and no clean verdict depends on it.
+
+\subsection{Development data: two sample collections and a render graph}
+SaschaWillems/\-Vulkan (\code{41a4410}, all 99 samples) and Khronos\-Group/\-Vulkan-\-Samples (\code{177edebf}, the 49 samples
+that record work under the study driver), 10 frames each, plus 27 ray-tracing, mesh-shading and compute samples and the
+78 tests of the vuk render-graph library (\code{61abde9}). Every report was triaged. The checker was then fixed using
+these reports, so they are development data (Table~\ref{tab:s-real}).
+
+\begin{table}[htbp]
+\caption{Triage of reports on unmodified samples (study snapshot; dev).}
+\label{tab:s-real}
+\small
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+& \multicolumn{2}{c}{Sascha Willems (99)} & \multicolumn{2}{c}{Khronos (49)} \\
+\cmidrule(lr){2-3}\cmidrule(l){4-5}
+Class & causes & groups & causes & groups \\
+\midrule
+true bug & 17 & 63 & 5 & 20 \\
+technicality & 3 & 31 & 3 & 87 \\
+false alarm & 11 & 53 & 6 & 164 \\
+driver / out of scope & 2 & 7 & -- & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The 22 root causes judged real at the study snapshot include six host-write races (T1--T6), compute and graphics
+submissions sharing a storage resource with no semaphore (T7), swapchain transitions from \code{TOP\_OF\_PIPE} not ordered
+after the acquire semaphore (T9a), offscreen passes whose outgoing dependency ends at \code{BOTTOM\_OF\_PIPE} (T14, six
+samples), a host struct 24 bytes long against a std430 stride of 32 (T17), and a semaphore signal with
+\code{stageMask = 0} (KS-1). Four more were found afterwards, for 26: SW-13 (all nine Sascha Willems ray-tracing samples)
+and KS-7 (three Khronos ones), where the ray-traced storage image is transitioned with no source access; KS-6, a
+fragment buffer allocated with 12-byte elements against a stride of 16; and VUK-1, a bug in vuk's own barrier
+derivation. Validation reports 10 of the Sascha Willems and 4 of the Khronos root causes at the study snapshot, and
+confirms SW-13, KS-7 and, on a variant that uploads with a GPU copy, VUK-1; it cannot see the host races. The false
+alarms came from 11 systematic causes (bindings declared but not used in an entry point, no array-layer tracking,
+page-granular host writes in sub-allocated memory, atomics treated as races, among others), all since fixed with unit
+tests. On the Sascha Willems T2--T5 races, see \S\ref{sup:dossiers}.
+
+%% ===================================================================
+\section{Bug Dossier Summary}
+\label{sup:dossiers}
+
+We judge 38 bugs to be real: 26 in the sample collections and vuk, 3 in the tutorials and 9 in the engines. This triage
+is ours. For the 11 strongest we prepared an evidence dossier, the \emph{11 historical dossiers}: the affected
+revision, the code, the diagnostic of the engine-study-3 snapshot verbatim, validation's messages on the same frames
+where validation can see the bug, a specification argument with a concrete bad schedule, a patch, and logs before and
+after under both tools. They are distinct from the 11 source-patch cases of the fresh studies (\S\ref{sup:repairs}),
+which cover nine causes; SDL-1 is in both. All dossier runs use the engine-study-3 snapshot (\code{2f74a46b1341}) and
+its model driver; the validation baseline is lavapipe with validation HEAD \code{0ad67fd}. These are \emph{source repairs} (the third kind of repair evidence in the paper's \S\ref{P-sec:eval-bugs}). A source repair counts as \emph{re-checked} when,
+after rebuilding and re-running, \sys's count on the bug is 0, validation's count is 0 where validation can see the bug,
+and no new diagnostic kind appears. The affected code was unchanged at each project's head when its dossier was
+written. None has been confirmed by a maintainer yet.
+
+\begin{table*}[t]
+\caption{The 11 historical dossiers. Syncval: validation reports the same resource and command pair (n/a: a host-write
+race, which validation does not track). Repair: \sys count (engine-study-3 snapshot) before $\to$ after; validation in
+parentheses.}
+\label{tab:s-dossiers}
+\small
+\begin{tabular}{@{}lllp{0.33\textwidth}lr@{}}
+\toprule
+Bug & Project & Revision & Class & Syncval & Repair \\
+\midrule
+KS-1 & Vulkan-Samples & \code{177edeb} & semaphore signal with \code{stageMask = 0} (empty first scope) & yes (11) & 99 $\to$ 0 (11 $\to$ 0) \\
+KS-3 & Vulkan-Samples & \code{177edeb} & no barrier between two dynamic-rendering instances on the swapchain image & yes (8) & 40 $\to$ 0 (8 $\to$ 0) \\
+SW-T1 & Sascha Willems Vulkan & \code{41a4410} & host write to a uniform buffer still read by a frame in flight & n/a & 500 $\to$ 0 \\
+SW-T6 & Sascha Willems Vulkan & \code{41a4410} & host write to a uniform buffer right after the compute submit that reads it & n/a & 2 $\to$ 0 \\
+SDL-1 & SDL3 & \code{e4af6f8e} & host write to vertex buffers shared by frames in flight & n/a & 166 $\to$ 0 \\
+VUK-1 & vuk & \code{61abde9} & render-graph barrier derivation: storage-read access for a uniform buffer & yes (1) & 1 $\to$ 0 (1 $\to$ 0) \\
+VSG-1 & VulkanSceneGraph & \code{2feabc69} & semaphore waited at \code{BOTTOM\_OF\_PIPE} (empty second scope) & yes (18) & 19 $\to$ 0 (18 $\to$ 0) \\
+VSG-3 & vsgExamples & \code{46a82943} & no barrier between compute write and vertex-input read & yes (19) & 58 $\to$ 0 (19 $\to$ 0) \\
+VSG-5 & vsgExamples & \code{46a82943} & subpass dependency without depth stages: depth clear vs.\ layout transition & yes (20) & 120 $\to$ 0 (39 $\to$ 0) \\
+VD-1 & DiligentCore & \code{074060c} & state tracker does not treat depth writes as writes & yes (9 + 5) & 114 $\to$ 0 (14 $\to$ 0) \\
+VQ-1 & vkQuake & \code{749b4fd} & GPU-written indirect buffers shared by frames in flight, no barrier & yes (19) & 302 $\to$ 0 (19 $\to$ 0) \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\paragraph{Notes on the dossiers}
+\begin{enumerate}
+\item \emph{Sascha Willems T2--T5} (host-write races in \code{particlesystem}, \code{rayquery}, \code{gltfskinning} and
+  \code{computecloth}) are real in the source, but the engine-study-2 and engine-study-3 snapshots did not detect them
+  on newly recorded traces: the racing stores write the bytes already there, and observed capture charges only changed
+  bytes. They were not given dossiers. The traces stored at the sample study and conservative capture (post-hoc) report
+  them (T2 8, T3 4, T4 9, T5 576 raw). T6 has only 2 diagnostics under the engine-study-3 snapshot for the same reason,
+  and T1's view uniform buffer the same blind spot.
+\item \emph{VSG-3 and VSG-5 are in vsgExamples}, not in the VulkanSceneGraph library: VSG-3 is a missing barrier in the
+  compute-vertex example and VSG-5 a hand-written dependency in the render-to-texture example. Per project:
+  VulkanSceneGraph 2 (VSG-1, VSG-2), vsgExamples 3 (VSG-3, VSG-4, VSG-5).
+\item \emph{VSG-5's 19 cross-frame pairs}, reported by validation but not by \sys, are not an effect of R1 (strict
+  transitions do not report them either); the specification decides them in \sys's favour (\S\ref{sup:vsg5}).
+\item \emph{KS-1} also contains a second, independent true bug (a compute-to-compute write-after-write behind a barrier
+  whose destination access is read-only; 11 raw), corroborated by validation's one write-after-write; it is an optional
+  second patch in the dossier.
+\item \emph{VQ-1 shares a report group with VQ-2}, because one synthesized repair covers both; the dossier counts raw
+  diagnostics per resource (VQ-1 302, VQ-2 about 22,500).
+\item \emph{KS-3's raw count} depends on the snapshot (18 raw at the sample study, 40 under the engine-study-3
+  snapshot), because the latter also lists the write-after-write pairs into the UI pass; same root cause and fix.
+\end{enumerate}
+Not dossiered: VD-2, VSG-2, VSG-4 and VQ-2 (VQ-2 is real, but its validation match is the same mechanism on another
+attachment and its fix is larger), T2--T5, and the remaining sample root causes.
+
+%% ===================================================================
+\section{Full Results Tables}
+\label{sec:eval}
+
+\subsection{\bench}
+\bench has 166 bugs from 105 projects: the first collection of 126 bugs from 79 projects (48 timing, 27 structure, 51
+meaning; Table~\ref{tab:s-taxonomy}) and 40 bugs collected fresh for rounds 5 and 6 (10 timing, 9 structure, 21
+meaning), each with a merged upstream fix. 64 first-collection rows link a fix and 48 are both fixed and linked. About
+60 of the 79 projects are small; the 29 well-known projects contribute 74 bugs. Table~\ref{tab:s-benchver} gives the
+strict status of all 114 reproductions per checker snapshot and configuration.
+
+\begin{table}[htbp]
+\caption{\bench taxonomy (first collection, 126 bugs). ``Fixed'': fixed with a linked fix.}
+\label{tab:s-taxonomy}
+\scriptsize
+\begin{tabular}{@{}llrr@{}}
+\toprule
+Category & Subcategory group & Bugs & Fixed \\
+\midrule
+\multirow{8}{*}{Timing (48)} & swapchain / semaphore misuse & 15 & 5 \\
+ & missing barrier / wrong stage or access & 10 & 2 \\
+ & image layout transition & 8 & 1 \\
+ & cross-queue / ownership & 5 & 1 \\
+ & frames-in-flight reuse & 4 & 2 \\
+ & render-pass / subpass dependency & 3 & 2 \\
+ & resource state (D3D12) & 2 & 1 \\
+ & barrier in loop & 1 & 0 \\
+\midrule
+\multirow{6}{*}{Structure (27)} & host/shader layout, padding & 9 & 5 \\
+ & descriptor binding / set & 8 & 3 \\
+ & vertex input / stage interface & 5 & 1 \\
+ & push-constant range / stage & 3 & 1 \\
+ & bindless / descriptor heap & 1 & 1 \\
+ & framebuffer / attachment extent & 1 & 0 \\
+\midrule
+\multirow{9}{*}{Meaning (51)} & color encoding / format & 26 & 10 \\
+ & depth convention & 9 & 6 \\
+ & handedness & 3 & 2 \\
+ & Y-flip / clip origin & 3 & 0 \\
+ & premultiplied alpha & 3 & 2 \\
+ & coordinate frame & 2 & 1 \\
+ & row- vs.\ column-major & 2 & 0 \\
+ & value range & 2 & 1 \\
+ & units & 1 & 1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\caption{Strict status of all 114 \bench reproductions per snapshot and configuration: detected / detected with unclean fixed variant /
+expected miss / missed. All are development data for cases 1--16 and re-runs (not the blind per-round result) for
+17--114.}
+\label{tab:s-benchver}
+\scriptsize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}llll@{}}
+\toprule
+Snapshot & status & provenance & mode \\
+\midrule
+tutorial-study snapshot & 81 / 1 / 2 / 30 & dev & R1, observed \\
+engine-study-2 snapshot & 80 / 2 / 2 / 30 & dev & R1, observed \\
+engine-study-3 snapshot & 80 / 2 / 2 / 30 & dev & R1, observed \\
+\quad the same, newly recorded traces & 80 / 2 / 2 / 30 & post-hoc & R1, observed \\
+first verified-configuration snapshot & 78 / 4 / 2 / 30 & post-hoc & \textbf{verified} (strict, conservative) \\
+\quad observed capture & 81 / 1 / 2 / 30 & post-hoc & strict, observed \\
+\quad heuristic R1 & 78 / 4 / 2 / 30 & post-hoc & R1, conservative \\
+\quad heuristic R1, observed capture & 81 / 1 / 2 / 30 & post-hoc & R1, observed \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+The engine-study-3 snapshot on the newly recorded traces reproduces its stored statuses exactly, so the trace driver
+changes no status. From that snapshot to the verified configuration on the same traces: 65, 66 and 68 become
+fixed-not-clean and 69 gains a timing code on both variants (conservative capture); 94 becomes a clean detection and 42
+loses a spurious timing code (entry-point stage attribution); 20 gains a \code{signal-stage-scope} diagnostic (signal
+stage masks limit every hop of a relay). After round 6, under strict scoring, the tutorial-study snapshot detects 35 of
+the 40 timing cases, and the engine-study-3 snapshot and every configuration of the first verified-configuration
+snapshot 34, because the fixed variant of case 62 draws the first-acquire warning added in the engine-study-2 snapshot.
+These are tuned numbers. The release gives the same statuses and codes as the verified
+row.
+
+\subsection{Semantics checks}
+\label{sec:eval-sem}
+
+\begin{table}[htbp]
+\caption{Checker vs.\ executable reference semantics, early checker around the tutorial-study snapshot (dev), R1 in
+both. ``Violations'': reference races the checker misses. The release against the reference is in the paper
+(\S\ref{P-sec:eval-sem}).}
+\label{tab:ref}
+\small
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Input & Frames & Ref.\ races & Checker & Violations \\
+\midrule
+random frames (9 option sets $\times$ 150 seeds) & 1,350+ & -- & -- & 0 \\
+difftest mutants & 753 & 6,279 & 6,279 & 0 \\
+bench traces (bug + fixed) & 148 & 709 & 709 & 0 \\
+elide traces, base and with plans & 6 & 0 & 0 & 0 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\paragraph{Reference semantics}
+On every input there is no race that the reference finds and the checker misses; the checker is stricter only on the
+option set that exercises partial region coverage (the region cut of Proposition~\ref{P-thm:complete}). The reference
+shares the checker's reading of the specification. At the time of this table it also shared two gaps, fixed since in
+both: a sync2 signal stage mask did not limit every hop of a relay, and a host-signalled timeline wait lost its stage
+mask (\S E). It gained the mesh, ray-tracing,
+acceleration-structure and event pipelines; random event frames agree exactly (150 seeds in the test suite, 3,000 once),
+and disabling the event first-scope cut makes 158 of them fail.
+
+\paragraph{Barrier mutants}
+750 random barrier plans (250 per workload: \emph{particles}, \emph{deferred}, \emph{postchain}) remove or narrow
+barrier structs within the recorded masks. On the validation commit pinned for every later study (\code{0ad67fd}, full
+synchronization settings, lavapipe) and the fresh-study-1 snapshot (post-hoc), mutant-level agreement is 95.9\%: 86
+both safe, 633 both hazard, 31 checker only and 0 validation only; at the resource level, 2,616 both, 210 checker only
+and 0 validation only. Thirty of the 31 checker-only mutants remove or narrow the barrier between an \code{atomicAdd}
+into a histogram and the dispatch that reads it, a read-after-write race (an atomic read-modify-write is a write) that
+validation misses, confirmed by a minimal reproduction; the last narrows a readback transition to \code{dstStageMask =
+ALL\_GRAPHICS}, which does not contain the copy that follows. No mutant that the checker accepted changed the output
+hashes. The fresh-study-2 snapshot gives byte-identical per-mutant diagnostics, and the release gives identical
+per-mutant diagnostics (95.9\%: 86 both safe / 633 both hazard / 31 checker only / 0 validation only).
+
+Earlier, the same plans ran under validation 1.3.275 (Ubuntu package, lavapipe) and the early checker (dev). In
+21 mutants (230 mutant--resource pairs) validation found hazards the checker accepted; bugs A and B explain all of them.
+After the fix no mutant is validation-only: 2,199 resource pairs agree and 621 are checker-only, of which 199 are races
+on storage buffers written by compute shaders that validation 1.3.275 classifies as reads, one is a copy after a barrier
+whose destination is \code{ALL\_GRAPHICS}, and three are conservative checker reports. With R-LT the verdicts per mutant
+and per resource are unchanged (2,199 both, 627 checker-only). Readback hashes were identical in all 750 mutants,
+including those with confirmed hazards, because lavapipe executes nearly in order.
+
+\paragraph{Ray tracing and mesh shading}
+Thirteen raw-Vulkan programs on one queue: 12 equal verdicts; in the thirteenth a top-level build reads a bottom-level
+structure whose build is not made available to it, and only \sys reports it. Two programs test R-LT: two transitions with
+no dependency between them are clean under both tools; a clear followed by two transitions and a copy, ordered only
+through the transitions, is reported by \sys, since the specification forbids relying on transition order. All 15 modes
+of this test give the same codes under the engine-study-3 snapshot and every configuration of the first snapshot of
+the verified configuration (post-hoc), and the release gives the same codes and counts (paper, \S\ref{P-sec:eval-sem}).
+On the sample collections,
+Table~\ref{tab:s-rt} gives the triage of the ray-tracing, mesh-shading and compute samples.
+
+\begin{table}[htbp]
+\caption{Ray-tracing (RT), mesh-shading and compute samples: raw reports per 10 frames (``base'': checker before ray
+tracing on the same trace), triage, and validation (HEAD-max) messages. n/a: lavapipe lacks the extension.}
+\label{tab:s-rt}
+\scriptsize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Samples & raw (base) & true / tech. / FA & validation \\
+\midrule
+SW RT, 2 samples & 48 (0) & 48 / 0 / 0 & 19 \\
+SW RT, 7 samples & 120 (72) & 48 / 72 / 0 & 19 \\
+SW \code{rayquery} & 288 (288) & 0 / 288 / 0 & 0 \\
+SW \code{meshshader} & 0 (0) & 0 / 0 / 0 & 0 \\
+KS RT, 3 samples & 94 (72) & 33 / 61 / 0 & 8 \\
+KS RT, 2 samples & 10 & 0 / 10 / 0 & 0 or n/a \\
+KS ray query, 2 samples & 10 (10) & 0 / 10 / 0 & 0 \\
+KS mesh shading, 2 samples & 10 (10) & 0 / 10 / 0 & 0 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\subsection{Whole-frame differential test}
+\label{sec:eval-wholeframe}
+The checker frozen before the test agreed with validation on 88.4\% of the 1,251 programs on hazards and 84.3\% on
+all finding classes (fresh). The disagreements exposed six checker defects (\S E). After they were fixed, we
+regenerated all 1,251 programs on the model driver and re-checked them with the release (\relhash),
+reusing validation's stored verdicts (Table~\ref{tab:s-wholeframe}): agreement is 97.9\% on hazards and 95.4\% on all
+classes; hazard pairs are 1,440 / 32 / 14 and all finding pairs 2,353 / 478 / 116 (both / \sys only / validation only).
+With the \code{acquire-first-use} warning scored as a hazard, agreement is 98.3\% / 95.8\%. All 1,251 programs are
+guarantee-eligible (checking complete, no model gap, no pair relying on the host-domain premise). Against the stored
+results of the checker with the test's six fixes, no verdict changes in any program. The workloads have no
+framebuffer-local flag, no render pass, no descriptor array and no device write followed by a host write, so the
+changes made after both fresh studies have nothing to act on here; the snapshots from the first verified configuration
+to the release give byte-identical diagnostics on these traces. The traces are archived with the artifact.
+
+The 205 host-write races are the same under both capture modes. Validation on the multi-queue baseline reports four
+write-after-write false positives through a timeline round trip that \sys accepts, so that configuration is compared
+relative to its baseline. On the mock driver, validation gives the same findings as on lavapipe in 967 of the 989
+completed single-queue runs, all 22 differences coming from the acquire order. Speed (original run): on these programs
+(six frames at 64$\times$64) a lavapipe run with validation takes a median 0.081\,s and \sys 0.092\,s, of which the
+model-driver run is 0.013\,s and loading and checking 0.015\,s; at 600 frames \sys's load and check (about
+0.5--0.6\,s) is slower than validation's overhead (0.1--0.23\,s). We claim no speed advantage.
+
+\begin{table*}[t]
+\caption{Whole-frame differential test, 1,251 programs. Pairs: both / \sys only / validation only. The release rows
+re-check regenerated programs. The engine-study-2 and engine-study-3 snapshots (dev) and every configuration of the first
+verified-configuration snapshot (post-hoc) give the same agreement and pairs as the release.}
+\label{tab:s-wholeframe}
+\small
+\begin{tabular}{@{}lllrrll@{}}
+\toprule
+Checker & provenance & first-acquire counted & hazard agr. & all-class agr. & hazard pairs & all pairs \\
+\midrule
+snapshot frozen before the test & fresh & -- & 88.4\% & 84.3\% & 1,132 / 17 / 322 & 1,270 / 413 / 1,199 \\
+release (\relhash) & post-hoc & no & 97.9\% & 95.4\% & 1,440 / 32 / 14 & 2,353 / 478 / 116 \\
+release (\relhash) & post-hoc & yes & 98.3\% & 95.8\% & 1,454 / 65 / 0 & 2,367 / 511 / 102 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\paragraph{Window measurements}
+Of the 187 stored traces of the two sample collections (99 Sascha Willems, 88 Khronos), 138 are periodic with a fence
+bound ($N = 1$ for 26, 2 for 85, 3 for 27); 44 have no present, 4 are not periodic and 1 has no fence bound. On the 138,
+checking only the first $w + N + 2$ frames found 1,229 of the 1,262 normalized diagnostic sites of the full traces while
+covering 78\% of the operations; all 33 missing sites are \code{unmodelled-command} warnings from stubbed commands, and
+no race or protocol site was missing. These are measurements, not instances of Theorem~\ref{P-thm:window}.
+
+\subsection{Engine and tutorial precision, all rows}
+Table~\ref{tab:s-precision} gives every precision row, fresh, dev and post-hoc, and Table~\ref{tab:s-units} the same
+triage by distinct cause and by raw diagnostic, which do not depend on how report groups are merged.
+\begin{table*}[t]
+\caption{Timing report groups true / technicality / false alarm (/ unresolved), every snapshot. ``Frozen'': the snapshot
+frozen for the study; ``E2'', ``E3'': the engine-study-2 and engine-study-3 snapshots; ``verified'' and ``observed'':
+the first snapshot of the verified configuration, in the verified configuration and with observed capture. Post-hoc
+rows re-use the earlier triage for every group whose hazard set is unchanged.}
+\label{tab:s-precision}
+\small
+\begin{tabular}{@{}llllrr@{}}
+\toprule
+Study & snapshot & provenance & groups & true & actionable \\
+\midrule
+Tutorials (43) & frozen & \textbf{fresh} & 11 / 13 / 1 of 25 & 44.0\% & 96.0\% \\
+ & E2 = E3 & dev & 6 / 13 / 0 of 19 & 31.6\% & 100\% \\
+ & verified & post-hoc & 6 / 13 / 24 / 0 of 43 & 14.0\% & 44.2\% \\
+ & observed & post-hoc & 6 / 13 / 0 / 0 of 19 & 31.6\% & 100\% \\
+vkQuake + Diligent (4) & frozen & \textbf{fresh} & 8 / 0 / 44 of 52 & 15.4\% & 15.4\% \\
+ & E2 = E3 & dev & 7 / 2 / 11 of 20 & 35.0\% & 45.0\% \\
+ & verified & post-hoc & 7 / 2 / 34 / 0 of 43 & 16.3\% & 20.9\% \\
+ & observed & post-hoc & 7 / 2 / 11 / 0 of 20 & 35.0\% & 45.0\% \\
+SDL3 + bgfx (12) & frozen & \textbf{fresh} & 2 / 0 / 13 of 15 & 13.3\% & 13.3\% \\
+ & E3 & dev & 2 / 0 / 0 of 2 & 100\% & 100\% \\
+ & every configuration & post-hoc & 2 / 0 / 0 of 2 & 100\% & 100\% \\
+Granite + VSG (12) & frozen (9 checked) & \textbf{fresh} & 8 / 12 / 0 of 20 & 40.0\% & 100\% \\
+ & verified (12 checked) & post-hoc & 8 / 13 / 0 / 1 of 22 & 36.4\% & 95.5\% \\
+ & heuristic R1 & post-hoc & 8 / 12 / 0 / 1 of 21 & 38.1\% & -- \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{table*}[t]
+\caption{Merge-independent units: distinct causes and raw diagnostics, true / technicality / false alarm. Snapshot
+names as in Table~\ref{tab:s-precision}.}
+\label{tab:s-units}
+\small
+\begin{tabular}{@{}llrrrr@{}}
+\toprule
+Study & checker & causes & per-cause true & raw & per-raw true \\
+\midrule
+Tutorials & frozen (fresh) & 3 / 2 / 1 & 50.0\% & 3,208 / 63 / 70 & 96.0\% \\
+Tutorials & E2 = E3 (dev) & 3 / 2 / 0 & 60.0\% & 3,208 / 63 / 0 & 98.1\% \\
+vkQuake + Diligent & frozen (fresh) & 3 / 0 / 7 (+1 DRV) & 30.0\% & 84,424 / 0 / 1,747 & 97.9\% \\
+vkQuake + Diligent & E2 = E3 (dev) & 3 / 1 / 2 & 50.0\% & -- & -- \\
+SDL3 + bgfx & frozen (fresh) & 1 / 0 / 1 & 50.0\% & 166 / 0 / 124 & 57.2\% \\
+SDL3 + bgfx & E3 (dev) & 1 / 0 / 0 & 100\% & 166 / 0 / 0 & 100\% \\
+Granite + VSG & frozen (fresh) & 5 / 1 / 0 & 83.3\% & 334 / 516 / 0 & 39.3\% \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\subsection{The verified configuration on every earlier corpus (post-hoc)}
+Table~\ref{tab:s-regress} compares the engine-study-3 snapshot (the snapshot of the dossier counts) with the first
+snapshot of the verified configuration on every earlier corpus, and Table~\ref{tab:s-engcfg} gives the engines under
+every configuration on the same newly recorded traces. The release's results on the archived traces are in the paper
+(Table~\ref{P-tab:release}).
+\begin{table*}[t]
+\caption{Earlier corpora: the engine-study-3 snapshot against the first snapshot of the verified configuration
+(post-hoc), same traces where both were run.}
+\label{tab:s-regress}
+\small
+\begin{tabular}{@{}p{0.25\textwidth}p{0.14\textwidth}p{0.14\textwidth}p{0.4\textwidth}@{}}
+\toprule
+Corpus & engine-study-3 snapshot & verified configuration\posthoc & why \\
+\midrule
+\bench strict (114) & 80 / 2 / 2 / 30 & 78 / 4 / 2 / 30 & 65, 66, 68 fixed-not-clean (true harness race, conservative capture); 94 detected (entry-point stages) \\
+\bench blind timing, strict / root cause & 29 / 33 of 35 & 29 / 33 of 35 & same traces; as run: 21 / 24 \\
+whole-frame (1,251) & 97.9\% / 95.4\% & 97.9\% / 95.4\% & 0 programs change \\
+RT / mesh (15) & 15 / 15 & 15 / 15 & texts only \\
+stored root causes & 24 IDs + T17 & 24 IDs + T17 & 0 lost (by site) \\
+tutorials raw / groups & 3,291 / 22 & 9,606 / 58 & conservative capture, page-neighbour false alarms \\
+SDL3 + bgfx raw / groups & 221 / 21 & 221 / 21 & -- \\
+Granite raw / groups / tech. & 515 / 6 / 6 & 589 / 4 / 8 & strict \code{UNDEFINED} technicalities and P3 warning \\
+VSG raw / groups / tech. & 334 / 8 / 0 (3 not checked) & 471 / 9 / 1 & CHK-PS fixed; \code{vsg\_depthpeel} final-layout technicality (\S D); message specificity \\
+Diligent raw / groups & 118 / 4 & 136 / 14 & texts (+8 raw), conservative capture (+10 false-alarm groups) \\
+vkQuake raw / groups & 71,101 / 14 & 81,161 / 27 & conservative capture (+10,057 raw, 13 false-alarm groups) and 3 P3 warnings \\
+Sascha T1--T6 host-race raw & 502 & 1,607 & T2--T5 detected (same-value stores) \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\emph{Strict transitions from \code{UNDEFINED}.} Strict mode changes no \bench status or code set, no whole-frame
+verdict and no ray-tracing code, and keeps every labelled root-cause site of the stored samples. It adds diagnostics
+of one shape, a write that is ordered before a transition from \code{UNDEFINED} but not made available to it, mostly
+after a \code{DONT\_CARE} store; \code{report\_groups} grades them as technicalities (\S D). It merges two error groups
+into one in four samples, because one \code{srcAccessMask} repair now covers both.
+
+\emph{\bench.} Conservative capture turns three detected meaning cases (65, 66, 68) into ``fixed variant not clean'',
+because both variants share a true harness race: two frames in flight share one uniform buffer, and the host rewrites
+the unchanged camera after waiting only its own frame's fence. The snapshot frozen for round 4 reported this race; the
+observed capture of the tutorial-study and engine-study snapshots lost it. Entry-point stage attribution turns case 94 into a clean detection.
+
+\emph{Engines.} With the push-constant crash fixed, all 12 Granite and VulkanSceneGraph programs run:
+\code{vsg\_gltf} and \code{vsg\_shadow} report nothing, and \code{vsg\_depthpeel} reports one technicality group and
+one group we leave unresolved, in the report direction. Its window render pass ends with the implicit dependency, whose
+second scope is empty, and a second render pass in the same command buffer then loads and writes the swapchain image.
+On VSG-5, validation reports 19 cross-frame write-after-write pairs that neither snapshot reports; \sys finds each pair
+ordered by a chain through the window render pass's external depth dependency into the next frame's dependency, which
+the specification text supports, and removing those dependencies from the model makes strict mode report them
+(\S\ref{sup:vsg5}).
+
+\begin{table*}[t]
+\caption{Engines on newly recorded traces, every configuration of the first snapshot of the verified configuration
+(post-hoc), and the engine-study-3 snapshot on the same traces: raw timing / report groups / technicality groups.}
+\label{tab:s-engcfg}
+\small
+\begin{tabular}{@{}llllll@{}}
+\toprule
+Programs & engine-study-3 snapshot & \textbf{verified} & observed capture & heuristic R1 & R1, observed \\
+\midrule
+SDL3 + bgfx (12) & 221/21/0 & 221/21/0 & 221/21/0 & 221/21/0 & 221/21/0 \\
+Granite (4) & 515/6/6 & 589/4/8 & 589/4/8 & 519/6/6 & 519/6/6 \\
+VSG (8) & 334/8/0$^*$ & 471/9/1 & 471/9/1 & 431/9/0 & 431/9/0 \\
+Diligent & 118/4/2 & 136/14/2 & 126/4/2 & 136/14/2 & 126/4/2 \\
+vkQuake (3) & 71,101/14/0 & 81,161/27/0 & 71,104/14/0 & 81,161/27/0 & 71,104/14/0 \\
+\bottomrule
+\multicolumn{6}{@{}l}{$^*$3 programs not checked: the check aborted (CHK-PS).}
+\end{tabular}
+\end{table*}
+
+\subsection{\rcgp}
+For every first-collection bug we asked whether \rcgp's contract language rules it out through its typed API (the buggy
+program fails to compile or cannot be written; escape hatches do not count), from its API and source at commit
+\code{85f2b04}, confirmed by 35 compile-only ports compiled by its own compiler, each buggy and fixed; where a port
+disagreed with our reading, the compile result was kept. \rcgp can express 23 of 126: 22 of 27 structure bugs, 1 of 48
+timing bugs and none of 51 meaning bugs. The ports changed seven earlier verdicts. Head to head, we ported every blind
+case \rcgp can express plus the 12 closest calls (29 ports, 58 compiles, all as predicted): \rcgp rules out 17 of the 98
+blind cases (structure 16 of 21, timing 1 of 35, meaning 0 of 42), \sys detects 29 under strict scoring; both catch 6,
+\rcgp alone 11 (all structure), \sys alone 23, either 40. \rcgp's four public samples under the tutorial-study snapshot give no report and no false
+alarm; with a legal \code{VK\_SUBOPTIMAL\_KHR} from acquire, \sys reports a swapchain over-acquire in every sample, caused
+by \rcgp's runtime treating a suboptimal acquire as failed (this rule was written after we saw a sample freeze, so it is
+not independent evidence).
+
+\subsection{Barrier transformations}
+\label{sec:eval-elide}
+These measurements were made with an early optimizer and checker (development data) and were not re-run with the
+release (\S\ref{sec:elide}).
+
+\paragraph{Microbenchmarks}
+Three headless workloads we wrote with a full barrier after every pass: \emph{particles} (8 independent compute
+dispatches, binning with atomics, shading), \emph{deferred} (three G-buffer passes, lighting, tonemap) and
+\emph{postchain} (two interleaved post-processing chains of six levels). The plans remove 63 of 111 recorded barrier
+calls, narrow 45 and keep 3. On lavapipe the output hashes are identical and validation reports zero hazards under
+strict matching (3 traced frames) and chain matching (8 frames). A naive control that removes every barrier redundant
+on its own creates 30 hazards on \emph{postchain}, and the checker and validation each report 30.
+Table~\ref{tab:s-speedup} reports GPU time on a consumer GPU: 15 runs of 300 frames per configuration, first 30 dropped,
+timestamp queries, bootstrap 95\% intervals. The eight-frame chain-matched runs are measurements, not instances of a
+guarantee (\S\ref{sec:elide}).
+
+\begin{table*}[t]
+\caption{Consumer GPU: median GPU frame time (ms) and GPU time saved (95\% CI).}
+\label{tab:s-speedup}
+\small
+\begin{tabular}{@{}lrrrrl@{}}
+\toprule
+Workload & scale & base & layer, off & plan & saved \\
+\midrule
+particles & 1 & 0.236 & 0.233 & 0.197 & 16.7\% (15.6..17.0) \\
+ & 4 & 0.800 & 0.800 & 0.752 & 5.9\% (5.8..6.1) \\
+ & 16 & 3.310 & 3.311 & 3.258 & 1.6\% ($-$1.3..4.7) \\
+deferred & 1 & 0.077 & 0.077 & 0.058 & 24.4\% (23.9..24.6) \\
+ & 4 & 0.230 & 0.230 & 0.211 & 8.4\% (8.2..8.6) \\
+ & 16 & 0.886 & 0.882 & 0.867 & 2.2\% (0.8..7.6) \\
+postchain & 1 & 0.140 & 0.141 & 0.107 & 23.6\% (22.6..24.5) \\
+ & 4 & 0.420 & 0.427 & 0.367 & 12.5\% (11.6..14.5) \\
+ & 16 & 1.708 & 1.630 & 1.655 & 3.1\% ($-$1.8..7.9) \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\paragraph{Real samples: a null result}
+On eight unmodified samples (three Sascha Willems, five Khronos) the prover removes or narrows none of 414 per-frame
+barrier calls: 318 sit between accesses that already race and are pinned, and the other 96 are transitions it proved
+necessary. Only 150 one-time setup barriers are narrowed. On lavapipe the presented-image hashes are identical between
+base and plan, and validation's messages do not change.
+
+\subsection{Cost}
+The checks are offline. The times below were measured with the snapshot in use for each corpus when it was run, not
+with the release; the release's cost on the largest fresh-study programs is in the paper. With the epoch mode, the timing check of the slowest Sascha Willems sample takes 5.1\,s; all
+Sascha Willems samples together take 44.7\,s under three-way parallel load (about 17\,s idle), and Khronos 302\,s, its four
+largest traces (over 400k records) taking 50--74\,s each, mostly loading. Grouping, including the oracle runs that
+re-check every candidate repair, costs 136\,s on Sascha Willems and 285\,s on Khronos. Checking the nine Granite and
+VulkanSceneGraph programs took 78\,s and grouping 79\,s (engine-study-3 snapshot); vkQuake's timedemos took
+105--271\,s to check and 331--650\,s to group (snapshot frozen for engine study 1); the 43 tutorial traces 182\,s and 422\,s. Table~\ref{tab:s-overhead} breaks the cost down on eight
+samples measured one at a time on a 4-core machine with no GPU (an early checker around the tutorial-study snapshot):
+tracing is cheaper than running the
+same 10 frames on lavapipe in every case, because the model driver executes no GPU work, and the timing check takes at
+most 1.6\,s.
+
+\begin{table*}[t]
+\caption{Overhead on eight samples (10 frames, early checker around the tutorial-study snapshot, measured one at a
+time). Trace and lavapipe: wall time
+with a warm file cache. Check phases in seconds; grouping includes its oracle runs. Peak resident memory of the traced
+application and of the same application on lavapipe.}
+\label{tab:s-overhead}
+\small
+\begin{tabular}{@{}lrrrrrrrrr@{}}
+\toprule
+& & & \multicolumn{2}{c}{run (s)} & \multicolumn{4}{c}{check phases (s)} & \\
+\cmidrule(lr){4-5}\cmidrule(lr){6-9}
+Sample & records & trace MB & traced & lavapipe & load & timing & struct. & grouping & peak MB (app / lavapipe) \\
+\midrule
+sw/triangle & 318 & 0.04 & 0.005 & 0.13 & 0.04 & 0.02 & 0.00 & 0.01 & 10 / 100 \\
+sw/deferred & 719 & 3.3 & 0.17 & 1.22 & 0.10 & 0.09 & 0.01 & 0.77 & 25 / 255 \\
+sw/computecloth & 2,545 & 1.9 & 0.06 & 0.27 & 0.10 & 0.10 & 0.28 & 0.21 & 23 / 118 \\
+sw/oit & 3,122 & 1.1 & 0.03 & 0.95 & 0.19 & 1.49 & 0.07 & 11.36 & 10 / 184 \\
+sw/shadowmappingomni & 2,901 & 1.1 & 0.03 & 0.38 & 0.17 & 0.74 & 0.07 & 15.38 & 10 / 139 \\
+sw/multithreading & 31,678 & 6.0 & 0.28 & 2.25 & 0.37 & 1.61 & 0.31 & 1.39 & 12 / 192 \\
+ks/hdr & 644 & 2.3 & 0.21 & 1.64 & 0.50 & 0.11 & 0.01 & 0.10 & 141 / 202 \\
+ks/afbc & 5,404 & 34.7 & 2.35 & 3.53 & 0.36 & 0.22 & 0.04 & 0.22 & 145 / 496 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\input{suppI}
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{refs}
+
+\end{document}

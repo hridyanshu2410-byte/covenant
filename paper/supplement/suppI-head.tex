@@ -1,0 +1,280 @@
+%% ===================================================================
+\section{The Two Fresh Studies of the Proved Configuration}
+\label{sup:fresh}
+
+This section gives the protocols, triage rules and full results of the two studies of the paper's E3. Every number
+is from the checker snapshot frozen for its study, in the configuration named, except in \S\ref{sup:release-posthoc},
+which re-checks the same recorded traces with the release and is post-hoc. The artifact holds the traces, the
+per-diagnostic classes and the scripts that produce each table.
+
+\subsection{Protocols and disclosures}
+\emph{Order of events.} For each study: (1) candidate programs were built and brought up under the model driver,
+recording only whether a program starts and how many calls, presents, draws and host writes it produces; no check,
+grouping or validation run was made on any bring-up trace; (2) the protocol fixing the program set, the run length (20
+presents), the commands, the triage rules and the metrics was written; (3) the checker was frozen by source hash and
+its full test suite run from the frozen snapshot; (4) every program was traced, checked in both capture modes,
+grouped, and run under validation; (5) report groups were triaged by the written rules. Amendments to a protocol are
+timestamped and append-only.
+
+\emph{Study 1} (snapshot \code{7cb216ed5753}): 32 programs. Qt~6.4.2 rendering hardware interface with its Vulkan
+backend, 13 Qt Quick~3D examples and one Qt Quick example, run with the \code{qml} tool; wgpu (15 examples, Vulkan
+backend, release build); the two Vulkan examples of Dear ImGui; and vkcube~1.3.275. Programs that render only on
+demand (fewer than 20 presents), need a compiled module, or redraw only on input were excluded at bring-up. Prior
+exposure: Dear ImGui's Vulkan backend had been linked into two earlier programs as an overlay; no rule was written
+for it. Amendment: the sequential runner was replaced by a three-wide one. Bring-up found one model-driver defect,
+fixed before the freeze; it changed no checker logic.
+
+\emph{Study 2} (snapshot \code{76e393826ae9}): 25 programs. GTK~4.14.5 with its Vulkan renderer
+(\code{gtk4-widget-factory} and eight \code{gtk4-demo} demos: fishbowl, paintable\_animated, iconscroll,
+path\_spinner, path\_walk, spinner, mask, listview\_clocks); vkmark (scenes vertex, texture, shading, effect2d,
+desktop, cube, clear); mpv~0.37 with libplacebo~6.338 (\code{gpu} and \code{gpu-next}, default and high-quality
+profiles) on a generated test video; and five GStreamer~1.24.2 Vulkan pipelines (upload to sink, colour conversion,
+overlay composition, view conversion, a SPIR-V shader). Seven GTK demos were excluded at bring-up (fewer than 20
+presents). Study~2's snapshot is study~1's plus the fixes of the three defects study~1 exposed and two commands
+bring-up showed were needed (\code{vkCmdClearAttachments}, \code{vkCmdCopyQueryPoolResults}), each tested on the model driver's own
+example, never on a study program. Prior exposure: a libplacebo merge request had been considered and rejected as an
+earlier benchmark case; no libplacebo code had been run. Amendments: (a) the first start traced only one program
+because the program table returned a wrong status; no check output was looked at, the run directory was deleted and
+the study restarted; (b) the conservative check of \code{gtk\_path\_walk} was killed by the container's memory limit
+while other checks ran beside it and was rerun alone; it then finished, but grouping exceeded the memory limit even
+alone, so the program is checked but not grouped and its diagnostics were classified one by one; (c) libplacebo refuses software devices unless one is named, so
+the mpv baseline runs name lavapipe.
+
+\emph{Baseline.} Khronos validation layer at \code{0ad67fd} with synchronization validation and its shader-access
+heuristic and load-after-store checks enabled, on lavapipe (Mesa~25.2.8), same programs and commands, limited to 20
+presents by a shim (mpv: to the end of the test video, since libplacebo loads its own entry points).
+
+\subsection{Triage rules}
+The rules were written before study~1's first check. \emph{Families}: a \emph{race} diagnostic reports two
+unordered accesses (layout transitions and host writes included); a \emph{protocol} diagnostic reports a broken
+valid-usage rule of a synchronization object (a binary semaphore signalled while a wait may be pending, a wait with
+no possible signal, a fence or command buffer reused while in use, swapchain over-acquire, timeline value order).
+\emph{Classes}: \emph{true} (a concrete rule is broken and either a schedule the specification allows changes what
+the program reads or presents, or the rule is a valid-usage rule); \emph{technicality} (a race whose rule is broken
+but no schedule changes what is read or presented, in exactly five named sub-classes: a transition from
+\code{UNDEFINED} against discarded contents, a layout-name mismatch with the same memory layout, a missing ownership
+transfer within one family, ordering only through the ordering of layout transitions among themselves, and a store of
+bytes already present); \emph{false alarm} (the program is correct; the cause is named); \emph{driver} (the model
+driver's fault; excluded); and \emph{unresolved} (needs a ruling on the specification; counted against precision).
+Semaphore reuse that relies on a queue idle or a fence wait is not a class of its own: every protocol violation is
+true. \emph{Amendments}: a report group takes the most consequential class of its members
+(true, unresolved, technicality, false alarm, driver); a checker defect found during triage is not fixed in the frozen
+checker. Each program also gets a \emph{premise verdict}: ``no detected violation'' when there is no capture warning (P1,
+P3), no unmodelled command and no untracked mechanism; otherwise outside, with the warnings named. ``No detected
+violation'' is not a proof that the premises hold: P2 and the model premises are assumed, and P3 is checked only at the
+first store to each page.
+
+\subsection{Study 1: causes}
+\begin{table*}[t]
+\caption{Study 1: causes. Groups in conservative capture. Upstream: the current source of the project.}
+\label{tab:s-fresh1}
+\scriptsize
+\begin{tabular}{@{}p{0.43\textwidth}llp{0.17\textwidth}rp{0.14\textwidth}@{}}
+\toprule
+Cause & class & family & programs & groups & validation / upstream \\
+\midrule
+QT-ACQ acquire semaphore reused with a pending wait & true & protocol & 14 Qt & 56 & 01779 / fixed \\
+QT-PSR present semaphore per frame slot, not per image & true & protocol & 14 Qt & 28 & 00067 / fixed \\
+VKCUBE-PSR present semaphore per frame & true & protocol & vkcube & 2 & 00067 / fixed \\
+IMGUI-PRE swapchain images transitioned before they are acquired & true & race & 2 ImGui & 40 & non-acquired image / \textbf{present} \\
+QT-VS texture made visible to the vertex stage only, sampled in the fragment shader & true & race & 4 Qt & 4 & RAW / \textbf{present} \\
+QT-L, QT-LF render-pass \code{UNDEFINED} transition right after Qt's own barrier & tech. (L) & race & 10 Qt & 12 & silent \\
+QT-U multisampled colour buffer shared by consecutive frames & tech. (U) & race & 2 Qt & (in QT-L) & WAW \\
+FA-PG conservative page capture of per-slot uniform writes & false alarm & race & 14 Qt (cons.\ only) & 1,026 & silent \\
+FA-CQ timeline counter query not taken as a host wait & false alarm & both & 15 wgpu & 934 & silent / fixed for study 2 \\
+FA-WL whole-image layout as an unbounded range & false alarm & race & 2 wgpu & 10 & silent / fixed for study 2 \\
+FA-X8 \code{X8\_D24} treated as colour & false alarm & race & 1 wgpu & 1 & silent / fixed for study 2 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+Dear ImGui's 20 groups per program come from the examples recreating the swapchain every frame under the model
+driver's fixed surface extent; they are one cause. Re-checking the 15 wgpu programs with the three defects fixed
+(post-hoc) leaves all 15 clean in both modes; study~1 as a whole is then 130 / 12 / 1,026 groups in conservative and
+130 / 12 / 0 in observed capture. Validation found the same five true causes; it is silent on QT-L and QT-LF and on
+every false alarm. One wgpu program crashed under lavapipe, so validation has no result for it.
+
+\subsection{Study 2: causes}
+\begin{table*}[t]
+\caption{Study 2: causes. Groups in conservative capture (observed capture is identical). Diagnostics: report-group
+members. Upstream: the current source of the project.}
+\label{tab:s-fresh2}
+\scriptsize
+\begin{tabular}{@{}p{0.47\textwidth}llp{0.13\textwidth}rp{0.15\textwidth}@{}}
+\toprule
+Cause & class & family & programs & groups & validation / upstream \\
+\midrule
+VKMARK-PSR one submit semaphore per scene, waited by every present & true & protocol & 7 vkmark & 7 & 00067 / \textbf{present} \\
+VKMARK-ACQ one acquire semaphore, no fence before the next acquire & true & protocol & 7 vkmark & 16 & 01779 / fixed \\
+VKMARK-UBO uniform buffer rewritten by \code{memcpy} every frame, no wait for the frame reading it & true & race & 5 vkmark & 8 & \textbf{silent} / fixed \\
+VKMARK-CLR clear scene: barrier source stage \code{TRANSFER} does not chain to the acquire wait at \code{COLOR\_ATTACHMENT\_OUTPUT} & true & race & clear & 4 & WAR / \textbf{present} \\
+VKMARK-DEPTH one depth image for all frames, render pass dependency on colour output only & true & race & 3 vkmark & 3 & WAW / \textbf{present} \\
+GST-WAIT acquire semaphore waited at \code{BOTTOM\_OF\_PIPE} & true & race & 5 gst & 30 & WAR / \textbf{present} \\
+GST-IA sampled image made visible to input-attachment reads only & true & race & 3 gst & 3 & RAW / \textbf{present} \\
+PLACEBO-EXT first barrier after an external semaphore wait has source stage \code{NONE} & true & race & 4 mpv & 16 & WAR / fixed \\
+GTK-SEM one acquire semaphore, re-signalled while the present's wait may pend & true & protocol & 8 gtk & 8 & 01779 / fixed \\
+GTK-ACQ rendering never waits for the acquire semaphore & true & race & 8 gtk & 47 & non-acquired image, WAP / fixed \\
+GTK-PRS present waits for the acquire semaphore, not the rendering & true & race & 8 gtk & 118 & PAW / fixed \\
+VKMARK-DEPTH-U the render pass's \code{UNDEFINED} transition against the previous frame's depth writes & tech. (U) & race & 3 vkmark & (mixed) & in WAW \\
+GTK-TL barrier transition, then the render pass's own transition & tech. (L) & race & iconscroll & (mixed) & silent \\
+GTK-DESC read charged to descriptor-array elements the draw does not sample & false alarm & race & 4 gtk & 1,042 & silent \\
+GTK-ATLAS uploads into disjoint rectangles of one atlas & false alarm & race & 6 gtk & 6 & silent \\
+GTK-RPX render-pass final transition vs.\ a later \code{COLOR\_ATTACHMENT\_OUTPUT} barrier & unresolved & race & 4 gtk & 7 & silent \\
+GTK-MP render passes per damage rectangle, no barrier between & unresolved & race & 4 gtk & 6 & silent \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\emph{GTK-DESC, evidence.} GTK's renderer encodes each image's descriptor-array index in a per-instance vertex
+attribute and samples \code{textures[nonuniformEXT(id >> 1)]}. We rebuilt every host-visible allocation at each
+submit from the recorded host writes, read the instance records of every draw through its pipeline's vertex input
+state and the vertex shader's attribute locations, and mapped each index to an image through the last descriptor
+update. All 11,875 decoded indices fall on written elements. 135,709 diagnostics name an image their draw does not
+sample, including every ``wrong layout for a shader read'' diagnostic; only 395 name a sampled image, all of them
+GTK-RPX. The specification counts only dynamically used descriptors as accessed, so these are false alarms. A static
+model of the recorded trace could decode the indices the same way; \sys does not.
+
+\emph{GTK-RPX and GTK-MP.} GTK's render passes declare no dependencies and so get only the implicit external ones,
+whose exit dependency has an empty second scope. GTK-RPX: a later barrier with source stage
+\code{COLOR\_ATTACHMENT\_OUTPUT} makes the pass's colour writes visible to a sampled read; whether its first scope also
+contains the pass's final layout transition is not stated. GTK-MP: several render passes on one swapchain image per
+frame, one per damage rectangle, with no barrier between them; whether two render passes' automatic transitions are
+ordered with each other is not stated (the specification orders transitions of image barriers with other transitions,
+including those of render passes, and says that ordering must not be relied on). Validation accepts both. They are
+one question, shared with \code{vsg\_depthpeel}, and need a ruling. Both lie in the report direction: \sys reports the
+pairs and validation accepts them, so no clean verdict depends on them (\S\ref{sup:vsg5}).
+
+\emph{Validation.} The tools share 10 true causes; VKMARK-UBO, a host-write race, is unique to \sys; none is unique to
+validation. Validation reports out-of-scope messages in vkmark (\code{VUID-VkShaderModuleCreateInfo-pCode-08740},
+\code{VUID-VkImageCreateInfo-initialLayout-12478}).
+
+\subsection{Provenance of upstream fixes}
+\label{sup:ledger}
+Both studies ran after every fix below landed, and we reported nothing upstream before or since; all nine commits
+predate the studies, and none was caused by this work. Fixing commits were found with \code{git log -S/-G} on the lines
+that carry each cause, and a commit is listed only when its diff changes the exact pattern. Days: from the commit's
+landing on the default branch to our study. The GTK fixes landed on main before the tested 4.14.5 release but were not
+backported to the 4.14 branch. The full ledger, with release tags and backports, is in the artifact.
+
+Each commit carries one of three labels. An \emph{initial fix attempt} was re-run under the same commands and leaves
+diagnostics of the cause. A \emph{commit changing the pattern} was read in the source and not re-run. A \emph{verified
+complete repair} would be re-run with no diagnostic of the cause left; none of the nine was re-run as a complete
+repair.
+
+\begin{table}[h]
+\caption{The nine true causes with an upstream commit that changes the implicated pattern. Label: initial fix attempt
+(re-run, leaves diagnostics of the cause) or commit changing the pattern (read, not re-run).}
+\label{tab:s-provenance}
+\scriptsize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}lllllr@{}}
+\toprule
+cause & tested rev. & upstream commit & label & issue named & days \\
+\midrule
+QT-ACQ & Qt 6.4.2 & \code{24d62ffd720} (2025-01-27) & changes the pattern & QTBUG-132808 & 627 \\
+QT-PSR & Qt 6.4.2 & \code{eab1295c882} (2025-06-25) & changes the pattern & QTBUG-137986 & 478 \\
+VKCUBE-PSR & 1.3.275 & \code{a8f20787} (2025-04-11) & changes the pattern & -- & 553 \\
+VKMARK-ACQ & \code{ab6e6f3} & \code{956e145} (2025-01-08) & initial fix attempt & -- & 646 \\
+VKMARK-UBO & \code{ab6e6f3} & \code{fd2d798} (2025-02-25) & initial fix attempt & vkmark\#69 & 598 \\
+PLACEBO-EXT & v6.338.2 & \code{fd01c75c} (2025-03-14) & changes the pattern & libplacebo\#333 & 581 \\
+GTK-SEM & 4.14.5 & \code{b08a17064e} (2024-07-14) & changes the pattern & -- & 824 \\
+GTK-ACQ & 4.14.5 & \code{4966f8cdf8} (2024-07-17) & changes the pattern & -- & 821 \\
+GTK-PRS & 4.14.5 & \code{fc6581cf3b} (2025-11-12) & changes the pattern & gtk\#7866 & 338 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+The two initial fix attempts are vkmark's. The uniform-buffer commit \code{fd2d798} (one uniform buffer per swapchain
+image) leaves 136 of the cause's 152 diagnostics, because it rewrites image $i$'s buffer once acquire returns $i$, which
+does not show the host that the frame that read that buffer has finished; and in the \code{shading} scene it drops the
+fragment stage from the uniform binding's descriptor layout (\code{structure.binding-not-in-layout}; validation reports
+VUID 07988), which vkmark corrected three weeks later. The acquire commit \code{956e145} leaves 119
+\code{acquire-semaphore-in-use} diagnostics, and validation still reports its semaphore error (01779).
+
+Seven causes are present in the current sources (checked 2026-10-16). Two were reported by others before our study:
+IMGUI-PRE (Dear ImGui issue \#9496 and open PR \#9553) and VKMARK-PSR (vkmark issue \#88 and open PR \#89, which does
+not touch VKMARK-CLR or VKMARK-DEPTH). We found no report of VKMARK-CLR or VKMARK-DEPTH. For QT-VS, GST-WAIT and
+GST-IA we could not search the projects' trackers.
+
+\subsection{Repair-to-clean cases}
+\label{sup:repairs}
+There are \emph{11 source-patch cases covering nine causes}: one case per cause (SDL-1, IMGUI-PRE, GST-WAIT, GST-IA and
+the five vkmark causes) and two combined cases, GST-ALL and VKMARK-ALL, that apply all patches of a project together.
+They are distinct from the 11 historical dossiers of \S\ref{sup:dossiers}; SDL-1 is in both. Each case: the original
+program, a source repair, a rebuild with the original flags, and a rerun with the same command (model driver, 20
+presents), checked in conservative and observed capture, with validation (\code{0ad67fd}, lavapipe) before and after.
+A repair is \emph{clean for its cause} when the patched run has no diagnostic of that cause and no diagnostic code the
+original lacked; remaining diagnostics are attributed by written rules (code and resource) to the other listed causes.
+The cases were first checked with the snapshot frozen for study~2 and then re-traced from the same sources and patches
+and re-checked with the release (post-hoc; Table~\ref{tab:s-repairs}). The vkmark sources are \code{ab6e6f3}, to which
+the tested Ubuntu package is source-identical. Patches, commands, traces and data are in the artifact.
+
+\begin{table*}[t]
+\caption{The 11 source-patch cases. Diagnostics / groups, conservative capture, summed over the case's programs, with
+the fresh-study-2 snapshot; observed capture gives the same in every run. Release\posthoc: diagnostics of the case's
+cause (for GST-ALL and VKMARK-ALL, of all the project's causes) before $\to$ after, on re-traced runs; every case is
+clean for its cause under the release, and every conservative run is guarantee-eligible.}
+\label{tab:s-repairs}
+\scriptsize
+\begin{tabular}{@{}lllllll@{}}
+\toprule
+case & programs & patch & before & after (remaining causes) & release\posthoc, cause & clean \\
+\midrule
+SDL-1 & 1 & +38/$-$18 & 166 / 2 & 0 / 0 & 166 $\to$ 0 & yes \\
+IMGUI-PRE & 2 & +0/$-$75 & 40 / 40 & 0 / 0 & 40 $\to$ 0 & yes \\
+GST-WAIT & 5 & +1/$-$1 & 495 / 33 & 95 / 3 (GST-IA) & 400 $\to$ 0 & yes \\
+GST-IA & 5 & +1/$-$1 & 495 / 33 & 400 / 30 (GST-WAIT) & 95 $\to$ 0 & yes \\
+GST-ALL & 5 & +2/$-$2 & 495 / 33 & 0 / 0 & 495 $\to$ 0 & yes \\
+VKMARK-UBO & 5 & +45/$-$5 & 978 / 26 & 370 / 18 (ACQ, DEPTH, PSR) & 152 $\to$ 0 & yes \\
+VKMARK-PSR & 7 & +42/$-$35 & 1124 / 38 & 991 / 31 (ACQ, CLR, DEPTH, UBO) & 133 $\to$ 0 & yes \\
+VKMARK-ACQ & 7 & +47/$-$18 & 1124 / 38 & 1028 / 30 (CLR, DEPTH, PSR, UBO) & 143 $\to$ 0 & yes \\
+VKMARK-CLR & 1 & +1/$-$1 & 108 / 9 & 48 / 5 (ACQ, PSR) & 60 $\to$ 0 & yes \\
+VKMARK-DEPTH & 3 & +10/$-$4 & 807 / 15 & 171 / 12 (ACQ, PSR, UBO) & 636 $\to$ 0 & yes \\
+VKMARK-ALL & 7 & +135/$-$58 & 1124 / 38 & 0 / 0 & 1,124 $\to$ 0 & yes \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+No run had a capture warning, an unmodelled command or an unimplemented command, and no diagnostic was left
+unattributed to a listed cause. With all patches of a project applied, 15 programs have no diagnostic in either capture
+mode under the release and no synchronization message under validation: all seven vkmark scenes, all five GStreamer
+pipelines, both ImGui examples and SDL's sprite test. Each of the 15 was traced three more times and once with the
+release's own build of the model driver, with the same result. All 152 re-traced runs of the cases (originals,
+single-cause variants, upstream commits and repairs) were checked with the release in both capture modes; every check
+completed, and no pair relies on the host-domain premise. One run-to-run difference is not a synchronization finding: in
+some runs, original or patched, \code{gst\_colorconvert} draws one \code{structure.host-layout} warning, because
+GStreamer copies a uniform struct whose padding it never initializes; it is outside the repaired causes and outside
+the timing check, and adds one unattributed diagnostic to the GStreamer totals of the re-traced runs (496 before
+instead of 495). PLACEBO-EXT was not attempted: the mpv programs are outside the premises. Qt and GTK were not
+rebuilt.
+
+\subsection{The release on the recorded traces (post-hoc)}
+\label{sup:release-posthoc}
+Everything in this subsection is post-hoc and is kept apart from the frozen results above. After both studies the
+checker was changed in four ways: framebuffer-local dependencies are read (\S\ref{sup:fblocal}); two automatic
+render-pass transitions on one queue are no longer exempt from each other (\S\ref{sup:ltpairs}); a descriptor-array
+read is narrowed to the elements its index bytes select when the guard holds (\S\ref{sec:impl}); and grouping has a
+memory and pair budget. When the budget is exceeded, grouping reports \emph{incomplete}, keeps every diagnostic in a
+site group and proposes no repair; a stub marked incomplete is written first, so a run that is killed never reads as
+clean. The release re-checked the traces both studies recorded, with the frozen triage rules and one added rule: a
+pair of automatic render-pass transitions with no dependency between them is \emph{unresolved}, the question of
+GTK-MP. On these traces the release loses no true group of the frozen runs.
+
+\emph{Study 1} (32 programs, all grouped completely): in conservative capture 130 / 10 / 2 / 1,026 groups (true /
+technicality / unresolved / false alarm), 11.1\% true; in observed capture 130 / 10 / 2 / 0, 91.5\% true. Every false
+alarm is Qt's page-granular host capture (FA-PG). The two unresolved groups are pairs of automatic render-pass
+transitions in two Qt programs. All 15 wgpu programs report nothing, \code{wgpu\_mipmap} included.
+
+\emph{Study 2}: the 24 programs whose grouping completes give 260 / 1 / 8 / 6 groups, so 94.5\% of these 275 groups are
+true (19.7\% when frozen); observed capture gives the same. The false alarms fall from 1,048 groups to 6 because a draw
+that selects its texture with a flat per-instance index whose bytes the host wrote, with no racing write, is charged
+only the elements those bytes select; the six that remain are GTK-ATLAS. \code{gtk\_path\_walk} reaches the grouping
+budget and is reported incomplete: 35 site groups with no repairs, of which 22 are true (the same three GTK causes), 12
+unresolved and 1 a false alarm, with all 15,595 diagnostics kept. It is not in the 94.5\%.
+
+\emph{Domain.} In conservative capture all 57 runs (32 + 25) are guarantee-eligible: checking completed, no
+unmodelled command has a memory effect, and no host write raises the host-domain warning. The 57 observed-capture runs
+are outside the verified configuration by definition. Reporting is complete for 56 programs; \code{gtk\_path\_walk}
+is the exception.
+
+\subsection{Per-program results}

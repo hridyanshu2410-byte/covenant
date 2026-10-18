@@ -1,0 +1,24 @@
+Case:     GST-IA
+Project:  GStreamer gst-plugins-bad (Vulkan library)
+Upstream: https://gitlab.freedesktop.org/gstreamer/gstreamer (GitHub mirror: https://github.com/GStreamer/gstreamer)
+Revision: tag 1.24.2 (2d82731515)
+Paths:    relative to subprojects/gst-plugins-bad in the GStreamer monorepo
+Files:    1 changed, +1/-1
+          gst-libs/gst/vulkan/gstvkfullscreenquad.c
+Cause:    the full-screen quad's input-image barrier uses dstAccessMask = INPUT_ATTACHMENT_READ although the fragment shader samples the image
+Repair:   dstAccessMask = VK_ACCESS_SHADER_READ_BIT
+Apply:    git apply GST-IA.diff   (from subprojects/gst-plugins-bad in the GStreamer monorepo; this header is ignored by git apply)
+
+diff --git a/gst-libs/gst/vulkan/gstvkfullscreenquad.c b/gst-libs/gst/vulkan/gstvkfullscreenquad.c
+index dbe3a94..13457dc 100644
+--- a/gst-libs/gst/vulkan/gstvkfullscreenquad.c
++++ b/gst-libs/gst/vulkan/gstvkfullscreenquad.c
+@@ -1508,7 +1508,7 @@ gst_vulkan_full_screen_quad_fill_command_buffer (GstVulkanFullScreenQuad * self,
+         .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+         .pNext = NULL,
+         .srcAccessMask = in_views[i]->image->barrier.parent.access_flags,
+-        .dstAccessMask = VK_ACCESS_INPUT_ATTACHMENT_READ_BIT,
++        .dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
+         .oldLayout = in_views[i]->image->barrier.image_layout,
+         .newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+         /* FIXME: implement exclusive transfers */
