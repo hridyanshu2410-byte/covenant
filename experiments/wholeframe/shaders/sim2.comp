@@ -1,0 +1,12 @@
+#version 450
+// W2: reads the per-frame params, read-modify-writes the shared state, writes sim[slot].
+layout(local_size_x = 64) in;
+layout(set = 0, binding = 0) uniform U { vec4 t; } u;
+layout(set = 0, binding = 1) writeonly buffer Out { vec4 p[]; } o;
+layout(set = 0, binding = 2) buffer State { vec4 s[]; } st;
+void main() {
+  uint i = gl_GlobalInvocationID.x;
+  st.s[i] += vec4(0.001);
+  float a = u.t.x + float(i) * 0.1 + st.s[i].x;
+  o.p[i] = vec4(0.5 * cos(a), 0.5 * sin(a), 0.0, 1.0);
+}

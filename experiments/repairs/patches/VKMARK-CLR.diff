@@ -1,0 +1,24 @@
+Case:     VKMARK-CLR
+Project:  vkmark
+Upstream: https://github.com/vkmark/vkmark
+Revision: ab6e6f3
+Paths:    relative to the source root
+Files:    1 changed, +1/-1
+          src/scenes/clear_scene.cpp
+Cause:    clear scene: the first barrier on the swapchain image (srcStageMask TRANSFER) does not chain to the acquire wait at COLOR_ATTACHMENT_OUTPUT
+Repair:   srcStageMask = TRANSFER | COLOR_ATTACHMENT_OUTPUT for the first barrier
+Apply:    git apply VKMARK-CLR.diff   (from the source root; this header is ignored by git apply)
+
+diff --git a/src/scenes/clear_scene.cpp b/src/scenes/clear_scene.cpp
+index 495a881..50b2159 100644
+--- a/src/scenes/clear_scene.cpp
++++ b/src/scenes/clear_scene.cpp
+@@ -137,7 +137,7 @@ void ClearScene::prepare_command_buffer(VulkanImage const& image)
+     command_buffers[i].begin(begin_info);
+ 
+     command_buffers[i].pipelineBarrier(
+-        vk::PipelineStageFlagBits::eTransfer,
++        vk::PipelineStageFlagBits::eTransfer | vk::PipelineStageFlagBits::eColorAttachmentOutput,
+         vk::PipelineStageFlagBits::eTransfer,
+         {}, {}, {},
+         undef_to_transfer_barrier);

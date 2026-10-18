@@ -1,0 +1,136 @@
+Case:     SDL-1
+Project:  SDL3
+Upstream: https://github.com/libsdl-org/SDL
+Revision: e4af6f8e283812aa693eb2c70c91249a9e1ce92c
+Paths:    relative to the source root
+Files:    1 changed, +38/-18
+          src/render/vulkan/SDL_render_vulkan.c
+Cause:    the Vulkan renderer rewrites vertex buffers in mapped memory that draws of frames still in flight may read (host write vs. device read)
+Repair:   one set of vertex buffers per command buffer (frame in flight), created lazily
+Apply:    git apply SDL-1.diff   (from the source root; this header is ignored by git apply)
+
+diff --git a/src/render/vulkan/SDL_render_vulkan.c b/src/render/vulkan/SDL_render_vulkan.c
+index f3ae7ca..dbf8918 100644
+--- a/src/render/vulkan/SDL_render_vulkan.c
++++ b/src/render/vulkan/SDL_render_vulkan.c
+@@ -388,8 +388,8 @@ typedef struct
+     VkDescriptorSetLayout descriptorSetLayout;
+     VkPipelineLayout pipelineLayout;
+ 
+-    // Vertex buffer data
+-    VULKAN_Buffer vertexBuffers[SDL_VULKAN_NUM_VERTEX_BUFFERS];
++    // Vertex buffer data, one set per command buffer (frame in flight), created on first use
++    VULKAN_Buffer (*vertexBuffers)[SDL_VULKAN_NUM_VERTEX_BUFFERS];
+     VULKAN_VertexShaderConstants vertexShaderConstantsData;
+ 
+     // Data for staging/allocating textures
+@@ -722,10 +722,6 @@ static void VULKAN_DestroyAll(SDL_Renderer *renderer)
+             rendererData->samplers[i] = VK_NULL_HANDLE;
+         }
+     }
+-    for (uint32_t i = 0; i < SDL_arraysize(rendererData->vertexBuffers); i++ ) {
+-        VULKAN_DestroyBuffer(rendererData, &rendererData->vertexBuffers[i]);
+-    }
+-    SDL_zeroa(rendererData->vertexBuffers);
+     for (uint32_t i = 0; i < VULKAN_RENDERPASS_COUNT; i++) {
+         if (rendererData->renderPasses[i] != VK_NULL_HANDLE) {
+             vkDestroyRenderPass(rendererData->device, rendererData->renderPasses[i], NULL);
+@@ -814,6 +810,15 @@ static void VULKAN_DestroyAll(SDL_Renderer *renderer)
+         rendererData->currentUploadBuffer = NULL;
+     }
+ 
++    if (rendererData->vertexBuffers) {
++        for (uint32_t i = 0; i < rendererData->swapchainImageCount; ++i) {
++            for (uint32_t j = 0; j < SDL_VULKAN_NUM_VERTEX_BUFFERS; j++) {
++                VULKAN_DestroyBuffer(rendererData, &rendererData->vertexBuffers[i][j]);
++            }
++        }
++        SDL_free(rendererData->vertexBuffers);
++        rendererData->vertexBuffers = NULL;
++    }
+     if (rendererData->constantBuffers) {
+         SDL_assert(rendererData->numConstantBuffers);
+         for (uint32_t i = 0; i < rendererData->swapchainImageCount; ++i) {
+@@ -1613,14 +1618,14 @@ static VkResult VULKAN_CreateVertexBuffer(VULKAN_RenderData *rendererData, size_
+ {
+     VkResult result;
+ 
+-    VULKAN_DestroyBuffer(rendererData, &rendererData->vertexBuffers[vbidx]);
++    VULKAN_DestroyBuffer(rendererData, &rendererData->vertexBuffers[rendererData->currentCommandBufferIndex][vbidx]);
+ 
+     result = VULKAN_AllocateBuffer(rendererData, size,
+         VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+         VK_MEMORY_PROPERTY_HOST_COHERENT_BIT |
+         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+-        &rendererData->vertexBuffers[vbidx]);
++        &rendererData->vertexBuffers[rendererData->currentCommandBufferIndex][vbidx]);
+     if (result != VK_SUCCESS) {
+         return result;
+     }
+@@ -2246,11 +2251,6 @@ static VkResult VULKAN_CreateDeviceResources(SDL_Renderer *renderer, SDL_Propert
+         return result;
+     }
+ 
+-    // Create default vertex buffers
+-    for (uint32_t i = 0; i < SDL_VULKAN_NUM_VERTEX_BUFFERS; ++i) {
+-        VULKAN_CreateVertexBuffer(rendererData, i, SDL_VULKAN_VERTEX_BUFFER_DEFAULT_SIZE);
+-    }
+-
+     SDL_PropertiesID props = SDL_GetRendererProperties(renderer);
+     SDL_SetPointerProperty(props, SDL_PROP_RENDERER_VULKAN_INSTANCE_POINTER, rendererData->instance);
+     SDL_SetNumberProperty(props, SDL_PROP_RENDERER_VULKAN_SURFACE_NUMBER, (Sint64)rendererData->surface);
+@@ -2433,6 +2433,15 @@ static VkResult VULKAN_CreateSwapChain(SDL_Renderer *renderer, int w, int h)
+         SDL_free(rendererData->uploadBuffers);
+         rendererData->uploadBuffers = NULL;
+     }
++    if (rendererData->vertexBuffers) {
++        for (uint32_t i = 0; i < rendererData->swapchainImageCount; ++i) {
++            for (uint32_t j = 0; j < SDL_VULKAN_NUM_VERTEX_BUFFERS; j++) {
++                VULKAN_DestroyBuffer(rendererData, &rendererData->vertexBuffers[i][j]);
++            }
++        }
++        SDL_free(rendererData->vertexBuffers);
++        rendererData->vertexBuffers = NULL;
++    }
+     if (rendererData->constantBuffers) {
+         SDL_assert(rendererData->numConstantBuffers);
+         for (uint32_t i = 0; i < rendererData->swapchainImageCount; ++i) {
+@@ -2763,6 +2772,14 @@ static VkResult VULKAN_CreateSwapChain(SDL_Renderer *renderer, int w, int h)
+     rendererData->currentConstantBufferOffset = -1;
+     rendererData->currentConstantBufferIndex = 0;
+ 
++    // Vertex buffers: one set per command buffer, so that a frame never rewrites a buffer that a
++    // frame still in flight reads (only this command buffer's fence is waited before reuse)
++    rendererData->vertexBuffers = SDL_calloc(rendererData->swapchainImageCount, sizeof(*rendererData->vertexBuffers));
++    if (!rendererData->vertexBuffers) {
++        VULKAN_DestroyAll(renderer);
++        return VK_ERROR_OUT_OF_HOST_MEMORY;
++    }
++
+     VULKAN_AcquireNextSwapchainImage(renderer);
+ 
+     SDL_PropertiesID props = SDL_GetRendererProperties(renderer);
+@@ -3794,14 +3811,17 @@ static bool VULKAN_UpdateVertexBuffer(SDL_Renderer *renderer,
+             return SDL_SetError("Failed to issue intermediate batch");
+         }
+     }
++    vertexBuffer = &rendererData->vertexBuffers[rendererData->currentCommandBufferIndex][vbidx];
++
+     // If the existing vertex buffer isn't big enough, we need to recreate a big enough one
+-    if (dataSizeInBytes > rendererData->vertexBuffers[vbidx].size) {
+-        VULKAN_IssueBatch(rendererData);
+-        VULKAN_WaitForGPU(rendererData);
+-        VULKAN_CreateVertexBuffer(rendererData, vbidx, dataSizeInBytes);
++    if (dataSizeInBytes > vertexBuffer->size) {
++        if (vertexBuffer->size > 0) {
++            VULKAN_IssueBatch(rendererData);
++            VULKAN_WaitForGPU(rendererData);
++        }
++        VULKAN_CreateVertexBuffer(rendererData, vbidx, SDL_max(dataSizeInBytes, SDL_VULKAN_VERTEX_BUFFER_DEFAULT_SIZE));
+     }
+ 
+-    vertexBuffer = &rendererData->vertexBuffers[vbidx];
+     SDL_memcpy(vertexBuffer->mappedBufferPtr, vertexData, dataSizeInBytes);
+ 
+     stateCache->vertexBuffer = vertexBuffer->buffer;

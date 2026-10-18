@@ -1,0 +1,33 @@
+%% =====================================================================
+%% elision.tex -- replaces the theorem and proof sketch of Section 8 (paper-wo/main.tex, from
+%% "\begin{theorem}[Elision soundness]" through the "\end{proof}" that follows it). Keeps label thm:elide;
+%% Proof: appendix-proofs.tex, \S app:elide.
+%% =====================================================================
+\begin{theorem}[Elision soundness on the recorded execution]\label{thm:elide}
+Let $P$ be a plan that removes or narrows barrier structs and keeps every layout transition, and let $\tau_P$ be the
+trace with the plan applied. Let $F^*$ be the strengthened frame, in which each transition is split into a struct that
+ends at the transition, the transition itself and a struct that starts from it, and load and store operations are
+accesses. Let $F^*(\tau_P)$ satisfy the premises of Theorem~\ref{thm:sound}. If
+$\Hpw(F^*(\tau_P)) \subseteq \Hpw(F^*(\tau))$, where pairs are compared by event identity (call, command and access
+index), then $\Hspec(\tau_P) \subseteq \Hpw(F^*(\tau))$. In particular, if the pairwise mode reports nothing on
+$F^*(\tau)$, then $\tau_P$ is race-free, and Corollary~\ref{cor:sched} applies to the transformed run on the recorded
+host path.
+\end{theorem}
+
+The proof (Appendix~\ref{app:elide}) has two steps. First, $F^*$ only adds events and removes exemptions, and its
+split structs chain exactly as the original struct did, so every race of a trace is a race of its strengthened frame.
+Second, Theorem~\ref{thm:sound} on $F^*(\tau_P)$ and the premise give the inclusion. The premise is checked on the final
+plan, so the order of the greedy search does not matter. Two requirements of the theorem are easy to lose in an
+implementation. The comparison must be by event pairs. A comparison by diagnostic text or site can hide a new pair
+behind an existing report of the same site, for example when a command buffer is submitted twice. It must also use the
+pairwise mode. The epoch mode reports only a subset (Lemma~\ref{lem:modes}), so ``no new epoch report'' does not
+imply the premise.
+
+\paragraph{Beyond the recorded frames}
+The theorem covers the frames that were traced, and nothing more. Reusing a plan on later frames would need the run to
+continue as the recorded one, and a runtime matcher that falls back safely when it does not. We do not claim such a
+reuse guarantee. Two obstacles show why a simple matcher is not enough: draining the device queues at a mismatch does
+not drain the presentation engine, which may still read an image whose transition the plan narrowed; and a host write
+can land in mapped memory before the matcher sees the call that reveals the mismatch. The layer
+\code{VK\_LAYER\_COVENANT\_elide} matches each barrier call by its recorded key and applies the plan only to the
+recorded ordinals; runs that go beyond them are measurements, not instances of Theorem~\ref{thm:elide}.

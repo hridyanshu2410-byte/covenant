@@ -1,0 +1,38 @@
+Case:     VKMARK-DEPTH
+Project:  vkmark
+Upstream: https://github.com/vkmark/vkmark
+Revision: ab6e6f3
+Paths:    relative to the source root
+Files:    1 changed, +10/-4
+          src/vkutil/render_pass_builder.cpp
+Cause:    the render pass's external dependency covers color only, so the shared depth image's transition and clear are not ordered after the previous frame's depth writes
+Repair:   add EARLY/LATE_FRAGMENT_TESTS to both stage masks, DEPTH_STENCIL_ATTACHMENT_WRITE to the source access mask and depth read/write to the destination access mask
+Apply:    git apply VKMARK-DEPTH.diff   (from the source root; this header is ignored by git apply)
+
+diff --git a/src/vkutil/render_pass_builder.cpp b/src/vkutil/render_pass_builder.cpp
+index 26c2f22..2195246 100644
+--- a/src/vkutil/render_pass_builder.cpp
++++ b/src/vkutil/render_pass_builder.cpp
+@@ -94,12 +94,18 @@ ManagedResource<vk::RenderPass> vkutil::RenderPassBuilder::build()
+ 
+     auto const subpass_dependency = vk::SubpassDependency{}
+         .setSrcSubpass(VK_SUBPASS_EXTERNAL)
+-        .setSrcStageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput)
+-        .setSrcAccessMask({})
++        .setSrcStageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput |
++                         vk::PipelineStageFlagBits::eEarlyFragmentTests |
++                         vk::PipelineStageFlagBits::eLateFragmentTests)
++        .setSrcAccessMask(vk::AccessFlagBits::eDepthStencilAttachmentWrite)
+         .setDstSubpass(0)
+-        .setDstStageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput)
++        .setDstStageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput |
++                         vk::PipelineStageFlagBits::eEarlyFragmentTests |
++                         vk::PipelineStageFlagBits::eLateFragmentTests)
+         .setDstAccessMask(vk::AccessFlagBits::eColorAttachmentRead |
+-                          vk::AccessFlagBits::eColorAttachmentWrite)
++                          vk::AccessFlagBits::eColorAttachmentWrite |
++                          vk::AccessFlagBits::eDepthStencilAttachmentRead |
++                          vk::AccessFlagBits::eDepthStencilAttachmentWrite)
+         .setDependencyFlags(vk::DependencyFlagBits::eByRegion);
+ 
+     auto const render_pass_create_info = vk::RenderPassCreateInfo{}

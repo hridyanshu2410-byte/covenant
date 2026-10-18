@@ -1,0 +1,225 @@
+Case:     VKMARK-ACQ
+Project:  vkmark
+Upstream: https://github.com/vkmark/vkmark
+Revision: ab6e6f3
+Paths:    relative to the source root
+Files:    10 changed, +47/-18
+          src/scenes/clear_scene.cpp
+          src/scenes/cube_scene.cpp
+          src/scenes/desktop_scene.cpp
+          src/scenes/effect2d_scene.cpp
+          src/scenes/shading_scene.cpp
+          src/scenes/texture_scene.cpp
+          src/scenes/vertex_scene.cpp
+          src/vulkan_image.h
+          src/ws/swapchain_window_system.cpp
+          src/ws/swapchain_window_system.h
+Cause:    one acquire semaphore is reused while the submission that waits on it may still be pending
+Repair:   one acquire semaphore and one fence per frame slot; the window system waits for the slot's fence before acquiring with its semaphore, and every scene's submit signals that fence
+Apply:    git apply VKMARK-ACQ.diff   (from the source root; this header is ignored by git apply)
+
+diff --git a/src/scenes/clear_scene.cpp b/src/scenes/clear_scene.cpp
+index 495a881..db5dc68 100644
+--- a/src/scenes/clear_scene.cpp
++++ b/src/scenes/clear_scene.cpp
+@@ -122,9 +122,14 @@ void ClearScene::prepare_command_buffer(VulkanImage const& image)
+         .setDstQueueFamilyIndex(VK_QUEUE_FAMILY_IGNORED)
+         .setSubresourceRange(image_range);
+ 
+-    auto const i = image.index;
++    // With a frame fence from the window system, the command buffer of this frame
++    // slot is free (the window system waited for that fence before acquiring).
++    auto const i = image.submit_fence ? image.slot : image.index;
+ 
+-    if (!command_buffer_fences[i])
++    if (image.submit_fence)
++    {
++    }
++    else if (!command_buffer_fences[i])
+     {
+         command_buffer_fences[i] = vulkan->device().createFence(vk::FenceCreateInfo());
+     }
+@@ -166,12 +171,13 @@ VulkanImage ClearScene::draw(VulkanImage const& image)
+         .setSignalSemaphoreCount(1)
+         .setPSignalSemaphores(&submit_semaphore.raw)
+         .setCommandBufferCount(1)
+-        .setPCommandBuffers(&command_buffers[image.index])
++        .setPCommandBuffers(&command_buffers[image.submit_fence ? image.slot : image.index])
+         .setWaitSemaphoreCount(image.semaphore ? 1 : 0)
+         .setPWaitSemaphores(&image.semaphore)
+         .setPWaitDstStageMask(&mask);
+ 
+-    vulkan->graphics_queue().submit(submit_info, command_buffer_fences[image.index]);
++    vulkan->graphics_queue().submit(
++        submit_info, image.submit_fence ? image.submit_fence : command_buffer_fences[image.index]);
+ 
+     return image.copy_with_semaphore(submit_semaphore);
+ }
+diff --git a/src/scenes/cube_scene.cpp b/src/scenes/cube_scene.cpp
+index 9fb7e95..cb18478 100644
+--- a/src/scenes/cube_scene.cpp
++++ b/src/scenes/cube_scene.cpp
+@@ -115,7 +115,7 @@ VulkanImage CubeScene::draw(VulkanImage const& image)
+         .setSignalSemaphoreCount(1)
+         .setPSignalSemaphores(&submit_semaphore.raw);
+ 
+-    vulkan->graphics_queue().submit(submit_info, {});
++    vulkan->graphics_queue().submit(submit_info, image.submit_fence);
+ 
+     return image.copy_with_semaphore(submit_semaphore);
+ }
+diff --git a/src/scenes/desktop_scene.cpp b/src/scenes/desktop_scene.cpp
+index 1e9ea30..32907dd 100644
+--- a/src/scenes/desktop_scene.cpp
++++ b/src/scenes/desktop_scene.cpp
+@@ -251,7 +251,7 @@ VulkanImage DesktopScene::draw(VulkanImage const& image)
+         .setSignalSemaphoreCount(1)
+         .setPSignalSemaphores(&submit_semaphore.raw);
+ 
+-    vulkan->graphics_queue().submit(submit_info, {});
++    vulkan->graphics_queue().submit(submit_info, image.submit_fence);
+ 
+     return image.copy_with_semaphore(submit_semaphore);
+ }
+diff --git a/src/scenes/effect2d_scene.cpp b/src/scenes/effect2d_scene.cpp
+index 2fe2235..69e097f 100644
+--- a/src/scenes/effect2d_scene.cpp
++++ b/src/scenes/effect2d_scene.cpp
+@@ -144,7 +144,7 @@ VulkanImage Effect2DScene::draw(VulkanImage const& image)
+         .setSignalSemaphoreCount(1)
+         .setPSignalSemaphores(&submit_semaphore.raw);
+ 
+-    vulkan->graphics_queue().submit(submit_info, {});
++    vulkan->graphics_queue().submit(submit_info, image.submit_fence);
+ 
+     return image.copy_with_semaphore(submit_semaphore);
+ }
+diff --git a/src/scenes/shading_scene.cpp b/src/scenes/shading_scene.cpp
+index fa496ba..79598d4 100644
+--- a/src/scenes/shading_scene.cpp
++++ b/src/scenes/shading_scene.cpp
+@@ -132,7 +132,7 @@ VulkanImage ShadingScene::draw(VulkanImage const& image)
+         .setSignalSemaphoreCount(1)
+         .setPSignalSemaphores(&submit_semaphore.raw);
+ 
+-    vulkan->graphics_queue().submit(submit_info, {});
++    vulkan->graphics_queue().submit(submit_info, image.submit_fence);
+ 
+     return image.copy_with_semaphore(submit_semaphore);
+ }
+diff --git a/src/scenes/texture_scene.cpp b/src/scenes/texture_scene.cpp
+index 04a8207..98c6f50 100644
+--- a/src/scenes/texture_scene.cpp
++++ b/src/scenes/texture_scene.cpp
+@@ -136,7 +136,7 @@ VulkanImage TextureScene::draw(VulkanImage const& image)
+         .setSignalSemaphoreCount(1)
+         .setPSignalSemaphores(&submit_semaphore.raw);
+ 
+-    vulkan->graphics_queue().submit(submit_info, {});
++    vulkan->graphics_queue().submit(submit_info, image.submit_fence);
+ 
+     return image.copy_with_semaphore(submit_semaphore);
+ }
+diff --git a/src/scenes/vertex_scene.cpp b/src/scenes/vertex_scene.cpp
+index 0fd7fe7..9c94fb9 100644
+--- a/src/scenes/vertex_scene.cpp
++++ b/src/scenes/vertex_scene.cpp
+@@ -134,7 +134,7 @@ VulkanImage VertexScene::draw(VulkanImage const& image)
+         .setSignalSemaphoreCount(1)
+         .setPSignalSemaphores(&submit_semaphore.raw);
+ 
+-    vulkan->graphics_queue().submit(submit_info, {});
++    vulkan->graphics_queue().submit(submit_info, image.submit_fence);
+ 
+     return image.copy_with_semaphore(submit_semaphore);
+ }
+diff --git a/src/vulkan_image.h b/src/vulkan_image.h
+index fcc4569..25b1a36 100644
+--- a/src/vulkan_image.h
++++ b/src/vulkan_image.h
+@@ -28,7 +28,7 @@ struct VulkanImage
+ {
+     VulkanImage copy_with_semaphore(vk::Semaphore sem) const
+     {
+-        return {index, image, format, extent, sem};
++        return {index, image, format, extent, sem, submit_fence, slot};
+     }
+ 
+     uint32_t index;
+@@ -36,4 +36,8 @@ struct VulkanImage
+     vk::Format format;
+     vk::Extent2D extent;
+     vk::Semaphore semaphore;
++    // Signalled by the frame's submission; the window system waits for it before it
++    // reuses this frame slot (its acquire semaphore) for a later frame.
++    vk::Fence submit_fence{};
++    uint32_t slot = 0;
+ };
+diff --git a/src/ws/swapchain_window_system.cpp b/src/ws/swapchain_window_system.cpp
+index 9f9fba3..e9ff76e 100644
+--- a/src/ws/swapchain_window_system.cpp
++++ b/src/ws/swapchain_window_system.cpp
+@@ -139,25 +139,42 @@ void SwapchainWindowSystem::init_vulkan(VulkanState& vulkan_)
+     Log::debug("SwapchainWindowSystem: Swapchain contains %d images\n",
+                vk_images.size());
+ 
+-    vk_acquire_semaphore = ManagedResource<vk::Semaphore>{
+-        vulkan->device().createSemaphore(vk::SemaphoreCreateInfo()),
+-        [this] (auto& s) { vulkan->device().destroySemaphore(s); }};
++    // One acquire semaphore per frame slot, reused only after the submission that
++    // waited on it has completed (its fence).
++    for (uint32_t i = 0; i < vk_images.size(); ++i)
++    {
++        vk_acquire_semaphores.push_back(ManagedResource<vk::Semaphore>{
++            vulkan->device().createSemaphore(vk::SemaphoreCreateInfo()),
++            [this] (auto& s) { vulkan->device().destroySemaphore(s); }});
++        vk_submit_fences.push_back(ManagedResource<vk::Fence>{
++            vulkan->device().createFence(vk::FenceCreateInfo{vk::FenceCreateFlagBits::eSignaled}),
++            [this] (auto& f) { vulkan->device().destroyFence(f); }});
++    }
++    current_slot = 0;
+ }
+ 
+ void SwapchainWindowSystem::deinit_vulkan()
+ {
+     vulkan->device().waitIdle();
+-    vk_acquire_semaphore = {};
++    vk_acquire_semaphores.clear();
++    vk_submit_fences.clear();
+     vk_swapchain = {};
+     vk_surface = {};
+ }
+ 
+ VulkanImage SwapchainWindowSystem::next_vulkan_image()
+ {
++    auto const slot = current_slot;
++    current_slot = (current_slot + 1) % vk_acquire_semaphores.size();
++
++    (void)vulkan->device().waitForFences(vk_submit_fences[slot].raw, true, INT64_MAX);
++    vulkan->device().resetFences(vk_submit_fences[slot].raw);
++
+     auto const image_index = vulkan->device().acquireNextImageKHR(
+-        vk_swapchain, UINT64_MAX, vk_acquire_semaphore, nullptr).value;
++        vk_swapchain, UINT64_MAX, vk_acquire_semaphores[slot], nullptr).value;
+ 
+-    return {image_index, vk_images[image_index], vk_image_format, vk_extent, vk_acquire_semaphore};
++    return {image_index, vk_images[image_index], vk_image_format, vk_extent,
++            vk_acquire_semaphores[slot], vk_submit_fences[slot], slot};
+ }
+ 
+ void SwapchainWindowSystem::present_vulkan_image(VulkanImage const& vulkan_image)
+diff --git a/src/ws/swapchain_window_system.h b/src/ws/swapchain_window_system.h
+index 412b924..70e1f89 100644
+--- a/src/ws/swapchain_window_system.h
++++ b/src/ws/swapchain_window_system.h
+@@ -68,7 +68,9 @@ private:
+     vk::Queue vk_present_queue;
+     ManagedResource<vk::SurfaceKHR> vk_surface;
+     ManagedResource<vk::SwapchainKHR> vk_swapchain;
+-    ManagedResource<vk::Semaphore> vk_acquire_semaphore;
++    std::vector<ManagedResource<vk::Semaphore>> vk_acquire_semaphores;
++    std::vector<ManagedResource<vk::Fence>> vk_submit_fences;
++    uint32_t current_slot = 0;
+     std::vector<vk::Image> vk_images;
+     vk::Format vk_image_format;
+     vk::Extent2D vk_extent;

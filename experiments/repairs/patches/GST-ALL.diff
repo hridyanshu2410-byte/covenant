@@ -1,0 +1,38 @@
+Case:     GST-ALL
+Project:  GStreamer gst-plugins-bad (Vulkan library)
+Upstream: https://gitlab.freedesktop.org/gstreamer/gstreamer (GitHub mirror: https://github.com/GStreamer/gstreamer)
+Revision: tag 1.24.2 (2d82731515)
+Paths:    relative to subprojects/gst-plugins-bad in the GStreamer monorepo
+Files:    2 changed, +2/-2
+          gst-libs/gst/vulkan/gstvkfullscreenquad.c
+          gst-libs/gst/vulkan/gstvkswapper.c
+Cause:    both GStreamer causes (GST-WAIT and GST-IA)
+Repair:   the two one-line patches together
+Apply:    git apply GST-ALL.diff   (from subprojects/gst-plugins-bad in the GStreamer monorepo; this header is ignored by git apply)
+
+diff --git a/gst-libs/gst/vulkan/gstvkfullscreenquad.c b/gst-libs/gst/vulkan/gstvkfullscreenquad.c
+index dbe3a94..13457dc 100644
+--- a/gst-libs/gst/vulkan/gstvkfullscreenquad.c
++++ b/gst-libs/gst/vulkan/gstvkfullscreenquad.c
+@@ -1508,7 +1508,7 @@ gst_vulkan_full_screen_quad_fill_command_buffer (GstVulkanFullScreenQuad * self,
+         .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+         .pNext = NULL,
+         .srcAccessMask = in_views[i]->image->barrier.parent.access_flags,
+-        .dstAccessMask = VK_ACCESS_INPUT_ATTACHMENT_READ_BIT,
++        .dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
+         .oldLayout = in_views[i]->image->barrier.image_layout,
+         .newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+         /* FIXME: implement exclusive transfers */
+diff --git a/gst-libs/gst/vulkan/gstvkswapper.c b/gst-libs/gst/vulkan/gstvkswapper.c
+index 1c94aa9..cebe135 100644
+--- a/gst-libs/gst/vulkan/gstvkswapper.c
++++ b/gst-libs/gst/vulkan/gstvkswapper.c
+@@ -1297,7 +1297,7 @@ reacquire:
+     goto error;
+ 
+   {
+-    VkPipelineStageFlags stages = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
++    VkPipelineStageFlags stages = VK_PIPELINE_STAGE_TRANSFER_BIT;
+     VkSubmitInfo submit_info = { 0, };
+ 
+     /* *INDENT-OFF* */

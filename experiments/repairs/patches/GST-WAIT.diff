@@ -1,0 +1,24 @@
+Case:     GST-WAIT
+Project:  GStreamer gst-plugins-bad (Vulkan library)
+Upstream: https://gitlab.freedesktop.org/gstreamer/gstreamer (GitHub mirror: https://github.com/GStreamer/gstreamer)
+Revision: tag 1.24.2 (2d82731515)
+Paths:    relative to subprojects/gst-plugins-bad in the GStreamer monorepo
+Files:    1 changed, +1/-1
+          gst-libs/gst/vulkan/gstvkswapper.c
+Cause:    vulkansink waits for the acquire semaphore at BOTTOM_OF_PIPE, which blocks no stage, so the swapchain image's transition and blit are not ordered after the presentation engine's read
+Repair:   wait at TRANSFER (the stage of the barrier and the blit)
+Apply:    git apply GST-WAIT.diff   (from subprojects/gst-plugins-bad in the GStreamer monorepo; this header is ignored by git apply)
+
+diff --git a/gst-libs/gst/vulkan/gstvkswapper.c b/gst-libs/gst/vulkan/gstvkswapper.c
+index 1c94aa9..cebe135 100644
+--- a/gst-libs/gst/vulkan/gstvkswapper.c
++++ b/gst-libs/gst/vulkan/gstvkswapper.c
+@@ -1297,7 +1297,7 @@ reacquire:
+     goto error;
+ 
+   {
+-    VkPipelineStageFlags stages = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
++    VkPipelineStageFlags stages = VK_PIPELINE_STAGE_TRANSFER_BIT;
+     VkSubmitInfo submit_info = { 0, };
+ 
+     /* *INDENT-OFF* */
