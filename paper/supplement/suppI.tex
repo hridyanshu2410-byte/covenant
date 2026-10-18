@@ -16,7 +16,7 @@ its full test suite run from the frozen snapshot; (4) every program was traced, 
 grouped, and run under validation; (5) report groups were triaged by the written rules. Amendments to a protocol are
 timestamped and append-only.
 
-\emph{Study 1} (snapshot \code{7cb216ed5753}): 32 programs. Qt~6.4.2 rendering hardware interface with its Vulkan
+\emph{Study 1}: 32 programs. Qt~6.4.2 rendering hardware interface with its Vulkan
 backend, 13 Qt Quick~3D examples and one Qt Quick example, run with the \code{qml} tool; wgpu (15 examples, Vulkan
 backend, release build); the two Vulkan examples of Dear ImGui; and vkcube~1.3.275. Programs that render only on
 demand (fewer than 20 presents), need a compiled module, or redraw only on input were excluded at bring-up. Prior
@@ -24,7 +24,7 @@ exposure: Dear ImGui's Vulkan backend had been linked into two earlier programs 
 for it. Amendment: the sequential runner was replaced by a three-wide one. Bring-up found one model-driver defect,
 fixed before the freeze; it changed no checker logic.
 
-\emph{Study 2} (snapshot \code{76e393826ae9}): 25 programs. GTK~4.14.5 with its Vulkan renderer
+\emph{Study 2}: 25 programs. GTK~4.14.5 with its Vulkan renderer
 (\code{gtk4-widget-factory} and eight \code{gtk4-demo} demos: fishbowl, paintable\_animated, iconscroll,
 path\_spinner, path\_walk, spinner, mask, listview\_clocks); vkmark (scenes vertex, texture, shading, effect2d,
 desktop, cube, clear); mpv~0.37 with libplacebo~6.338 (\code{gpu} and \code{gpu-next}, default and high-quality
@@ -40,7 +40,7 @@ while other checks ran beside it and was rerun alone; it then finished, but grou
 alone, so the program is checked but not grouped and its diagnostics were classified one by one; (c) libplacebo refuses software devices unless one is named, so
 the mpv baseline runs name lavapipe.
 
-\emph{Baseline.} Khronos validation layer at \code{0ad67fd} with synchronization validation and its shader-access
+\emph{Baseline.} Khronos validation layer (Table~\ref{tab:s-software}) with synchronization validation and its shader-access
 heuristic and load-after-store checks enabled, on lavapipe (Mesa~25.2.8), same programs and commands, limited to 20
 presents by a shim (mpv: to the end of the test video, since libplacebo loads its own entry points).
 
@@ -184,11 +184,11 @@ GTK-PRS & 4.14.5 & \code{fc6581cf3b} (2025-11-12) & changes the pattern & gtk\#7
 \end{tabular}}
 \end{table}
 
-The two initial fix attempts are vkmark's. The uniform-buffer commit \code{fd2d798} (one uniform buffer per swapchain
+The two initial fix attempts are vkmark's. The uniform-buffer commit (one uniform buffer per swapchain
 image) leaves 136 of the cause's 152 diagnostics, because it rewrites image $i$'s buffer once acquire returns $i$, which
 does not show the host that the frame that read that buffer has finished; and in the \code{shading} scene it drops the
 fragment stage from the uniform binding's descriptor layout (\code{structure.binding-not-in-layout}; validation reports
-VUID 07988), which vkmark corrected three weeks later. The acquire commit \code{956e145} leaves 119
+VUID 07988), which vkmark corrected three weeks later. The acquire commit leaves 119
 \code{acquire-semaphore-in-use} diagnostics, and validation still reports its semaphore error (01779).
 
 Seven causes are present in the current sources (checked 2026-10-16). Two were reported by others before our study:
@@ -202,12 +202,11 @@ There are \emph{11 source-patch cases covering nine causes}: one case per cause 
 the five vkmark causes) and two combined cases, GST-ALL and VKMARK-ALL, that apply all patches of a project together.
 They are distinct from the 11 historical dossiers of \S\ref{sup:dossiers}; SDL-1 is in both. Each case: the original
 program, a source repair, a rebuild with the original flags, and a rerun with the same command (model driver, 20
-presents), checked in conservative and observed capture, with validation (\code{0ad67fd}, lavapipe) before and after.
+presents), checked in conservative and observed capture, with validation (lavapipe) before and after.
 A repair is \emph{clean for its cause} when the patched run has no diagnostic of that cause and no diagnostic code the
 original lacked; remaining diagnostics are attributed by written rules (code and resource) to the other listed causes.
 The cases were first checked with the snapshot frozen for study~2 and then re-traced from the same sources and patches
-and re-checked with the release (post-hoc; Table~\ref{tab:s-repairs}). The vkmark sources are \code{ab6e6f3}, to which
-the tested Ubuntu package is source-identical. Patches, commands, traces and data are in the artifact.
+and re-checked with the release (post-hoc; Table~\ref{tab:s-repairs}). The tested vkmark package is source-identical to the commit in Table~\ref{tab:s-software}. Patches, commands, traces and data are in the artifact.
 
 \begin{table*}[t]
 \caption{The 11 source-patch cases. Diagnostics / groups, conservative capture, summed over the case's programs, with

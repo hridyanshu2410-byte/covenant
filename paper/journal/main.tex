@@ -387,12 +387,13 @@ does it detect blind (E2, \S\ref{sec:eval-bench}); how precise is the proved con
 Every study below was run with a checker snapshot frozen, by source hash, before the study's first run. We call such
 results \emph{fresh} and report them as scored; a checker defect found during a study was fixed only after it. A result
 of a later checker on code already seen is \emph{post-hoc} and is marked \posthoc{} in tables. The checker that the
-theorems of \S\ref{sec:model} describe is the release (source hash \relhash); Table~\ref{tab:release}
+theorems of \S\ref{sec:model} describe is the release (fingerprint \relhash, a hash of its source that it prints in every report); Table~\ref{tab:release}
 gives its results on every corpus of this section, re-run on the recorded traces. The snapshot of each study is
-listed in \supp{E}.
+listed in \supp{E}. All comparisons use the Khronos validation layer at one fixed commit, run on lavapipe (Mesa's
+software Vulkan driver); \supp{A} lists the exact version of it and of every program we tested.
 
 \begin{table*}[t]
-\caption{The released checker (source hash \relhash, verified configuration) on every corpus, re-run on the
+\caption{The released checker (verified configuration) on every corpus, re-run on the
 recorded traces. All rows are post-hoc: every corpus was seen before the release was fixed. \emph{In domain}: runs that are guarantee-eligible (\S\ref{sec:eligible}): checking completed, no
 unmodelled command with a memory effect, no host write that relies on premise A-HOST. Report groups are
 true / technicality / unresolved / false alarm. \emph{Incomplete}: grouping stopped at its budget and gives site
@@ -451,15 +452,15 @@ mask taken to order something. The release passes all 378 tests of its suite.
   \caption{\textbf{Barrier mutants and proved plans.} (a) Of 111 recorded barrier calls in three
   microbenchmarks, the proved plans of \S\ref{sec:elide} remove 63 and narrow 45; the 3 kept are host-readback
   barriers that the optimizer never touches. (b) The 750 random barrier mutants checked by \sys and by Khronos
-  synchronization validation (\code{0ad67fd}, lavapipe): no mutant is reported by validation only. ``Checker only''
+  synchronization validation (lavapipe): no mutant is reported by validation only. ``Checker only''
   mutants remove the barrier after an \code{atomicAdd} (a write that validation still misses) or narrow a readback
   transition to a stage that excludes the copy. The released checker gives the same diagnostics on every mutant as
   the snapshot shown.}
   \label{fig:barriers}
 \end{figure*}
 We generated 750 random barrier plans for three headless single-queue workloads, each removing or narrowing barrier
-structs within the recorded masks, and ran each under validation at the commit pinned for every later study
-(\code{0ad67fd}, full synchronization settings, lavapipe) and through the checker frozen for the first fresh study;
+structs within the recorded masks, and ran each under validation at the commit fixed for every later study
+(full synchronization settings, lavapipe) and through the checker frozen for the first fresh study;
 the release gives identical diagnostics on every mutant (Figure~\ref{fig:barriers}b, Table~\ref{tab:release}).
 Mutant-level agreement is 95.9\%: 86 both safe, 633 both hazardous, 31 checker only and \textbf{none validation only}.
 Thirty of the 31 checker-only mutants remove the barrier between an \code{atomicAdd} into a histogram and the
@@ -482,7 +483,7 @@ depth buffer), in five configurations with two or three frames in flight and, fo
 compute-only queue family with ownership transfers. In every frame the host waits on an earlier frame, writes mapped
 memory, acquires and presents. A generator mutates semaphore waits and signals, per-frame indexing, fence waits,
 presents, every barrier and both halves of each ownership transfer, for 1,251 programs in all. Each runs under \sys
-and under validation (HEAD \code{0ad67fd}, full synchronization settings) on lavapipe with a real X11 surface; the
+and under validation (full synchronization settings) on lavapipe with a real X11 surface; the
 multi-queue configuration ran on the Khronos mock driver, patched to give the second family a compute queue, where
 validation analyses the submitted commands without executing them. Findings are normalized to (class, object) keys and
 every disagreement is classified by explicit rules (Table~\ref{tab:wholeframe}).
@@ -678,8 +679,8 @@ rules into true bug, technicality, false alarm or \emph{unresolved} (the verdict
 specification we cannot settle), and into two families: \emph{race} diagnostics, about unordered accesses, and
 \emph{protocol} diagnostics, about the use of semaphores, fences and swapchain images. A group takes the most
 consequential class of its members. A checker defect found during triage is not fixed in the frozen checker; it is
-counted as it fell and fixed only for the next study. The baseline is synchronization validation (VVL \code{0ad67fd},
-all synchronization checks enabled) on lavapipe, on the same programs and number of presents, with two exceptions:
+counted as it fell and fixed only for the next study. The baseline is synchronization validation
+(all synchronization checks enabled) on lavapipe, on the same programs and number of presents, with two exceptions:
 one wgpu program crashes under lavapipe and has no validation result, and the mpv runs could not be limited to 20
 presents and play their test video to the end. Comparisons with validation are over the 56 programs it completed.
 
@@ -775,10 +776,10 @@ The same check tests upstream repairs. For each of the nine causes already chang
 \emph{initial fix attempt} (a commit that changes the implicated pattern but, re-run, leaves diagnostics of the
 cause), a \emph{commit changing the pattern} (read in the source, not re-run) and a \emph{verified complete repair}
 (re-run, no diagnostic of the cause). We re-ran vkmark's two commits. Both are initial fix attempts: the
-uniform-buffer commit (\code{fd2d798}) leaves 136 of the cause's 152 diagnostics, because it rewrites image $i$'s
+uniform-buffer commit leaves 136 of the cause's 152 diagnostics, because it rewrites image $i$'s
 buffer once acquire returns $i$, which does not show the host that the frame that read it has finished, and in one
 scene it drops a fragment stage from a descriptor layout, which vkmark corrected later; the acquire commit
-(\code{956e145}) leaves 119 diagnostics, and validation still reports its semaphore error. The other seven are
+leaves 119 diagnostics, and validation still reports its semaphore error. The other seven are
 commits changing the pattern.
 
 \paragraph{Premises}
