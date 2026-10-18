@@ -98,6 +98,41 @@ fresh-study-2 snapshot & \code{76e393826ae9} & fresh study 2 (25 programs); the 
 \end{table}
 
 \begin{table}[htbp]
+\caption{Tested software. A seven- to twelve-character entry is the start of a git commit ID in the project's public
+repository, so the exact code can be checked out; other entries are release versions.}
+\label{tab:s-software}
+\scriptsize
+\begin{tabular}{@{}p{0.36\columnwidth}p{0.2\columnwidth}p{0.36\columnwidth}@{}}
+\toprule
+Project & version & used in \\
+\midrule
+Khronos validation layer & \code{0ad67fd} & baseline of every comparison \\
+lavapipe (Mesa) & 25.2.8 & driver of every validation run \\
+Vulkan specification (Vulkan-Docs) & v1.4.365 & cited text (line numbers from \code{193ebe195f47}) \\
+Vulkan-Tutorial & \code{baf622df} & tutorial study \\
+vulkan-guide & \code{dcf72a8b} & tutorial study \\
+vkQuake & \code{749b4fd} & engine study 1 \\
+Diligent Engine & \code{efe5da2} & engine study 1 \\
+SDL3 & \code{e4af6f8} & engine study 2 \\
+bgfx & \code{73183be} & engine study 2 \\
+Granite & \code{fb178c8} & engine study 3 \\
+VulkanSceneGraph & \code{2feabc6} & engine study 3 \\
+vsgExamples & \code{46a82943} & engine study 3 \\
+SaschaWillems/Vulkan & \code{41a4410} & development data \\
+KhronosGroup/Vulkan-Samples & \code{177edebf} & development data \\
+vuk & \code{61abde9} & development data \\
+Qt & 6.4.2 & fresh study 1 \\
+vkcube & 1.3.275 & fresh study 1 \\
+GTK & 4.14.5 & fresh study 2 \\
+vkmark & \code{ab6e6f3} & fresh study 2 (the tested Ubuntu package is source-identical) \\
+mpv / libplacebo & 0.37 / 6.338 & fresh study 2 \\
+GStreamer & 1.24.2 & fresh study 2 \\
+\rcgp & \code{85f2b04} & expressiveness comparison (\S\ref{sup:rcgp}) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
 \caption{Configurations of the checker. Only the verified configuration, the default, is covered by the theorems.
 The other switches are opt-in and can be combined; each is recorded in the report's metadata. ``Unrecorded subpass
 flags'': how a trace from a driver that did not record subpass-dependency flags is read.}
@@ -673,12 +708,12 @@ For each fresh study, the checker and a triage protocol were frozen before the f
 group was triaged against the specification and the source as TRUE (a real bug), TECH (a real violation without
 practical effect, e.g.\ on contents discarded anyway, or a universally tolerated pattern), FA (false alarm), DRV (an
 artefact of the model driver; excluded from denominators) or UNRESOLVED. \code{timing.unmodelled-command} warnings are
-listed but not scored. Synchronization validation (HEAD \code{0ad67fd}, all synchronization checks on, lavapipe) on the
+listed but not scored. Synchronization validation (all synchronization checks on, lavapipe) on the
 same frames is supporting evidence only.
 
 \subsection{Tutorials (fresh)}
-All 36 chapter programs of Khronos' Vulkan-Tutorial (\code{baf622df}) and the 7 chapters of vulkan-guide
-(\code{dcf72a8b}) built and ran unmodified for 10 frames; 29 record frame work and were checked. \sys reported 25 report
+All 36 chapter programs of Khronos' Vulkan-Tutorial and the 7 chapters of vulkan-guide
+built and ran unmodified for 10 frames; 29 record frame work and were checked. \sys reported 25 report
 groups in 8 programs (Table~\ref{tab:s-tut}).
 
 \begin{table*}[t]
@@ -703,7 +738,7 @@ of VG-1 is reported by the same validator build), so VG-1 to VG-3 rest on source
 engine-study-2 and engine-study-3 snapshots (dev), grouping gives 6 / 13 / 0 of 19 with no finding lost.
 
 \subsection{vkQuake and Diligent (fresh)}
-vkQuake (\code{749b4fd}; three timedemos, 107--182 presents) and Diligent's glTF viewer (\code{efe5da2}, 20 frames).
+vkQuake (three timedemos, 107--182 presents) and Diligent's glTF viewer (20 frames).
 \begin{itemize}
 \item \textbf{TRUE (VQ-1 + VQ-2)}, one repair group per demo: the indirect-argument and index buffers exist once and the
   next frame's compute rewrites them while the previous frame's indirect draws may read them (VQ-1; validation: 39 / 39
@@ -731,7 +766,7 @@ groups are conservative-capture false alarms classified in Table~\ref{tab:s-capc
 carries one P3 warning (worker-thread host writes).
 
 \subsection{SDL3 and bgfx (fresh)}
-SDL3 (\code{e4af6f8}, two Vulkan back ends, 6 programs) and bgfx (\code{73183be}, 6 programs), 20 presents each.
+SDL3 (two Vulkan back ends, 6 programs) and bgfx (6 programs), 20 presents each.
 \begin{itemize}
 \item \textbf{TRUE (SDL-1)}, 2 groups (two directions of one race, 166 raw): SDL's Vulkan renderer keeps its vertex
   buffers globally rather than per frame, restarts at index 0 every frame and copies into the mapped buffer with no
@@ -746,7 +781,7 @@ Result: 2 / 0 / 13 of 15 (13.3\%); raw 57.2\% true; by cause 1 / 0 / 1. Under th
 alarms, four causes.
 
 \subsection{Granite and VulkanSceneGraph (fresh)}
-Granite (\code{fb178c8}, 4 programs) and VulkanSceneGraph (\code{2feabc6}) with vsgExamples (8 programs); 3 programs
+Granite (4 programs) and VulkanSceneGraph with vsgExamples (8 programs); 3 programs
 aborted under the snapshot frozen for the study (CHK-PS), so 9 were checked.
 \begin{itemize}
 \item \textbf{VulkanSceneGraph, 8 groups, all TRUE, 5 causes.} VSG-1 (library): the semaphore wrapper's default wait
@@ -800,7 +835,7 @@ resource restriction; the store of frame $k$ is in its first access scope. (2) T
 the logically earlier \code{EARLY\_FRAGMENT\_TESTS}; this dependency carries the transition. (3) The chain condition
 holds through \code{EARLY\_FRAGMENT\_TESTS}, so the store happens before the transition and is available to it.
 
-\emph{The specification} (Vulkan-Docs \code{193ebe195f47}) decides the case. In the render pass chapter, external
+\emph{The specification} (Vulkan-Docs v1.4.365) decides the case. In the render pass chapter, external
 subpass dependencies: with \code{srcSubpass = VK\_SUBPASS\_EXTERNAL}, ``the first synchronization scope includes
 commands that occur earlier in submission order than the \code{vkCmdBeginRenderPass}'', limited only by
 \code{srcStageMask} (renderpass.adoc 3693--3706); the first access scope ``is limited to accesses in the pipeline stages
@@ -820,7 +855,7 @@ external subpass dependency only to the accesses of the pass's own attachments. 
 (the depth clear is not ordered after the depth layout transition) in every variant.
 
 \begin{table}[htbp]
-\caption{Minimal reproductions of the two disagreements with validation (validation \code{0ad67fd}, lavapipe; \sys:
+\caption{Minimal reproductions of the two disagreements with validation (validation on lavapipe; \sys:
 fresh-study-1 snapshot). VSG-5: load-operation pairs + store-operation pairs, and cross-frame pairs.
 \code{vsg\_depthpeel}: pairs of pass~1's final transition with pass~2's load and store.}
 \label{tab:s-vsg5}
@@ -857,9 +892,9 @@ transitions in GTK and Qt (\S I), lies in the report direction. There \sys repor
 so the question can only add reports and no clean verdict depends on it.
 
 \subsection{Development data: two sample collections and a render graph}
-SaschaWillems/\-Vulkan (\code{41a4410}, all 99 samples) and Khronos\-Group/\-Vulkan-\-Samples (\code{177edebf}, the 49 samples
+SaschaWillems/\-Vulkan (all 99 samples) and Khronos\-Group/\-Vulkan-\-Samples (the 49 samples
 that record work under the study driver), 10 frames each, plus 27 ray-tracing, mesh-shading and compute samples and the
-78 tests of the vuk render-graph library (\code{61abde9}). Every report was triaged. The checker was then fixed using
+78 tests of the vuk render-graph library. Every report was triaged. The checker was then fixed using
 these reports, so they are development data (Table~\ref{tab:s-real}).
 
 \begin{table}[htbp]
@@ -902,8 +937,8 @@ is ours. For the 11 strongest we prepared an evidence dossier, the \emph{11 hist
 revision, the code, the diagnostic of the engine-study-3 snapshot verbatim, validation's messages on the same frames
 where validation can see the bug, a specification argument with a concrete bad schedule, a patch, and logs before and
 after under both tools. They are distinct from the 11 source-patch cases of the fresh studies (\S\ref{sup:repairs}),
-which cover nine causes; SDL-1 is in both. All dossier runs use the engine-study-3 snapshot (\code{2f74a46b1341}) and
-its model driver; the validation baseline is lavapipe with validation HEAD \code{0ad67fd}. These are \emph{source repairs} (the third kind of repair evidence in the paper's \S\ref{P-sec:eval-bugs}). A source repair counts as \emph{re-checked} when,
+which cover nine causes; SDL-1 is in both. All dossier runs use the engine-study-3 snapshot and
+its model driver; the validation baseline is lavapipe with the validation commit of Table~\ref{tab:s-software}. These are \emph{source repairs} (the third kind of repair evidence in the paper's \S\ref{P-sec:eval-bugs}). A source repair counts as \emph{re-checked} when,
 after rebuilding and re-running, \sys's count on the bug is 0, validation's count is 0 where validation can see the bug,
 and no new diagnostic kind appears. The affected code was unchanged at each project's head when its dossier was
 written. None has been confirmed by a maintainer yet.
@@ -918,13 +953,13 @@ parentheses.}
 \toprule
 Bug & Project & Revision & Class & Syncval & Repair \\
 \midrule
-KS-1 & Vulkan-Samples & \code{177edeb} & semaphore signal with \code{stageMask = 0} (empty first scope) & yes (11) & 99 $\to$ 0 (11 $\to$ 0) \\
-KS-3 & Vulkan-Samples & \code{177edeb} & no barrier between two dynamic-rendering instances on the swapchain image & yes (8) & 40 $\to$ 0 (8 $\to$ 0) \\
+KS-1 & Vulkan-Samples & \code{177edebf} & semaphore signal with \code{stageMask = 0} (empty first scope) & yes (11) & 99 $\to$ 0 (11 $\to$ 0) \\
+KS-3 & Vulkan-Samples & \code{177edebf} & no barrier between two dynamic-rendering instances on the swapchain image & yes (8) & 40 $\to$ 0 (8 $\to$ 0) \\
 SW-T1 & Sascha Willems Vulkan & \code{41a4410} & host write to a uniform buffer still read by a frame in flight & n/a & 500 $\to$ 0 \\
 SW-T6 & Sascha Willems Vulkan & \code{41a4410} & host write to a uniform buffer right after the compute submit that reads it & n/a & 2 $\to$ 0 \\
-SDL-1 & SDL3 & \code{e4af6f8e} & host write to vertex buffers shared by frames in flight & n/a & 166 $\to$ 0 \\
+SDL-1 & SDL3 & \code{e4af6f8} & host write to vertex buffers shared by frames in flight & n/a & 166 $\to$ 0 \\
 VUK-1 & vuk & \code{61abde9} & render-graph barrier derivation: storage-read access for a uniform buffer & yes (1) & 1 $\to$ 0 (1 $\to$ 0) \\
-VSG-1 & VulkanSceneGraph & \code{2feabc69} & semaphore waited at \code{BOTTOM\_OF\_PIPE} (empty second scope) & yes (18) & 19 $\to$ 0 (18 $\to$ 0) \\
+VSG-1 & VulkanSceneGraph & \code{2feabc6} & semaphore waited at \code{BOTTOM\_OF\_PIPE} (empty second scope) & yes (18) & 19 $\to$ 0 (18 $\to$ 0) \\
 VSG-3 & vsgExamples & \code{46a82943} & no barrier between compute write and vertex-input read & yes (19) & 58 $\to$ 0 (19 $\to$ 0) \\
 VSG-5 & vsgExamples & \code{46a82943} & subpass dependency without depth stages: depth clear vs.\ layout transition & yes (20) & 120 $\to$ 0 (39 $\to$ 0) \\
 VD-1 & DiligentCore & \code{074060c} & state tracker does not treat depth writes as writes & yes (9 + 5) & 114 $\to$ 0 (14 $\to$ 0) \\
@@ -1071,7 +1106,7 @@ and disabling the event first-scope cut makes 158 of them fail.
 
 \paragraph{Barrier mutants}
 750 random barrier plans (250 per workload: \emph{particles}, \emph{deferred}, \emph{postchain}) remove or narrow
-barrier structs within the recorded masks. On the validation commit pinned for every later study (\code{0ad67fd}, full
+barrier structs within the recorded masks. On the validation commit pinned for every later study (full
 synchronization settings, lavapipe) and the fresh-study-1 snapshot (post-hoc), mutant-level agreement is 95.9\%: 86
 both safe, 633 both hazard, 31 checker only and 0 validation only; at the resource level, 2,616 both, 210 checker only
 and 0 validation only. Thirty of the 31 checker-only mutants remove or narrow the barrier between an \code{atomicAdd}
@@ -1289,9 +1324,9 @@ vkQuake (3) & 71,101/14/0 & 81,161/27/0 & 71,104/14/0 & 81,161/27/0 & 71,104/14/
 \end{table*}
 
 \subsection{\rcgp}
+\label{sup:rcgp}
 For every first-collection bug we asked whether \rcgp's contract language rules it out through its typed API (the buggy
-program fails to compile or cannot be written; escape hatches do not count), from its API and source at commit
-\code{85f2b04}, confirmed by 35 compile-only ports compiled by its own compiler, each buggy and fixed; where a port
+program fails to compile or cannot be written; escape hatches do not count), from its API and source (Table~\ref{tab:s-software}), confirmed by 35 compile-only ports compiled by its own compiler, each buggy and fixed; where a port
 disagreed with our reading, the compile result was kept. \rcgp can express 23 of 126: 22 of 27 structure bugs, 1 of 48
 timing bugs and none of 51 meaning bugs. The ports changed seven earlier verdicts. Head to head, we ported every blind
 case \rcgp can express plus the 12 closest calls (29 ports, 58 compiles, all as predicted): \rcgp rules out 17 of the 98
