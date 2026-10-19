@@ -110,7 +110,11 @@ operation.
 $D$'s first stage set, $a$ is not in another struct of $D$'s call, and $p(a) < c_D$ when $D$ is an event wait. It
 is in $\Sc{2}(D)$ if $p(a) > p(D)$ and $s(a)$ is in $D$'s second stage set. Transitions are the exception: $t_B$ is
 in $\Sc{1}(B)$ and $\Sc{2}(B)$, in $\Sc{1}$ of a later signal with $S = \top$, and in $\Sc{2}$ of an earlier wait
-with $W = \top$ or an earlier submission wait, and in no other scope.
+with $W = \top$ or an earlier submission wait, and in no other scope. Accordingly, both stage sets of the barrier
+struct $B$ that performs a transition contain the pseudo-stage $\mathsf{LT}$, and no other dependency's stage set does.
+For the link classes below, $\mathsf{LT}$ counts as a framebuffer-space stage: $\mathsf{G}$ and $\mathsf{L}$ keep
+it and $\mathsf{N}$ removes it. So a write in $B$'s first access scope is ordered before $t_B$ through the link
+$(B,\mathsf{G})$, and $t_B$ before an access in $B$'s second access scope.
 
 \emph{Access scopes,} for an element $\ell$: $a \in \ASc{1}{\ell}(D)$ if $a \in \Sc{1}(D)$ and, when $D$ is a barrier
 struct, $s(a) \in \AS(S_1)$, $f(a) \in_{k(a)} A_1$, and $r_B = \ast$ or ($r_B = r(a)$ and $\ell \in R_B$).
@@ -138,8 +142,11 @@ treated as one (premise A-HOST, \S\ref{sec:hostdom}). The intermediate dependenc
 \emph{Races.} $a$ and $b$ \emph{conflict} if $r(a) = r(b)$, $R(a) \cap R(b) \ne \emptyset$, one of them writes, and
 they are not exempt. Five kinds of pair are exempt: (E1)~two accesses of one command; (E2)~attachment accesses of one
 render-pass scope on one queue (rasterization order); (E3)~a load or store operation and an access of its subpass
-instance; (E4)~two accesses on one queue with compatible atomic modes; (E5)~two transitions on one queue, at least one of them
-explicit (rule R-LT).
+instance; (E4)~two accesses on one queue with compatible atomic modes, that is, on every block member both touch,
+both are atomic operations whose memory scope holds every invocation of the device (\code{Device}, \code{QueueFamily}
+or \code{CrossDevice}), or both read; (E5)~two transitions on one queue, at least one of them explicit (rule R-LT).
+A store through an index taken from an atomic is an ordinary write: the atomic need not hand out distinct indices
+(\code{atomicAdd(c, 0)} gives every caller the same one).
 They \emph{race at} $\ell \in R(a) \cap R(b)$ if neither $\ordl{\ell}(a,b)$ nor $\ordl{\ell}(b,a)$ holds, where
 $\ordl{\ell}(x,y)$ is $x \mspecl{\ell} y$ if $k(x) = \mathsf{W}$ and $x \xspec y$ otherwise. We write $a \spec b$ when
 $\ordl{\ell}(a,b)$ holds for every $\ell \in R(a) \cap R(b)$. $\Hspec(\tau)$ is the set of pairs that race at some
@@ -369,7 +376,10 @@ without a signal). \emph{Reporting complete}: report grouping finished within it
 diagnostic is still reported, as a site group without a repair, and the result is marked incomplete (grouping never
 removes a diagnostic, so this does not affect the guarantee). \emph{Guarantee-eligible}: the verified configuration,
 checking complete, no detected capture or coverage violation (an unmodelled command, an untracked mapping, a capture
-warning, host writes from another thread), and no premise warning. For an eligible trace, an empty error report is an
+warning, host writes from another thread, a pipeline whose shader code is missing or cannot be read), and no premise
+warning. The configuration is resolved once per check, from the environment and any explicit argument, and the
+same values drive the check and the reported eligibility, so a check run with an opt-in heuristic is never reported
+as verified. For an eligible trace, an empty error report is an
 instance of Corollary~\ref{cor:sched} and Proposition~\ref{prop:hostdom}; P2 and the model premises remain assumptions.
 \S\ref{sec:eval} reports eligibility per evaluated trace.
 

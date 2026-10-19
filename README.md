@@ -19,12 +19,12 @@ This repository accompanies an anonymous paper submission (Anonymous authors).
 | `covenant/data/` | SPIR-V grammar files from Khronos SPIRV-Headers, with their license |
 | `model_driver/` | the model driver `libcovvk` (C++), its code generator `gen.py`, the image-I/O interposer `covio.c`, and examples; see `model_driver/README.md` for the trace format |
 | `tools/check_trace.py` | checks one trace of an unannotated program |
-| `bench/run.py`, `bench/cases/` | GPUBugBench: 114 distilled reproductions of real-world graphics bugs, each with a buggy and a fixed variant, and the runner |
+| `bench/run.py`, `bench/cases/` | GPUBugBench: 114 distilled reproductions of real-world graphics bugs, each with a buggy and a fixed variant, the runner, and this release's results (`bench/results-release.md`) |
 | `bench/elide/` | barrier-elision workloads, plans, traces and measurement scripts (see `bench/elide/README.md`) |
 | `tests/` | unit, property and end-to-end tests; `tests/fixtures/minimal_frames/` holds the minimal frames of the paper's appendix as standalone scripts |
 | `examples/`, `run_demo.py` | a small forward renderer written against the contract IR, with seeded bugs |
 | `paper/` | LaTeX sources and figures of the journal paper and its supplementary material |
-| `experiments/` | the paper's whole-frame differential test against Khronos validation (`wholeframe/`) and the source repairs of vkmark, GStreamer, Dear ImGui and SDL3 (`repairs/`), each with a README |
+| `experiments/` | the inputs and outputs of every evaluation result, with a README per experiment; `experiments/README.md` maps each table of the paper to its files and re-check command (whole-frame differential test, barrier mutants, fresh studies with the upstream ledger, source repairs, archived traces) |
 
 ## Requirements
 
