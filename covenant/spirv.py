@@ -210,15 +210,15 @@ _WRITE_PTR = {"OpStore", "OpAtomicStore", "OpAtomicExchange", "OpAtomicCompareEx
               "OpAtomicFMaxEXT", "OpCopyMemory"}
 
 
-def entry_bindings(m, entry):
-    """{(set, binding): written} for the descriptor resources the entry point
-    can reach (through its call graph). Resources it never touches are absent.
-    "written" means some reachable store, atomic or image write targets it."""
-    fid = next((f for _, f, n, _ in m.entries if n == entry), None)
-    if fid is None:
-        return None
-    var_key = {v: (d.get("DescriptorSet", [0])[0], d["Binding"][0])
-               for v, d in m.decos.items() if "Binding" in d}
+class AnalysisIncomplete(ValueError):
+    """The entry point accesses descriptor memory through a value the provenance
+    analysis does not attribute to a descriptor; callers fail closed."""
+
+
+_DESC_CLASSES = (0, 2, 11, 12)      # UniformConstant, Uniform, Image, StorageBuffer
+
+
+def _reach(m, fid):
     reach, todo = set(), [fid]
     while todo:
         f = todo.pop()
@@ -226,27 +226,93 @@ def entry_bindings(m, entry):
             continue
         reach.add(f)
         todo += [i.args[0] for i in m.functions[f] if i.op == "OpFunctionCall"]
-    root = {v: v for v in var_key}            # id -> descriptor variable it derives from
+    return reach
+
+
+def _descriptor_roots(m, reach, var_key, through_load):
+    """{id: frozenset of descriptor variables it may derive from}, to a fixpoint.
+    A value keeps every root it can have: a helper parameter called with A at one
+    call site and with B at another derives from both. Follows access chains,
+    copies, OpPhi / OpSelect, function parameters and return values, and
+    pointers stored to and loaded from variables. through_load(i): whether an
+    OpLoad result derives from its pointer's roots."""
+    root = {v: frozenset((v,)) for v in var_key}
+    rets = {}                                   # function id -> roots of its return values
+    body = [(f, i) for f in reach for i in m.functions[f]]
+
+    def add(k, r):
+        if r and not r <= root.get(k, frozenset()):
+            root[k] = root.get(k, frozenset()) | r
+            return True
+        return False
+
+    changed = True
+    while changed:
+        changed = False
+        for f, i in body:
+            a = i.args
+            if i.op in _PTR_OPS and a and a[0] in root and (i.op != "OpLoad" or through_load(i)):
+                changed |= add(i.id, root[a[0]])
+            elif i.op == "OpPhi":
+                changed |= add(i.id, frozenset().union(*(root.get(v, frozenset()) for v in a[0::2])))
+            elif i.op == "OpSelect" and len(a) > 2:
+                changed |= add(i.id, root.get(a[1], frozenset()) | root.get(a[2], frozenset()))
+            elif i.op == "OpCopyLogical" and a:
+                changed |= add(i.id, root.get(a[0], frozenset()))
+            elif i.op == "OpFunctionCall":
+                for prm, arg in zip(m.params.get(a[0], []), a[1:]):
+                    changed |= add(prm, root.get(arg, frozenset()))
+                changed |= add(i.id, rets.get(a[0], frozenset()))
+            elif i.op == "OpReturnValue" and a and a[0] in root:
+                if not root[a[0]] <= rets.get(f, frozenset()):
+                    rets[f] = rets.get(f, frozenset()) | root[a[0]]
+                    changed = True
+            elif i.op == "OpStore" and len(a) > 1 and a[1] in root and \
+                    m.tkind(m.defs[a[1]].type if a[1] in m.defs else None) == "pointer":
+                changed |= add(a[0], root[a[1]])        # a pointer kept in a variable
+    return root
+
+
+def _check_attributed(m, reach, root):
+    """Raise AnalysisIncomplete if a load, store, atomic or image write reaches
+    descriptor memory through a pointer or image the analysis did not attribute."""
+    for f in reach:
+        for i in m.functions[f]:
+            if i.op == "OpImageWrite" or i.op in _WRITE_PTR or i.op in ("OpLoad", "OpImageTexelPointer"):
+                tgt = i.args[0] if i.args else None
+                if tgt is None or tgt in root:
+                    continue
+                d = m.defs.get(tgt)
+                t = m.types.get(d.type) if d is not None else None
+                if i.op == "OpImageWrite" or i.op == "OpImageTexelPointer" or \
+                        (t is not None and t.op == "OpTypePointer" and t.args[0] in _DESC_CLASSES):
+                    raise AnalysisIncomplete(f"{i.op} through %{tgt} is not attributed to a descriptor")
+
+
+def entry_bindings(m, entry):
+    """{(set, binding): written} for the descriptor resources the entry point
+    can reach (through its call graph). Resources it never touches are absent.
+    "written" means some reachable store, atomic or image write targets it.
+    Raises AnalysisIncomplete when an access cannot be attributed."""
+    fid = next((f for _, f, n, _ in m.entries if n == entry), None)
+    if fid is None:
+        return None
+    var_key = {v: (d.get("DescriptorSet", [0])[0], d["Binding"][0])
+               for v, d in m.decos.items() if "Binding" in d}
+    reach = _reach(m, fid)
+    root = _descriptor_roots(m, reach, var_key, lambda i: True)
+    _check_attributed(m, reach, root)
     out = {}
-    for _ in range(4):                        # params bound through calls need a few rounds
-        for f in reach:
-            for i in m.functions[f]:
-                if i.op in _PTR_OPS and i.args and i.args[0] in root:
-                    root[i.id] = root[i.args[0]]
-                elif i.op == "OpFunctionCall":
-                    for prm, arg in zip(m.params.get(i.args[0], []), i.args[1:]):
-                        if arg in root:
-                            root[prm] = root[arg]
     for f in reach:
         for i in m.functions[f]:
             if i.op in _NO_ACCESS:
                 continue                    # literal operands (OpLine line numbers) are no ids
             for a in i.args:
-                if a in root:
-                    out.setdefault(var_key[root[a]], False)
+                for v in root.get(a, ()):
+                    out.setdefault(var_key[v], False)
             tgt = i.args[0] if i.args and (i.op in _WRITE_PTR or i.op == "OpImageWrite") else None
-            if tgt in root:
-                out[var_key[root[tgt]]] = True
+            for v in root.get(tgt, ()):
+                out[var_key[v]] = True
     return out
 
 
@@ -258,7 +324,7 @@ _CHAIN_OPS = ("OpAccessChain", "OpInBoundsAccessChain", "OpPtrAccessChain", "OpI
 _DEVICE_SCOPES = (0, 1, 5)     # Scope CrossDevice, Device, QueueFamily: every invocation of every command
 
 
-def entry_binding_modes(m, entry):
+def entry_binding_modes(m, entry, spans=False):
     """{(set, binding): frozenset((class, member))} for written descriptor
     resources whose every access in the entry point is a plain load ("read")
     or
@@ -278,33 +344,22 @@ def entry_binding_modes(m, entry):
       slots=True, COVENANT_HEURISTIC_SLOTS=1); flow-insensitive: a function
       variable once assigned an atomic's result counts as one.
 
-    member: the constant index of the top-level block member accessed (None:
-    unknown, or an image). Bindings with any other access (plain store, image
-    read/write, ...) are absent. See modes_compatible."""
+    member: the constant index of the top-level block member accessed, or with
+    spans=True its byte span (lo, hi) within the block, from the Offset
+    decorations (hi None: to the end of the range). None: unknown, a block
+    array, an image, or a pointer that reaches the access through a helper
+    parameter. The loader turns spans into buffer bytes by adding the
+    descriptor's offset (physical_modes). Bindings with any other access (plain
+    store, image read/write, ...) are absent. See modes_compatible."""
     fid = next((f for _, f, n, _ in m.entries if n == entry), None)
     if fid is None:
         return {}
     var_key = {v: (d.get("DescriptorSet", [0])[0], d["Binding"][0])
                for v, d in m.decos.items() if "Binding" in d}
-    reach, todo = set(), [fid]
-    while todo:
-        f = todo.pop()
-        if f in reach or f not in m.functions:
-            continue
-        reach.add(f)
-        todo += [i.args[0] for i in m.functions[f] if i.op == "OpFunctionCall"]
+    reach = _reach(m, fid)
     body = [i for f in reach for i in m.functions[f]]
-    root = {v: v for v in var_key}
     handle = ("image", "sampledimage", "sampler", "accelerationstructurekhr", "pointer")
-    for _ in range(4):
-        for i in body:
-            if i.op in _PTR_OPS and i.args and i.args[0] in root and \
-                    (i.op != "OpLoad" or m.tkind(i.type) in handle):
-                root[i.id] = root[i.args[0]]
-            elif i.op == "OpFunctionCall":
-                for prm, arg in zip(m.params.get(i.args[0], []), i.args[1:]):
-                    if arg in root:
-                        root[prm] = root[arg]
+    root = _descriptor_roots(m, reach, var_key, lambda i: m.tkind(i.type) in handle)
     # values computed from an atomic's result (through function / private variables too)
     derived, dvars = set(), set()
     for i in body:
@@ -335,7 +390,9 @@ def entry_binding_modes(m, entry):
         return False
 
     def member(ptr):
-        """First member index below the descriptor variable (None: unknown / whole)."""
+        """First member below the descriptor variable: its index, or with spans
+        its byte span (lo, hi) in the block (hi None: to the end of the range).
+        None: unknown, the whole block, or a block array."""
         top = None
         for _ in range(64):
             d = m.defs.get(ptr)
@@ -345,7 +402,20 @@ def entry_binding_modes(m, entry):
         if top is None or len(top.args) < 2 or top.args[0] not in var_key:
             return None
         c = m.consts.get(top.args[1])
-        return c if isinstance(c, int) else None
+        if not isinstance(c, int):
+            return None
+        if not spans:
+            return c
+        var = m.defs.get(top.args[0])
+        st = m.pointee(var.type) if var is not None and var.type in m.types else None
+        if m.tkind(st) != "struct":
+            return None                     # a descriptor array: the index is no member
+        offs = [m.member_decos.get((st, k), {}).get("Offset", [None])[0]
+                for k in range(len(m.types[st].args))]
+        if c >= len(offs) or offs[c] is None:
+            return None
+        hi = min((o for o in offs if o is not None and o > offs[c]), default=None)
+        return (offs[c], hi)
 
     modes, written = {}, set()
     for i in body:
@@ -356,42 +426,74 @@ def entry_binding_modes(m, entry):
             continue                        # passes the pointer on: its uses are in the callee
         if i.op in _PTR_OPS and i.id in root:
             continue                        # derives a pointer / loads a descriptor handle
-        key = var_key[root[refs[0]]]
+        keys = {var_key[v] for a in refs for v in root[a]}
         ptr = i.args[0]
         if i.op.startswith("OpAtomic") and ptr in root and \
                 len(i.args) > 1 and m.consts.get(i.args[1]) in _DEVICE_SCOPES:
             cls = "atomic"
             if i.op != "OpAtomicLoad":
-                written.add(key)
+                written |= keys
         elif i.op in ("OpStore", "OpLoad") and ptr in root and slot(ptr):
             cls = "slot"
             if i.op == "OpStore":
-                written.add(key)
+                written |= keys
         elif i.op == "OpLoad" and ptr in root:
             cls = "read"
         elif i.op == "OpArrayLength":
             continue
         else:
             cls = None                      # plain store, image access, ...
-        if cls is None or modes.get(key, ()) is None:
-            modes[key] = None
-            continue
         d = m.defs.get(ptr)
         mem = None if d is not None and d.op == "OpImageTexelPointer" else member(ptr)
-        modes[key] = modes.get(key, frozenset()) | {(cls, mem)}
+        for key in keys:
+            if cls is None or modes.get(key, ()) is None:
+                modes[key] = None
+            else:
+                modes[key] = modes.get(key, frozenset()) | {(cls, mem)}
     return {k: v for k, v in modes.items() if v and k in written}
 
 
+def physical_modes(modes, buf, base):
+    """entry_binding_modes(spans=True) of one descriptor as buffer locations:
+    (class, (buf, base + lo, base + hi or None)); a member None stays None
+    (the whole range). base None (offset unknown): every member becomes None."""
+    if modes is None:
+        return None
+    out = set()
+    for cls, sp in modes:
+        if sp is None or base is None or not isinstance(sp, tuple):
+            out.add((cls, None))
+        else:
+            out.add((cls, (buf, base + sp[0], None if sp[1] is None else base + sp[1])))
+    return frozenset(out)
+
+
+def _overlap(m1, m2):
+    if m1 is None or m2 is None:
+        return True
+    if isinstance(m1, tuple) and isinstance(m2, tuple):
+        if m1[0] != m2[0]:
+            return True                     # different buffers: memory may still alias
+        lo, hi = max(m1[1], m2[1]), min(x for x in (m1[2], m2[2], float("inf")) if x is not None)
+        return lo < hi
+    if isinstance(m1, tuple) or isinstance(m2, tuple):
+        return True
+    return m1 == m2
+
+
 def modes_compatible(a, b, slots=False):
-    """Two accesses with entry_binding_modes a and b (sets of (class, member))
-    do not race: on every member both touch, both are atomics or both only read
-    (member None overlaps all); both taking atomically allocated slots counts
-    only with slots=True (an opt-in heuristic, outside the verified configuration)."""
+    """Two accesses with modes a and b (sets of (class, location)) do not race:
+    wherever their locations may overlap, both are atomics or both only read;
+    both taking atomically allocated slots counts only with slots=True (an
+    opt-in heuristic, outside the verified configuration). A location is None
+    (anywhere), a buffer location (buf, lo, hi) from physical_modes, compared by
+    byte overlap, or a member index of one shader's block (compared by equality:
+    meaningful only within one module and one descriptor offset)."""
     if not a or not b:
         return False
     for c1, m1 in a:
         for c2, m2 in b:
-            if m1 is not None and m2 is not None and m1 != m2:
+            if not _overlap(m1, m2):
                 continue
             if c1 != c2 or (c1 == "slot" and not slots):
                 return False

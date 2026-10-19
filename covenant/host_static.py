@@ -15,7 +15,10 @@ import math
 from dataclasses import dataclass, field
 from pathlib import Path
 
-import clang.cindex as ci
+try:
+    import clang.cindex as ci
+except ImportError:         # trace-only checks need no libclang; parse() says so if called
+    ci = None
 
 from . import spirv
 from .diagnostics import Report
@@ -23,7 +26,7 @@ from .meaning_solver import MeaningSolver
 from .shader_meaning import HostSeed
 from .signatures import glm as glm_sig, std_trig
 
-K = ci.CursorKind
+K = ci.CursorKind if ci is not None else None
 INCLUDE = Path(__file__).parent / "include"
 
 
@@ -112,6 +115,8 @@ def _where(c):
 
 
 def parse(files, args=()):
+    if ci is None:
+        raise HostParseError("the libclang Python bindings (clang.cindex) are not installed")
     files = [Path(f) for f in files]
     idx = ci.Index.create()
     facts = HostFacts()

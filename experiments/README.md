@@ -7,7 +7,7 @@ validation layer (named in each README).
 
 | Paper result | Inputs and outputs | Re-check |
 |---|---|---|
-| Test suite (383 tests) | `tests/` | `python3 -m pytest -q tests` (see the top-level README) |
+| Test suite (387 tests) | `tests/` | `python3 -m pytest -q tests` (see the top-level README) |
 | Barrier mutants, 95.9% agreement with validation | `mutants/` | `bench/elide/difftest/recheck.py`, see `mutants/README.md` |
 | Ray tracing and mesh shading, 15 runs | `archived-traces/` (`rtmesh/*`), `tests/test_rt_mesh.py` | `archived-traces/README.md` |
 | Whole-frame differential test, 1,251 programs (Table 6) | `wholeframe/` | `wholeframe/recheck.sh`, see `wholeframe/README.md` |

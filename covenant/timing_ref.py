@@ -65,7 +65,10 @@ Stage expansion (execution scopes only)
              either test stage (modelling decision M1: the model records one
              test stage for an access the hardware may do in either).
   The pseudo-stage LAYOUT_TRANSITION (elide's split transitions) is in a
-  scope only when named explicitly.
+  scope only when named explicitly, and links only the two halves of one split
+  transition (same call and struct): two dependencies never chain through it
+  otherwise ("an application must not rely on ordering of image layout
+  transitions to influence ordering of other commands").
   An event with unknown stage (None) is in a scope only if the scope holds
   every stage; an unknown access flag only if the mask has MEMORY_READ /
   MEMORY_WRITE (or is None).
@@ -440,7 +443,10 @@ class Reference:
                             continue
                         if kind == "BAR" and _same_call(nd[3], nd2[3]):
                             continue
-                        if second & nd2[4][0]:
+                        common = second & nd2[4][0]
+                        if LT in common and not _same_struct(nd[3], nd2[3]):
+                            common = common - {LT}
+                        if common:
                             if cls == "L" and _local(nd2[3]):
                                 succ[st].update(self.entered_locally(j))
                             else:
@@ -730,6 +736,12 @@ def _located(stage):
 def _same_call(a, b):
     ca, cb = getattr(a, "call", None), getattr(b, "call", None)
     return ca is not None and ca == cb and getattr(a, "struct", None) != getattr(b, "struct", None)
+
+
+def _same_struct(a, b):
+    """One struct of one barrier call (the halves of a split transition)."""
+    ca, cb = getattr(a, "call", None), getattr(b, "call", None)
+    return ca is not None and ca == cb and getattr(a, "struct", None) == getattr(b, "struct", None)
 
 
 def races(frame, discard_relaxed=False):

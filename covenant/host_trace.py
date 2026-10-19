@@ -1060,12 +1060,13 @@ class _Loader:
             return Bound(desc_type, res, fmt), self.view_res(el.get("view")), short_layout(el.get("layout"))
         return Bound(desc_type, None, None), None, None
 
-    def shader_gap(self, pipeline, why):
-        """A pipeline whose shader code is not available: fail closed. Its storage
+    def shader_gap(self, pipeline, why, what="shader code not available"):
+        """A pipeline whose shader code is not available, or whose accesses the
+        provenance analysis cannot attribute to descriptors: fail closed. Its storage
         descriptors are taken as written by every stage, no access is atomic, and the
         gap is recorded with effect "untracked" (the code may also reach memory through
         device addresses), so the check is not guarantee-eligible."""
-        self.note_unsupported("shader code not available", f"pipeline {self.n(pipeline)}", "untracked",
+        self.note_unsupported(what, f"pipeline {self.n(pipeline)}", "untracked",
                               f"{why}: storage accesses taken as writes; the verdict does not cover "
                               "memory the shader may reach otherwise")
 
@@ -1083,16 +1084,19 @@ class _Loader:
             out = {}
             for stg_names, sha, entry in p.stages:
                 path = os.path.join(self.spirv_dir, f"{sha}.spv")
-                got, why = None, f"module {sha[:12]} ({stg_names}) is missing"
+                got, why, what = None, f"module {sha[:12]} ({stg_names}) is missing", "shader code not available"
                 if os.path.exists(path):
                     try:
                         mod = _spirv.parse(path)
                         got = _spirv.entry_bindings(mod, entry)
-                        md = _spirv.entry_binding_modes(mod, entry) if got else {}
+                        md = _spirv.entry_binding_modes(mod, entry, spans=True) if got else {}
+                    except _spirv.AnalysisIncomplete as ex:
+                        got, what = None, "shader accesses not attributed"
+                        why = f"module {sha[:12]} ({stg_names}): {ex}"
                     except Exception as ex:     # unknown opcodes, truncated module, ...
                         got, why = None, f"module {sha[:12]} ({stg_names}) cannot be read: {type(ex).__name__}"
                 if got is None:
-                    self.shader_gap(pipeline, why)
+                    self.shader_gap(pipeline, why, what)
                     out, modes, per_stage = None, {}, {}
                     break
                 for k, w in got.items():
@@ -2011,7 +2015,14 @@ class _Loader:
                 reg = self.desc_region(st, bp, si, binding, el, dtype, entry)
                 if reg != () and "BUFFER" in str(dtype) and "TEXEL" not in str(dtype) and entry.get("buffer"):
                     reg = self.refine_region(pipe, kind, si, binding, st, c, bp, el, dtype, entry, reg)
-                atom = self.mode_cache.get(pipe, {}).get((si, binding)) if dtype in _STORAGE_TYPES else None
+                atom = None
+                if dtype in _STORAGE_TYPES and (si, binding) in self.mode_cache.get(pipe, {}):
+                    # member spans -> buffer bytes (descriptor offset, plus the dynamic offset)
+                    base = (entry.get("offset", 0) or 0) if entry.get("buffer") else None
+                    if base is not None and "DYNAMIC" in str(dtype):
+                        d = st.get("dyn", {}).get(bp, {}).get((si, binding, el))
+                        base = None if d is None else base + d
+                    atom = _spirv.physical_modes(self.mode_cache[pipe][(si, binding)], res, base)
                 used = self._used_at(pipe, si, binding)
                 if dyn is not None:     # this element's Uses are tagged after the loop
                     bwhere = wheres.get((si, binding))     # one string per binding, not per element
