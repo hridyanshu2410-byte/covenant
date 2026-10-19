@@ -306,6 +306,13 @@ them race. If, moreover, no premise warning is reported, this holds with host wa
 execution dependency (Proposition~\ref{prop:hostdom}).
 \end{corollary}
 
+For a developer, an empty report on a guarantee-eligible run means: on the path this run took, no GPU timing can make
+two modelled accesses race. A driver may reorder, overlap or delay the work in any way the barriers, semaphores and
+fences allow without exposing a race. The statement does not cover paths the run did not take (a resize, swapchain
+recreation, error handling), accesses outside the model (\S\ref{sec:cover}) or a mistaken reading of the
+specification. These are the premises of Table~\ref{tab:assume}, and the report says when a run falls outside the
+domain (\S\ref{sec:eligible}).
+
 The bridge from the run to $E(\tau)$ is an abstraction lemma (Appendix~\ref{app:abstraction}). A2 and A2-H give each
 covered access $\alpha$ of the run a representative event $a$ whose scopes are subsets of $\alpha$'s. An ordering
 of the representatives therefore implies the same ordering of the accesses, and every race of covered accesses is a
@@ -379,8 +386,9 @@ without a signal). \emph{Reporting complete}: report grouping finished within it
 diagnostic is still reported, as a site group without a repair, and the result is marked incomplete (grouping never
 removes a diagnostic, so this does not affect the guarantee). \emph{Guarantee-eligible}: the verified configuration,
 checking complete, no detected capture or coverage violation (an unmodelled command, an untracked mapping, a capture
-warning, host writes from another thread, a pipeline whose shader code is missing or cannot be read, or that reaches
-descriptor memory through a value the shader analysis cannot attribute to a descriptor), and no premise
+warning, host writes from another thread, a pipeline whose shader code is missing or cannot be read, that reaches
+descriptor memory through a value the shader analysis cannot attribute to a descriptor, or that applies to it an
+instruction outside the analysis's inventory of memory effects), and no premise
 warning. The configuration is resolved once per check, from the environment and any explicit argument, and the
 same values drive the check and the reported eligibility, so a check run with an opt-in heuristic is never reported
 as verified. For an eligible trace, an empty error report is an
@@ -521,8 +529,8 @@ T1 recording driver (\code{covvk.cpp}): calls, arguments, host-write pages (A1, 
 synchronization validation in the whole-frame (1,251 programs) and ray-tracing/mesh (13) differential tests; capture
 tests \\
 T2 trace translation (\code{host\_trace}, \code{ranges}, SPIR-V access analysis): events, regions, exemption tags,
-W1, W2 & unit tests, including assembled SPIR-V that varies helper calls, descriptor offsets and atomic against
-plain accesses; the two whole-frame differential tests; 114 \bench reproductions. The executable reference consumes
+W1, W2 & unit tests, including SPIR-V that varies helper calls, descriptor offsets, atomic against plain accesses,
+and the instruction that writes (store, copy, sized copy, cooperative-matrix store); the two whole-frame differential tests; 114 \bench reproductions. The executable reference consumes
 T2's events, so it does not test T2 \\
 T3 stage and access algebra (pipeline tables, scope expansion) & regression unit tests; an executable reference
 with independently written tables; 750 barrier mutants under validation \\

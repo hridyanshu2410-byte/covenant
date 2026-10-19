@@ -23,7 +23,7 @@
 \newcommand{\spec}{\ensuremath{\Rightarrow_{\mathit{spec}}}}
 \newcommand{\Haz}{\ensuremath{\mathit{Haz}}}
 \newcommand{\posthoc}{\textsuperscript{\textsf{ph}}}
-\newcommand{\relhash}{\code{4d0d0f901f56}}
+\newcommand{\relhash}{\code{5fe846eddf3e}}
 \DeclareRobustCommand{\circled}[1]{\tikz[baseline=(c.base)]\node[circle,fill=black!35,text=white,inner sep=.6pt,font=\sffamily\scriptsize\bfseries](c){#1};}
 
 \setcopyright{none}
@@ -192,7 +192,9 @@ are lifted from SPIR-V, and the C++ host is read with libclang for struct layout
   returns, \code{OpPhi}, \code{OpSelect} and pointers held in variables. When a pipeline's shader code is missing or
   cannot be parsed, or an access reaches descriptor memory through a value the analysis cannot trace to a descriptor,
   every storage descriptor it binds is taken as written at every stage, and the gap is recorded (``shader code not
-  available'' or ``shader accesses not attributed''), so the check is not guarantee-eligible. A descriptor access is
+  available'' or ``shader accesses not attributed''), so the check is not guarantee-eligible. The same gap is
+  recorded when an instruction outside the inventory of memory effects (Table~\ref{tab:s-effects}) takes a
+  descriptor pointer or handle as an operand. A descriptor access is
   charged at the stages whose entry point uses the binding; the set layout's stage flags are only the fallback when
   no entry point is known. (The snapshots up to engine study 3 charged every stage the layout granted, which is sound
   but caused a false alarm on \bench case 94.)
@@ -222,6 +224,34 @@ are lifted from SPIR-V, and the C++ host is read with libclang for struct layout
   and position, and the checker emits \code{timing.unmodelled-command} when that buffer is submitted. The verdict
   makes no claim for such a command.
 \end{itemize}
+\begin{table*}[t]
+\caption{The shader analysis's inventory of memory effects: the class of every SPIR-V instruction that may take a
+descriptor pointer or handle (image, sampled image, acceleration structure) as an operand. Any other instruction on
+one makes the check not guarantee-eligible (model gap ``shader accesses not attributed''), and every storage
+descriptor of the pipeline is then taken as written.}
+\label{tab:s-effects}
+\scriptsize
+\begin{tabular}{@{}p{0.08\textwidth}p{0.88\textwidth}@{}}
+\toprule
+Effect & Instructions \\
+\midrule
+write & \code{OpStore}; every \code{OpAtomic*} except \code{OpAtomicLoad} (image atomics through
+\code{OpImageTexelPointer}); the target of \code{OpCopyMemory} and \code{OpCopyMemorySized}; \code{OpImageWrite};
+\code{OpCooperativeMatrixStore\{KHR,NV,TensorNV\}}, \code{OpCooperativeVectorStoreNV},
+\code{OpCooperativeVector\{ReduceSum,OuterProduct\}AccumulateNV}; a pointer operand of a \code{GLSL.std.450}
+instruction (\code{Modf}, \code{Frexp}) \\
+read & \code{OpLoad}, \code{OpAtomicLoad}, \code{OpArrayLength}; the source of a copy; \code{OpImageRead},
+\code{OpImageFetch}, \code{OpImage*Gather}, \code{OpImageSample*}, \code{OpImageSparse*}, \code{OpImageQuery*};
+cooperative-matrix and cooperative-vector loads and multiplies; \code{OpTraceRayKHR}, \code{OpTraceNV},
+\code{OpTraceRayMotionNV}, \code{OpRayQueryInitializeKHR}, \code{OpHitObjectTraceRay*NV} \\
+passes on & access chains, \code{OpCopyObject}, \code{OpBitcast}, \code{OpImageTexelPointer},
+\code{OpSampledImage}, \code{OpImage}, \code{OpPhi}, \code{OpSelect}, \code{OpCopyLogical}, \code{OpFunctionCall},
+\code{OpReturnValue}, pointer comparisons; the result keeps every descriptor of its operands \\
+none & \code{OpVariable}, \code{NonSemantic} debug instructions, control flow \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
 \emph{Structure checks} (secondary, no guarantee) use the same trace: stage interfaces, host/shader struct layouts,
 bindings used but not bound, push-constant ranges and framebuffer extents.
 
@@ -606,7 +636,7 @@ Every study was scored by a checker snapshot frozen, by source hash, before its 
 A checker defect found during a study was not fixed in that study's snapshot; it was fixed before a later snapshot,
 with a unit test. Table~\ref{tab:s-exposed} lists what each study, and each piece of development work between the
 studies, exposed in the checker, and the first snapshot that carries the fix. The release carries every fix in the
-table and passes all 387 tests of its suite (paper, \S\ref{P-sec:eval-sem}).
+table and passes all 390 tests of its suite (paper, \S\ref{P-sec:eval-sem}).
 
 \begin{table*}[t]
 \caption{What each study exposed: checker defects and missing modelling found in triage or by tests, and the first
@@ -633,6 +663,7 @@ fresh study 2 (fresh; \S I) & one precision cause: a descriptor-array read charg
 model audit after both fresh studies (dev) & subpass-dependency flags not read: every dependency given its global meaning (\S\ref{sup:fblocal}); two automatic render-pass transitions on one queue exempt from each other although the specification's ordering sentence does not cover them (\S\ref{sup:ltpairs}); in the epoch mode, the read key ignored the framebuffer position, so a stand-in could be ordered locally where the entry it replaced is not; host writes relying on the host-domain premise not flagged; guarantee eligibility not reported per run & the release \\
 external review of the release (dev) & three defects where shader accesses become events: a store through an index taken from an atomic was exempt, although \code{atomicAdd(c, 0)} gives every caller one index; a missing shader module made storage accesses reads; an explicit relaxation was reported as the verified configuration. Fixed (slot exemption opt-in only, atomics exempt only at device scope, missing shader code a write and a model gap, one resolved configuration); findings unchanged on every corpus, and one archived figure trace kept without its shader module is now outside the domain & the release \\
 second external review of the release (dev) & two shader-analysis defects that could accept a race: a helper function called with two buffers kept only one of them, so a write became a read; atomic-only tags compared block members, not buffer bytes, so an atomic at one descriptor offset hid a plain read of the same bytes at another. In the optimizer's split frame, the transition halves of two barriers could chain. Fixed (every possible descriptor kept, unattributed accesses a model gap, byte-range tags, transition halves chain only within one struct); findings unchanged on every corpus & the release \\
+third external review of the release (dev) & the shader analysis read any instruction not in its list of writes as a read: \code{OpCopyMemorySized} (untyped pointers) and cooperative-matrix stores wrote without a write event, and an untyped-pointer access chain was not reported. Fixed: an inventory of memory effects (Table~\ref{tab:s-effects}); any other instruction on descriptor memory is a model gap. On every shader of every corpus (2,129 entry points) the analysis is unchanged & the release \\
 \bottomrule
 \end{tabular}
 \end{table*}
