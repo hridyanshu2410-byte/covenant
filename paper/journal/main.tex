@@ -24,7 +24,7 @@
 \newcommand{\Haz}{\ensuremath{\mathit{Haz}}}
 \newcommand{\supp}[1]{Supplement~\S#1}
 \newcommand{\posthoc}{\textsuperscript{\textsf{ph}}}
-\newcommand{\relhash}{\code{4d0d0f901f56}}
+\newcommand{\relhash}{\code{5fe846eddf3e}}
 \DeclareRobustCommand{\circled}[1]{\tikz[baseline=(c.base)]\node[circle,fill=black!35,text=white,inner sep=.6pt,font=\sffamily\scriptsize\bfseries](c){#1};}
 %% acmart already defines theorem, corollary, proposition, lemma and definition environments.
 
@@ -122,10 +122,14 @@ Render graphs~\cite{odonnell2017framegraph,amd2022rps} derive barriers at run ti
 language, within one command recording.
 
 \paragraph{What \sys adds}
-None of \sys's ingredients is individually new: vector clocks, FastTrack-style epochs, GPU-free capture and
-whole-frame reasoning all exist. What we contribute is their integration into one \emph{specified},
-schedule-independent analysis of a captured Vulkan frame, and the evidence that this integration finds bugs and can
-be trusted. Concretely, one analysis covers:
+\sys gives a recorded Vulkan execution one specified model in which host stores to mapped memory, every GPU queue
+and the presentation engine of each swapchain image are parts of one concurrent program, with all frames in flight
+in one order. It analyses existing programs as they are, without a new programming abstraction, and for an accepted
+run in the domain it reports, it guarantees that no device schedule consistent with the run's synchronization lets
+two modelled accesses race. Validation also reports potential hazards rather than only manifested ones; what is new
+is the specified whole-frame model that includes the host and presentation, the guarantee proved for it, and the
+domain reported for each run. Its building blocks, vector clocks, FastTrack-style epochs and GPU-free capture, are
+established (\S\ref{sec:related}). Concretely, one analysis covers:
 \begin{itemize}
 \item \textbf{host memory:} CPU stores to mapped memory are captured by page protection and ordered with device
   work, including stores that leave a value unchanged (\S\ref{sec:capture}); eight of the real bugs we report are
@@ -140,6 +144,13 @@ be trusted. Concretely, one analysis covers:
   transcription of the specification, with a stated trusted computing base and a domain that the checker reports for
   every run (\S\ref{sec:model}, Appendix~\ref{app:proofs}).
 \end{itemize}
+
+\paragraph{What this changes for a renderer}
+A clean, eligible report is a statement about every schedule of the recorded path, not about the one schedule a test
+run happened to take, and it needs no GPU. A developer who edits the synchronization of a frame can re-check the whole
+frame, host writes and presentation included, and get either the scope test that fails or that statement. The same
+decision procedure licenses removing barriers from the recorded execution (\S\ref{sec:elide}). Checking the barriers
+that a render graph derives at its boundaries is a natural further use that we have not evaluated.
 
 \paragraph{Scope}
 The guarantee is about the recorded host path, in the verified configuration (spec-strict layout transitions,
@@ -345,9 +356,13 @@ outside the theorem.
   writes and classifies storage bindings as atomic-only or plain, per byte range of the bound buffer; an atomic
   counts only at a scope that holds every invocation of the device, and an access through an index taken from an
   atomic is a plain access. A pointer keeps every descriptor it may come from, through helper calls, returns, branches
-  and pointers held in variables, so a helper called with two buffers accesses both. When a pipeline's shader code is
-  missing or cannot be parsed, or an access reaches descriptor memory through a value the analysis cannot trace to a
-  descriptor, every storage descriptor it binds is taken as written at every stage, and the check is not
+  and pointers held in variables, so a helper called with two buffers accesses both. Every instruction that takes a
+  descriptor pointer or handle belongs to a fixed inventory of memory effects (writes: stores, atomics, the targets of
+  sized and unsized copies, image writes, cooperative-matrix and cooperative-vector stores; reads: loads, image reads,
+  samples and queries, ray-tracing and cooperative loads; instructions that only pass a pointer on). When a
+  pipeline's shader code is missing or cannot be parsed, an access reaches descriptor memory through a value the
+  analysis cannot trace to a descriptor, or an instruction outside the inventory (an untyped pointer, say) touches
+  descriptor memory, every storage descriptor it binds is taken as written at every stage, and the check is not
   guarantee-eligible. A descriptor access is
   charged at the stages whose entry point uses the binding; the set layout's stage flags are only the fallback when no
   entry point is known. A descriptor-array read is charged to every written element, unless the guard conditions of
@@ -410,7 +425,7 @@ groups without repairs; no incomplete report counts as clean.}
 \toprule
 Corpus & runs & in domain & Release result \\
 \midrule
-Test suite & 387 & -- & all pass: 2,550 random frames against the reference semantics, 300 with host writes, the
+Test suite & 390 & -- & all pass: 2,550 random frames against the reference semantics, 300 with host writes, the
 minimal frames of Appendix~\ref{app:counter}, shader-to-event tests, regression frames \\
 Barrier mutants (\S\ref{sec:eval-sem}) & 750 & 750 & 95.9\% agreement with validation (86 / 633 / 31 / 0); per-mutant
 diagnostics unchanged \\
@@ -456,7 +471,9 @@ shaders to events. Separate tests assemble SPIR-V modules for it: an index taken
 a fresh slot (both stores race), an atomic is exempt only at device scope and only against atomics on the same
 bytes, a helper called with two buffers writes both, an access the analysis cannot attribute fails closed, a missing
 or malformed shader module makes its storage accesses writes and the trace not eligible, and two transitions never
-chain two barriers. The release passes all 387 tests of its suite.
+chain two barriers. Further modules, checked with \code{spirv-val} for Vulkan~1.3, write through
+\code{OpCopyMemorySized} and a cooperative-matrix store (both writes, so the copy races) and through an untyped
+pointer (outside the inventory, so the trace is not eligible). The release passes all 390 tests of its suite.
 
 \paragraph{Barrier mutants against synchronization validation}
 \begin{figure*}[t]
@@ -1161,16 +1178,15 @@ games~\cite{macklon2022canvas}.
 %% ===================================================================
 \section{Conclusion}
 \label{sec:conclusion}
-\sys treats a graphics frame as what it is, a concurrent program, and checks its synchronization from one GPU-free run
-of the unmodified program: host memory, presentation and overlapping frames in one specified order, with diagnostics
-that name the failed scope test and repairs that are re-checked. For a run in its stated domain, which the checker
-reports, an accepted trace is race-free under every device schedule consistent with its synchronization, for the
-modelled accesses on the recorded host path, by a complete proof written by hand and relative to our transcription of
-the specification. Blind, frozen checkers achieved strict paired detection on 21 of 35 timing bugs and found the root
-cause of 24. On eight code bases not checked before, the frozen checkers found 16 true root causes, one of which
-validation cannot see, with no false alarm on five code bases. On the same traces, the release reports 94.5\% of
-report groups true on the 24 programs of the second study whose grouping completes. Patching nine of the causes makes
-15 programs free of synchronization diagnostics under both \sys and validation. What remains is to narrow sub-page host writes, to settle the open
+\sys treats a graphics frame as what it is, a concurrent program, and makes its synchronization something that can
+be checked rather than only tested. From one GPU-free run of the unmodified program, it orders host memory, every
+queue and the presentation engine across overlapping frames in one specified model. For a run in its stated domain,
+which the checker reports, an accepted trace is race-free under every device schedule consistent with its
+synchronization, for the modelled accesses on the recorded host path, by a complete proof written by hand and relative
+to our transcription of the specification. The same procedure names the scope test that each race fails, re-checks
+repairs on the whole frame and licenses barrier removal. On eight code bases not checked before, the frozen checkers
+found 16 true root causes, one of which validation cannot see, and patching nine of the causes makes 15 programs free
+of synchronization diagnostics under both \sys and validation. What remains is to narrow sub-page host writes, to settle the open
 questions of the specification, to measure recall on real code and to run on GPUs with several concurrent queues.
 
 \bibliographystyle{ACM-Reference-Format}
