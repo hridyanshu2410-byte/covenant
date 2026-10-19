@@ -1060,6 +1060,15 @@ class _Loader:
             return Bound(desc_type, res, fmt), self.view_res(el.get("view")), short_layout(el.get("layout"))
         return Bound(desc_type, None, None), None, None
 
+    def shader_gap(self, pipeline, why):
+        """A pipeline whose shader code is not available: fail closed. Its storage
+        descriptors are taken as written by every stage, no access is atomic, and the
+        gap is recorded with effect "untracked" (the code may also reach memory through
+        device addresses), so the check is not guarantee-eligible."""
+        self.note_unsupported("shader code not available", f"pipeline {self.n(pipeline)}", "untracked",
+                              f"{why}: storage accesses taken as writes; the verdict does not cover "
+                              "memory the shader may reach otherwise")
+
     def access_for(self, pipeline):
         """{(set, binding): written} over the pipeline's entry points, from the
         dumped SPIR-V; bindings no entry reaches are absent. None if unknown."""
@@ -1068,19 +1077,22 @@ class _Loader:
         out, modes = None, {}
         per_stage = {}          # (set, binding) -> {pipeline stage: written}
         p = self.m.pipelines.get(pipeline)
+        if p and not self.spirv_dir:
+            self.shader_gap(pipeline, "no SPIR-V directory was given")
         if p and self.spirv_dir:
             out = {}
             for stg_names, sha, entry in p.stages:
                 path = os.path.join(self.spirv_dir, f"{sha}.spv")
-                got = None
+                got, why = None, f"module {sha[:12]} ({stg_names}) is missing"
                 if os.path.exists(path):
                     try:
                         mod = _spirv.parse(path)
                         got = _spirv.entry_bindings(mod, entry)
                         md = _spirv.entry_binding_modes(mod, entry) if got else {}
-                    except Exception:           # unknown opcodes etc.: stay conservative
-                        got = None
+                    except Exception as ex:     # unknown opcodes, truncated module, ...
+                        got, why = None, f"module {sha[:12]} ({stg_names}) cannot be read: {type(ex).__name__}"
                 if got is None:
+                    self.shader_gap(pipeline, why)
                     out, modes, per_stage = None, {}, {}
                     break
                 for k, w in got.items():
@@ -1987,12 +1999,12 @@ class _Loader:
                 if acc_map is not None and (si, binding) not in acc_map:
                     continue                    # bound but no entry point touches it
                 if dtype in _STORAGE_TYPES:
-                    # from the SPIR-V when we have it; otherwise compute writes and
-                    # graphics reads
+                    # from the SPIR-V when we have it; otherwise a write (fail closed:
+                    # shader_gap has recorded the missing code)
                     if acc_map is not None:
                         acc = "write" if acc_map[(si, binding)] else "read"
                     else:
-                        acc = "write" if kind in ("dispatch", "trace") else "read"
+                        acc = "write"
                     flag = "SHADER_STORAGE_WRITE" if acc == "write" else "SHADER_STORAGE_READ"
                 else:
                     acc, flag = "read", _DESC_FLAG.get(dtype)
@@ -2601,6 +2613,7 @@ class _Loader:
                                   "framebuffer-global (COVENANT_LEGACY_SUBPASS_FLAGS=global, not conservative)")
             m.unsupported["subpass dependency flags not recorded"]["count"] = self.legacy_rp_flags
         self.fr.unsupported = m.unsupported
+        self.fr.host_capture = self.capture
         for img in m.images.values():
             for x in self.img_res(img.id):
                 self.fr.initial_layouts[x] = img.initial_layout or "undefined"

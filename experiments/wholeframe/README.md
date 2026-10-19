@@ -52,8 +52,8 @@ scorer compares against them.
 - The model driver, built as described in the repository README. It needs Vulkan-Headers v1.4.365.
 - To regenerate the traces, you also need a C++17 compiler, the libxcb headers, `glslangValidator`
   and `Xvfb`.
-- For `recheck.sh` only: the traces archive `wholeframe-traces.tar.xz` (3.3 MB, distributed with the
-  paper's artifact), which holds the 1,251 recorded traces. `regenerate.sh` needs no archive.
+- For `recheck.sh` only: the traces archive `data/wholeframe-traces.tar.xz` (3.3 MB, in this folder), which
+  holds the 1,251 recorded traces. `regenerate.sh` needs no archive.
 
 ## Run
 
@@ -68,7 +68,8 @@ Environment variables:
 Re-check the archived traces with this repository's checker:
 
 ```sh
-ARCHIVE=wholeframe-traces.tar.xz WORK=$PWD/wf-work NO_TOOL=1 bash experiments/wholeframe/recheck.sh
+ARCHIVE=experiments/wholeframe/data/wholeframe-traces.tar.xz WORK=$PWD/wf-work NO_TOOL=1 \
+    bash experiments/wholeframe/recheck.sh
 ```
 
 The timing-only check of all 1,251 traces takes seconds. Without `NO_TOOL=1`, every trace is also run

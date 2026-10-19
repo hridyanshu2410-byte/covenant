@@ -255,6 +255,7 @@ _NO_ACCESS = {"OpLine", "OpNoLine", "OpSelectionMerge", "OpLoopMerge", "OpBranch
               "OpReturnValue", "OpKill", "OpUnreachable", "OpModuleProcessed", "OpSource",
               "OpSourceContinued", "OpString"}
 _CHAIN_OPS = ("OpAccessChain", "OpInBoundsAccessChain", "OpPtrAccessChain", "OpInBoundsPtrAccessChain")
+_DEVICE_SCOPES = (0, 1, 5)     # Scope CrossDevice, Device, QueueFamily: every invocation of every command
 
 
 def entry_binding_modes(m, entry):
@@ -263,14 +264,19 @@ def entry_binding_modes(m, entry):
     or
 
     * "atomic": an atomic instruction (OpAtomic*, image atomics through
-      OpImageTexelPointer included). Two atomic operations never form a data
-      race (Vulkan memory model), so atomic accesses of two commands on one
-      queue need no barrier between them;
+      OpImageTexelPointer included) whose memory scope is a constant that
+      includes every invocation of the device (CrossDevice, Device or
+      QueueFamily). Two such atomic operations never form a data race (Vulkan
+      memory model), so atomic accesses of two commands on one queue need no
+      barrier between them. An atomic with a narrower or unknown scope is an
+      ordinary access;
     * "slot": a load/store through an access chain with an index
       computed from an atomic's result (a slot allocated with atomicAdd, e.g. an
-      order-independent-transparency node list). Two commands that only take
-      fresh slots touch disjoint elements. This is a heuristic (flow-insensitive:
-      a function variable once assigned an atomic's result counts as one).
+      order-independent-transparency node list). Distinct slots are assumed, not
+      established (atomicAdd(c, 0) hands every caller the same index), so slot
+      accesses are exempt only under the opt-in heuristic (modes_compatible
+      slots=True, COVENANT_HEURISTIC_SLOTS=1); flow-insensitive: a function
+      variable once assigned an atomic's result counts as one.
 
     member: the constant index of the top-level block member accessed (None:
     unknown, or an image). Bindings with any other access (plain store, image
@@ -352,7 +358,8 @@ def entry_binding_modes(m, entry):
             continue                        # derives a pointer / loads a descriptor handle
         key = var_key[root[refs[0]]]
         ptr = i.args[0]
-        if i.op.startswith("OpAtomic") and ptr in root:
+        if i.op.startswith("OpAtomic") and ptr in root and \
+                len(i.args) > 1 and m.consts.get(i.args[1]) in _DEVICE_SCOPES:
             cls = "atomic"
             if i.op != "OpAtomicLoad":
                 written.add(key)
@@ -375,17 +382,18 @@ def entry_binding_modes(m, entry):
     return {k: v for k, v in modes.items() if v and k in written}
 
 
-def modes_compatible(a, b):
+def modes_compatible(a, b, slots=False):
     """Two accesses with entry_binding_modes a and b (sets of (class, member))
-    do not race: on every member both touch, both are atomics, both take
-    atomically allocated slots, or both only read (member None overlaps all)."""
+    do not race: on every member both touch, both are atomics or both only read
+    (member None overlaps all); both taking atomically allocated slots counts
+    only with slots=True (an opt-in heuristic, outside the verified configuration)."""
     if not a or not b:
         return False
     for c1, m1 in a:
         for c2, m2 in b:
             if m1 is not None and m2 is not None and m1 != m2:
                 continue
-            if c1 != c2:
+            if c1 != c2 or (c1 == "slot" and not slots):
                 return False
     return True
 

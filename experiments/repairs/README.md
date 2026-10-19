@@ -105,11 +105,11 @@ WORK=$PWD/rep-work NOSV=1 bash experiments/repairs/scripts/run_all.sh VKMARK-ALL
 - `check.sh <out> conservative|observed`: run `tools/check_trace.py` and `covenant.report_groups`;
 - `sv.sh <out> <prog> <tree> 20`: run validation.
 
-To re-check the archived traces (`traces.tar.xz`, 152 runs, distributed with the paper's artifact) with
+To re-check the archived traces (`data/traces.tar.xz`, 152 runs, 4.8 MB, in this folder) with
 this repository's checker, and compare with the archived check results:
 
 ```sh
-ARCHIVE=traces.tar.xz WORK=$PWD/rep-work JOBS=2 ONLY='^(vkmark/all|gst/both|imgui/fix|sdl/fix)/' \
+ARCHIVE=experiments/repairs/data/traces.tar.xz WORK=$PWD/rep-work JOBS=2 ONLY='^(vkmark/all|gst/both|imgui/fix|sdl/fix)/' \
     bash experiments/repairs/scripts/recheck.sh
 ```
 

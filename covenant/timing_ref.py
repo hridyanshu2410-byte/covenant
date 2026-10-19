@@ -88,9 +88,10 @@ Race (Haz_spec)
   operation and an access of a command in the same subpass instance (a load
   happens-before / a store happens-after every command of its subpass that
   accesses the attachment), and they are not two shader accesses on one
-  queue whose binding modes are compatible (both atomics, both atomically
-  allocated slots, or reads, on every block member both touch: the Vulkan
-  memory model has no data race between atomics; spirv.modes_compatible),
+  queue whose binding modes are compatible (both device-scope atomics, or
+  reads, on every block member both touch: the Vulkan memory model has no data
+  race between atomics; spirv.modes_compatible; atomically allocated slots are
+  ordinary accesses here, as in the verified configuration),
   and they are not two layout transitions on one queue at least one of
   which is performed via an image memory barrier (R-LT,
   synchronization.adoc:262-269: "Layout transitions that are performed via
@@ -593,7 +594,7 @@ class Reference:
                 (a.pass_op is not None or b.pass_op is not None):
             return ()           # load/store operation vs the commands of its subpass
         if _t.atomic_exempt(a, b):
-            return ()           # atomics / atomically allocated slots (Vulkan memory model)
+            return ()           # atomics (Vulkan memory model); slots are not exempt here
         if a.queue == b.queue and a.lt_of is not None and b.lt_of is not None and not (a.auto and b.auto):
             # R-LT: "Layout transitions that are performed via image memory barriers execute in
             # their entirety in submission order, relative to other image layout transitions

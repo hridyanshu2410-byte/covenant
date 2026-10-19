@@ -126,13 +126,15 @@ class Use:
     fb: object = None
 
 
-def atomic_exempt(a, b):
-    """Atomic accesses (or fresh atomically allocated slots) of two commands on
-    one queue: no data race in the Vulkan memory model."""
+def atomic_exempt(a, b, slots=False):
+    """Atomic accesses of two commands on one queue: no data race in the Vulkan
+    memory model. Accesses through atomically allocated slots count only with the
+    opt-in heuristic (slots=True, COVENANT_HEURISTIC_SLOTS=1), outside the verified
+    configuration."""
     if a.atomic is None or b.atomic is None or a.queue != b.queue:
         return False
     from .spirv import modes_compatible
-    return modes_compatible(a.atomic, b.atomic)
+    return modes_compatible(a.atomic, b.atomic, slots)
 
 
 @dataclass
@@ -848,6 +850,8 @@ class Frame:
     # effect "memory" (accesses/barriers missing: a warning), "untracked",
     # "approximated" (meta only)
     unsupported: dict = field(default_factory=dict)
+    # host-write capture mode the trace was loaded with (host_trace; None: no loader)
+    host_capture: str = None
 
     def q(self, name):
         return self.queues.setdefault(name, [])
@@ -997,8 +1001,9 @@ class _GSet:
 
 # ---------------------------------------------------------------- the checker
 class _Checker:
-    def __init__(self, frame, report, hazards, exhaustive, discard_relaxed, discard_kill=False):
+    def __init__(self, frame, report, hazards, exhaustive, discard_relaxed, discard_kill=False, slots=False):
         self.report, self.hazards = report, hazards
+        self.slots = slots
         self.exhaustive, self.discard_relaxed = exhaustive, discard_relaxed
         self.discard_kill = discard_kill and discard_relaxed
         self.names = list(frame.queues)
@@ -1593,8 +1598,7 @@ class _Checker:
             self.hazards.append((e.key, u.key, code))
 
     # -- accesses -------------------------------------------------------------
-    @staticmethod
-    def _exempt(e, u):
+    def _exempt(self, e, u):
         if e.cmd is not None and e.cmd == u.cmd:
             return True             # accesses of one command
         if e.queue == u.queue and u.scope is not None and e.scope == u.scope:
@@ -1602,7 +1606,7 @@ class _Checker:
         if e.queue == u.queue and u.instance is not None and e.instance is u.instance and \
                 (e.pass_op is not None or u.pass_op is not None):
             return True             # a load / store operation and the commands of its subpass
-        return atomic_exempt(e, u)
+        return atomic_exempt(e, u, self.slots)
 
     @staticmethod
     def _supersedes(u, e):
@@ -1860,7 +1864,7 @@ class _Checker:
                            op.where)
 
 
-def _eligibility(report, unsup, c, modes):
+def _eligibility(report, unsup, c, cfg):
     """Does this check carry the guarantee (Corollary cor:sched)? Checking
     completeness (every queue ran to its end), coverage (no unmodelled command or
     state that hides memory accesses), the verified configuration, and no pair
@@ -1868,7 +1872,7 @@ def _eligibility(report, unsup, c, modes):
     of report_groups) is separate: it never removes a raw diagnostic."""
     codes = {d.code for d in report.items}
     gaps = sorted(k for k, u in unsup.items() if u.get("effect") in ("memory", "untracked"))
-    out = {"verified_configuration": modes.verified(),
+    out = {"verified_configuration": cfg["verified_configuration"],
            "checking_complete": "timing.deadlock" not in codes,
            "model_gaps": gaps,
            "host_domain_premise_pairs": c.premise_host}
@@ -1878,7 +1882,7 @@ def _eligibility(report, unsup, c, modes):
 
 
 def check(frame, report=None, hazards=None, exhaustive=False, discard_relaxed=None, stats=None, window=True,
-          discard_kill=False, premise=None):
+          discard_kill=False, premise=None, slots=None):
     """Check a frame and return the Report.
 
     window: also decide whether the trace is long enough (Theorem 3,
@@ -1891,6 +1895,9 @@ def check(frame, report=None, hazards=None, exhaustive=False, discard_relaxed=No
     discard_relaxed / discard_kill: relaxations R1 / R1' (module docstring).
     discard_relaxed=None (the default) means spec-strict unless the opt-in heuristic
     COVENANT_HEURISTIC_DISCARD=1 is set (covenant/modes.py).
+    slots: accesses through atomically allocated slots do not conflict (opt-in
+    heuristic; None: COVENANT_HEURISTIC_SLOTS). The configuration is resolved once
+    (modes.resolve) and the same values drive the check and report.meta.
     premise: optional list; receives (device write where, host write where) for every
     pair accepted under premise A-HOST only (warning timing.premise-host-domain).
 
@@ -1899,12 +1906,18 @@ def check(frame, report=None, hazards=None, exhaustive=False, discard_relaxed=No
     checking complete (no queue left blocked), no model gap that hides memory
     accesses, and no pair accepted under premise A-HOST only."""
     from . import modes as _modes
-    if discard_relaxed is None:
-        discard_relaxed = _modes.discard_heuristic()
+    cfg = _modes.resolve(discard_relaxed, slots)
+    if frame.host_capture is not None and frame.host_capture != cfg["host_capture"]:
+        # the capture mode the trace was loaded with is the one that holds
+        cfg["host_capture"] = frame.host_capture
+        cfg["verified_configuration"] = cfg["verified_configuration"] and frame.host_capture == "conservative"
+    discard_relaxed = cfg["discard"] != "strict"
+    slots = cfg["atomic_slots"] != "off"
+    if discard_kill and discard_relaxed:
+        cfg["discard"] = "heuristic-R1'"
     report = report if report is not None else Report()
     if hasattr(report, "meta"):
-        report.meta["covenant.modes"] = dict(_modes.describe(), discard="heuristic-R1" if discard_relaxed
-                                             else "strict")
+        report.meta["covenant.modes"] = dict(cfg)
     for cat, code, msg, where, notes in frame.findings:
         report.add(cat, code, msg, where, notes)
     for sem, img, pwhere, swhere in frame.semaphore_reuse:
@@ -1944,7 +1957,7 @@ def check(frame, report=None, hazards=None, exhaustive=False, discard_relaxed=No
         rep = Report()
         # a hazard sink with a budget (report_groups) hands out fresh sinks of its own kind
         hz = (hazards.fresh() if hasattr(hazards, "fresh") else []) if hazards is not None else None
-        c = _Checker(frame, rep, hz, exhaustive, discard_relaxed, discard_kill)
+        c = _Checker(frame, rep, hz, exhaustive, discard_relaxed, discard_kill, slots)
         c.failed_guards = set(failed)
         c.premise_pairs = [] if premise is not None else None
         c.run()
@@ -1959,7 +1972,7 @@ def check(frame, report=None, hazards=None, exhaustive=False, discard_relaxed=No
     if premise is not None:
         premise.extend(c.premise_pairs)
     if hasattr(report, "meta"):
-        report.meta["covenant.eligibility"] = _eligibility(report, unsup, c, _modes)
+        report.meta["covenant.eligibility"] = _eligibility(report, unsup, c, cfg)
     if c.guards_seen and hasattr(report, "meta"):
         report.meta["timing.desc_refine.failed"] = frozenset(failed)    # guards widened in this run
         report.meta["timing.desc_refine"] = {

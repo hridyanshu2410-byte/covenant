@@ -474,7 +474,8 @@ class MeshAndCompute(Base):
             t.pipeline("vkCreateComputePipelines", "pipeline#1", ["VK_SHADER_STAGE_COMPUTE_BIT"],
                        "VK_PIPELINE_BIND_POINT_COMPUTE")
             t.c("vkCmdDispatch", groups=[1, 1, 1])
-            t.barrier([CS], [SW], dst, [SR])
+            # no SPIR-V here: the mesh draw's storage access is taken as a write (fail closed)
+            t.barrier([CS], [SW], dst, [SR, SW])
             t.pipeline("vkCreateGraphicsPipelines", "pipeline#2",
                        ["VK_SHADER_STAGE_MESH_BIT_EXT", "VK_SHADER_STAGE_FRAGMENT_BIT"],
                        "VK_PIPELINE_BIND_POINT_GRAPHICS")
