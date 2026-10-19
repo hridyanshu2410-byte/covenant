@@ -112,9 +112,10 @@ class Use:
     guard: object = None
     hseq: int = None
     # shader storage accesses that are only atomics / atomically allocated
-    # slots / plain reads: spirv.entry_binding_modes, a frozenset of (class,
-    # member). Two accesses on one queue with compatible modes
-    # (spirv.modes_compatible) are never checked pairwise
+    # slots / plain reads: a frozenset of (class, location), the location a
+    # buffer byte range (spirv.physical_modes) or None (anywhere). Two accesses on
+    # one queue with compatible modes (spirv.modes_compatible) are never checked
+    # pairwise
     atomic: frozenset = None
     # the framebuffer position of an access performed by a
     # framebuffer-space operation at its own pixel (attachment reads/writes, input
@@ -558,8 +559,11 @@ class _Chain:
         self.lx_last = self.lm_last = -1   # seq of the last barrier reached framebuffer-locally
 
     def _reached(self, other, cur):
+        """other plus the sets reached in the current call, without the pseudo
+        stage LAYOUT_TRANSITION: it links only the two halves of one split
+        transition (one call, one struct), never two dependencies."""
         for v in cur.values():
-            other = _union(other, v)
+            other = _union(other, (v[0], v[1] - {LT_STAGE}) if LT_STAGE in v[1] else v)
         return other
 
     def advance(self, bars, upto, src):

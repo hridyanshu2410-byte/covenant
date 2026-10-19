@@ -20,7 +20,7 @@ import os
 from pathlib import Path
 
 from . import probe, shader_meaning as sm, host_static as hs, timing, witness
-from . import equivariance, host_meaning
+from . import equivariance
 from .diagnostics import Report
 from .meaning_solver import MeaningSolver
 from .signatures import vulkan as vk
@@ -302,6 +302,7 @@ def check_program(model, modules, host_files=(), host_args=(), report=None, mean
             equivariance.check(uses, r)
         return r
     r.meta["host_static"] = "parsed"
+    from . import host_meaning                  # needs libclang, like the host parse above
     hs.check_layouts(facts, modules, r)
     hs.check_clip_depth(facts, modules, r)
     hmx = None
