@@ -24,7 +24,7 @@
 \newcommand{\Haz}{\ensuremath{\mathit{Haz}}}
 \newcommand{\supp}[1]{Supplement~\S#1}
 \newcommand{\posthoc}{\textsuperscript{\textsf{ph}}}
-\newcommand{\relhash}{\code{be5d91e015be}}
+\newcommand{\relhash}{\code{4d0d0f901f56}}
 \DeclareRobustCommand{\circled}[1]{\tikz[baseline=(c.base)]\node[circle,fill=black!35,text=white,inner sep=.6pt,font=\sffamily\scriptsize\bfseries](c){#1};}
 %% acmart already defines theorem, corollary, proposition, lemma and definition environments.
 
@@ -342,10 +342,13 @@ outside the theorem.
 \item \textbf{Draws.} Draws read their bound descriptors and their vertex, index and indirect buffers, and they
   write their attachments. Byte ranges come from descriptor ranges, dynamic offsets and index ranges.
 \item \textbf{Shader accesses.} A per-entry-point analysis of the SPIR-V call graph yields each shader's reads and
-  writes and classifies storage bindings as atomic-only or plain; an atomic counts only at a scope that holds every
-  invocation of the device, and an access through an index taken from an atomic is a plain access. When a pipeline's
-  shader code is missing or cannot be parsed, every storage descriptor it binds is taken as written at every stage, and
-  the check is not guarantee-eligible. A descriptor access is
+  writes and classifies storage bindings as atomic-only or plain, per byte range of the bound buffer; an atomic
+  counts only at a scope that holds every invocation of the device, and an access through an index taken from an
+  atomic is a plain access. A pointer keeps every descriptor it may come from, through helper calls, returns, branches
+  and pointers held in variables, so a helper called with two buffers accesses both. When a pipeline's shader code is
+  missing or cannot be parsed, or an access reaches descriptor memory through a value the analysis cannot trace to a
+  descriptor, every storage descriptor it binds is taken as written at every stage, and the check is not
+  guarantee-eligible. A descriptor access is
   charged at the stages whose entry point uses the binding; the set layout's stage flags are only the fallback when no
   entry point is known. A descriptor-array read is charged to every written element, unless the guard conditions of
   \S\ref{sec:guards} hold and the element is selected by host-written index bytes.
@@ -407,7 +410,7 @@ groups without repairs; no incomplete report counts as clean.}
 \toprule
 Corpus & runs & in domain & Release result \\
 \midrule
-Test suite & 383 & -- & all pass: 2,550 random frames against the reference semantics, 300 with host writes, the
+Test suite & 387 & -- & all pass: 2,550 random frames against the reference semantics, 300 with host writes, the
 minimal frames of Appendix~\ref{app:counter}, shader-to-event tests, regression frames \\
 Barrier mutants (\S\ref{sec:eval-sem}) & 750 & 750 & 95.9\% agreement with validation (86 / 633 / 31 / 0); per-mutant
 diagnostics unchanged \\
@@ -450,8 +453,10 @@ Appendix~\ref{app:counter} and one regression frame for each implementation erro
 example \code{ALL\_COMMANDS} in a later barrier taken to contain an earlier transition, or a wait with an empty stage
 mask taken to order something. Since the reference consumes the same events, neither tests the translation from
 shaders to events. Separate tests assemble SPIR-V modules for it: an index taken from \code{atomicAdd(c, 0)} is not
-a fresh slot (both stores race), an atomic is exempt only at device scope, and a missing or malformed shader module
-makes its storage accesses writes and the trace not eligible. The release passes all 383 tests of its suite.
+a fresh slot (both stores race), an atomic is exempt only at device scope and only against atomics on the same
+bytes, a helper called with two buffers writes both, an access the analysis cannot attribute fails closed, a missing
+or malformed shader module makes its storage accesses writes and the trace not eligible, and two transitions never
+chain two barriers. The release passes all 387 tests of its suite.
 
 \paragraph{Barrier mutants against synchronization validation}
 \begin{figure*}[t]
