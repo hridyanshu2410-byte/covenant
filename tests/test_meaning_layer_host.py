@@ -12,7 +12,10 @@ import unittest
 from pathlib import Path
 from types import SimpleNamespace
 
-import clang.cindex as ci
+try:
+    import clang.cindex as ci
+except ImportError:                 # the meaning layer reads the C++ host with libclang
+    raise unittest.SkipTest("needs the libclang Python bindings (clang.cindex)")
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))

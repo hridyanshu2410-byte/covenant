@@ -16,7 +16,8 @@ loaded with covenant/host_trace.py and checked in both modes and by the referenc
   and selected pointers), and an access it cannot attribute fails closed;
 * atomic exemptions compare buffer bytes, not member numbers: one shader run
   through two descriptor offsets of one buffer, whose ordinary read of one run
-  overlaps the atomic of the other, races;
+  overlaps the atomic of the other, races, whether the read is addressed with
+  OpAccessChain or with OpPtrAccessChain (whose Element operand is no member);
 * a layout transition orders nothing between two barriers: the transitions of two
   image barriers do not chain them, in the checked frame or in the optimizer's
   frame where each transition is split into two halves around a pseudo-stage;
@@ -294,13 +295,18 @@ def two_buffer_trace(sha):
     return out
 
 
-def counter_module():
-    """{uint counter (offset 0); uint source (offset 256);}: atomicAdd(counter, source)."""
+def counter_module(chain="access"):
+    """{uint counter (offset 0); uint source (offset 256);}: atomicAdd(counter, source).
+    chain "ptr": source is reached with OpPtrAccessChain(block, Element 0, member 1)
+    (variable pointers; the block pointer type has an ArrayStride, as SPIR-V
+    requires); "ptr1": the same with Element 1, the next block in memory."""
     w = [0x07230203, 0x00010300, 0, 40, 0]
 
     def e(op, *a):
         w.extend([(len(a) + 1) << 16 | OPS[op], *a])
     e("OpCapability", 1)
+    if chain != "access":
+        e("OpCapability", 4441)                             # VariablePointersStorageBuffer
     e("OpMemoryModel", 0, 1)
     e("OpEntryPoint", 5, 20, *_string("main"))
     e("OpExecutionMode", 20, 17, 1, 1, 1)
@@ -309,6 +315,8 @@ def counter_module():
     e("OpMemberDecorate", 4, 1, 35, 256)
     e("OpDecorate", 7, 34, 0)
     e("OpDecorate", 7, 33, 0)
+    if chain != "access":
+        e("OpDecorate", 5, 6, 260)                          # ArrayStride of the block pointer
     e("OpTypeVoid", 1)
     e("OpTypeFunction", 2, 1)
     e("OpTypeInt", 3, 32, 0)
@@ -320,7 +328,10 @@ def counter_module():
     e("OpConstant", 3, 9, 1)
     e("OpFunction", 1, 20, 0, 2)
     e("OpLabel", 21)
-    e("OpAccessChain", 6, 22, 7, 9)
+    if chain == "access":
+        e("OpAccessChain", 6, 22, 7, 9)
+    else:
+        e("OpPtrAccessChain", 6, 22, 7, 8 if chain == "ptr" else 9, 9)
     e("OpLoad", 3, 23, 22)
     e("OpAccessChain", 6, 24, 7, 8)
     e("OpAtomicIAdd", 3, 25, 24, 9, 8, 23)                  # Device scope
@@ -472,23 +483,37 @@ class BoundaryTest(unittest.TestCase):
             self.assertFalse(elig["guarantee_eligible"])
 
     def test_atomic_exemption_compares_bytes_not_members(self):
-        b = counter_module()
-        # same offset: atomics meet atomics, reads meet reads, so no race
-        m = self.load(shifted_trace(_sha(b), 0), {_sha(b): b})
-        self.assertEqual(timing_ref.races(m.frame), [])
-        for codes, elig in self.verdicts(m):
-            self.assertEqual(codes, [])
-            self.assertTrue(elig["guarantee_eligible"])
-        # offset 256: the first run's read of bytes [256, 260) meets the second run's atomic
-        m = self.load(shifted_trace(_sha(b), 256), {_sha(b): b})
-        self.assertEqual(len(timing_ref.races(m.frame)), 1)
-        for codes, elig in self.verdicts(m):
-            self.assertEqual(codes, ["timing.missing-barrier"])
-            self.assertTrue(elig["guarantee_eligible"])
-        # offset 512: the two runs touch disjoint bytes
-        m = self.load(shifted_trace(_sha(b), 512), {_sha(b): b})
-        for codes, _ in self.verdicts(m):
-            self.assertEqual(codes, [])
+        # the same shader with OpAccessChain and with OpPtrAccessChain (Element 0) reads the same bytes
+        for chain in ("access", "ptr"):
+            b = counter_module(chain)
+            # same offset: atomics meet atomics, reads meet reads, so no race
+            m = self.load(shifted_trace(_sha(b), 0), {_sha(b): b})
+            self.assertEqual(timing_ref.races(m.frame), [], chain)
+            for codes, elig in self.verdicts(m):
+                self.assertEqual(codes, [], chain)
+                self.assertTrue(elig["guarantee_eligible"])
+            # offset 256: the first run's read of bytes [256, 260) meets the second run's atomic
+            m = self.load(shifted_trace(_sha(b), 256), {_sha(b): b})
+            self.assertEqual(len(timing_ref.races(m.frame)), 1, chain)
+            for codes, elig in self.verdicts(m):
+                self.assertEqual(codes, ["timing.missing-barrier"], chain)
+                self.assertTrue(elig["guarantee_eligible"])
+            # offset 512: the two runs touch disjoint bytes
+            m = self.load(shifted_trace(_sha(b), 512), {_sha(b): b})
+            for codes, _ in self.verdicts(m):
+                self.assertEqual(codes, [], chain)
+
+    def test_pointer_access_chain_element_moves_the_span(self):
+        spans = {}
+        for chain in ("access", "ptr", "ptr1"):
+            with tempfile.NamedTemporaryFile(suffix=".spv") as f:
+                f.write(counter_module(chain))
+                f.flush()
+                spans[chain] = spirv.entry_binding_modes(spirv.parse(f.name), "main", spans=True)
+        self.assertEqual(spans["access"], {(0, 0): frozenset({("atomic", (0, 256)), ("read", (256, None))})})
+        self.assertEqual(spans["ptr"], spans["access"])
+        # Element 1 reads the next block: no member span, so the read may touch the whole range
+        self.assertEqual(spans["ptr1"], {(0, 0): frozenset({("atomic", (0, 256)), ("read", None)})})
 
     def test_transitions_do_not_chain_two_barriers(self):
         F, B, U = frozenset, timing.Barrier, timing.Use
@@ -552,6 +577,13 @@ class BoundaryTest(unittest.TestCase):
             r = subprocess.run(["spirv-val", "--target-env", "vulkan1.3",
                                 os.path.join(EFFECTS, f"{name}.spv")], capture_output=True, text=True)
             self.assertEqual(r.returncode, 0, f"{name}: {r.stderr}")
+        for chain in ("access", "ptr"):
+            with tempfile.NamedTemporaryFile(suffix=".spv") as f:
+                f.write(counter_module(chain))
+                f.flush()
+                r = subprocess.run(["spirv-val", "--target-env", "vulkan1.3", f.name],
+                                   capture_output=True, text=True)
+            self.assertEqual(r.returncode, 0, f"counter_module({chain}): {r.stderr}")
 
 if __name__ == "__main__":
     unittest.main()

@@ -17,6 +17,10 @@ def elider(w):
 class ElideTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        try:
+            elide.VkNames.find_header()
+        except FileNotFoundError as ex:     # flag names are read from the Vulkan headers
+            raise unittest.SkipTest(str(ex))
         cls.plans = {}
         for w in ("particles", "deferred", "postchain"):
             el = elider(w)

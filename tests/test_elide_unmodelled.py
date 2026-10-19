@@ -14,7 +14,16 @@ TRACES = os.path.join(HERE, "..", "bench", "elide", "traces")
 SRC = os.path.join(TRACES, "particles.jsonl")
 
 
+def _have_header():
+    try:
+        elide.VkNames.find_header()
+        return True
+    except FileNotFoundError:
+        return False
+
+
 @unittest.skipUnless(os.path.exists(SRC), "demonstration traces not present")
+@unittest.skipUnless(_have_header(), "vulkan_core.h not found; set COVENANT_VKINC or VULKAN_HEADER")
 class ElideUnmodelled(unittest.TestCase):
     def run_with(self, extra_after_seq, rec):
         with open(SRC) as f:
