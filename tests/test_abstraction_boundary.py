@@ -19,8 +19,16 @@ loaded with covenant/host_trace.py and checked in both modes and by the referenc
   overlaps the atomic of the other, races;
 * a layout transition orders nothing between two barriers: the transitions of two
   image barriers do not chain them, in the checked frame or in the optimizer's
-  frame where each transition is split into two halves around a pseudo-stage.
+  frame where each transition is split into two halves around a pseudo-stage;
+* every instruction that writes memory is a write, whatever its form: OpCopyMemory
+  and OpCopyMemorySized write their target, a cooperative-matrix store writes its
+  buffer, and an instruction outside the analysis's inventory (an untyped-pointer
+  access chain) on a descriptor fails closed. These modules, in
+  fixtures/shader_effects, pass spirv-val for Vulkan 1.3 (the cooperative-matrix
+  one is compiled from GLSL with glslangValidator).
 """
+import shutil
+import subprocess
 import copy
 import hashlib
 import json
@@ -36,6 +44,7 @@ from covenant import spirv, timing, timing_ref  # noqa: E402
 from covenant.diagnostics import Report  # noqa: E402
 from covenant.host_trace import load_trace  # noqa: E402
 
+EFFECTS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fixtures", "shader_effects")
 _GRAMMAR = os.path.join(os.path.dirname(spirv.__file__), "data", "spirv.core.grammar.json")
 with open(_GRAMMAR) as _f:
     OPS = {x["opname"]: x["opcode"] for x in json.load(_f)["instructions"]}
@@ -510,6 +519,39 @@ class BoundaryTest(unittest.TestCase):
         # one split transition still links its own halves: W before X's transition and R
         fr = timing.Frame(queues={"q": [w] + split[1:4] + [r]}, initial_layouts={"img": "general"})
         self.assertFalse(any(a.op is w for a, b in timing_ref.races(fr) if b.op.where.endswith("transition)")))
+
+    def test_every_memory_write_is_a_write(self):
+        cases = {"copy": {(0, 0): True, (0, 1): False}, "copysized": {(0, 0): True, (0, 1): False},
+                 "coop": {(0, 0): True, (0, 1): False}}
+        for name, want in cases.items():
+            path = os.path.join(EFFECTS, f"{name}.spv")
+            self.assertEqual(spirv.entry_bindings(spirv.parse(path), "main"), want, name)
+            with open(path, "rb") as f:
+                b = f.read()
+            m = self.load(two_buffer_trace(_sha(b)), {_sha(b): b})
+            self.assertEqual(len(timing_ref.races(m.frame)), 1, name)
+            for codes, elig in self.verdicts(m):
+                self.assertEqual(codes, ["timing.missing-barrier"], name)
+                self.assertTrue(elig["guarantee_eligible"], name)
+
+    def test_instruction_outside_the_inventory_fails_closed(self):
+        path = os.path.join(EFFECTS, "untyped.spv")
+        with self.assertRaises(spirv.AnalysisIncomplete):
+            spirv.entry_bindings(spirv.parse(path), "main")
+        with open(path, "rb") as f:
+            b = f.read()
+        m = self.load(two_buffer_trace(_sha(b)), {_sha(b): b})
+        for codes, elig in self.verdicts(m):
+            self.assertEqual(codes, ["timing.missing-barrier"])
+            self.assertIn("shader accesses not attributed", elig["model_gaps"])
+            self.assertFalse(elig["guarantee_eligible"])
+
+    @unittest.skipUnless(shutil.which("spirv-val"), "spirv-val not installed")
+    def test_effect_fixtures_are_valid_spirv(self):
+        for name in ("copy", "copysized", "coop", "untyped"):
+            r = subprocess.run(["spirv-val", "--target-env", "vulkan1.3",
+                                os.path.join(EFFECTS, f"{name}.spv")], capture_output=True, text=True)
+            self.assertEqual(r.returncode, 0, f"{name}: {r.stderr}")
 
 if __name__ == "__main__":
     unittest.main()

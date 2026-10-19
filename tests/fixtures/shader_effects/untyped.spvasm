@@ -1,0 +1,24 @@
+               OpCapability Shader
+               OpCapability UntypedPointersKHR
+               OpExtension "SPV_KHR_untyped_pointers"
+               OpMemoryModel Logical GLSL450
+               OpEntryPoint GLCompute %main "main" %A
+               OpExecutionMode %main LocalSize 1 1 1
+               OpDecorate %S Block
+               OpMemberDecorate %S 0 Offset 0
+               OpDecorate %A DescriptorSet 0
+               OpDecorate %A Binding 0
+       %void = OpTypeVoid
+         %fn = OpTypeFunction %void
+       %uint = OpTypeInt 32 0
+          %S = OpTypeStruct %uint
+       %uptr = OpTypeUntypedPointerKHR StorageBuffer
+          %A = OpUntypedVariableKHR %uptr StorageBuffer %S
+      %uint0 = OpConstant %uint 0
+    %uint123 = OpConstant %uint 123
+       %main = OpFunction %void None %fn
+          %l = OpLabel
+          %p = OpUntypedAccessChainKHR %uptr %S %A %uint0
+               OpStore %p %uint123
+               OpReturn
+               OpFunctionEnd
