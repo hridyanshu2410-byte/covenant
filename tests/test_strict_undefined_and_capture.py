@@ -417,6 +417,10 @@ class ElisionComparesEventPairs(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         from covenant import elide
+        try:
+            elide.VkNames.find_header()
+        except FileNotFoundError as ex:
+            raise unittest.SkipTest(str(ex))
         cls.el = elide.Elider(str(ELIDE_TRACES / "particles.jsonl"), str(ELIDE_TRACES / "particles-spv"))
         cls.el.run()
 

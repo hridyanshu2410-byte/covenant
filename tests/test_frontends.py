@@ -107,6 +107,7 @@ class EntryBindings(unittest.TestCase):
         self.assertEqual(spirv.entry_bindings(m, "resolveMain"), {(0, 0): False})
 
 
+@unittest.skipUnless(hs.ci is not None, "needs the libclang Python bindings (clang.cindex)")
 class HostConventions(unittest.TestCase):
     def test_glm_define_after_include(self):
         late = hs.parse([FIX / "glm_order.cpp"])

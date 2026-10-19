@@ -446,6 +446,7 @@ _NO_ACCESS = {"OpLine", "OpNoLine", "OpSelectionMerge", "OpLoopMerge", "OpBranch
               "OpReturnValue", "OpKill", "OpUnreachable", "OpModuleProcessed", "OpSource",
               "OpSourceContinued", "OpString"}
 _CHAIN_OPS = ("OpAccessChain", "OpInBoundsAccessChain", "OpPtrAccessChain", "OpInBoundsPtrAccessChain")
+_PTR_CHAIN_OPS = ("OpPtrAccessChain", "OpInBoundsPtrAccessChain")   # Base, Element, Indexes...
 _DEVICE_SCOPES = (0, 1, 5)     # Scope CrossDevice, Device, QueueFamily: every invocation of every command
 
 
@@ -517,16 +518,22 @@ def entry_binding_modes(m, entry, spans=False):
     def member(ptr):
         """First member below the descriptor variable: its index, or with spans
         its byte span (lo, hi) in the block (hi None: to the end of the range).
-        None: unknown, the whole block, or a block array."""
+        None: unknown, the whole block, or a block array. OpPtrAccessChain and
+        OpInBoundsPtrAccessChain carry an Element operand before their indexes,
+        which moves the address by whole elements of their base type: only a
+        constant Element 0 keeps the access inside the member."""
         top = None
         for _ in range(64):
             d = m.defs.get(ptr)
             if d is None or d.op not in _CHAIN_OPS:
                 break
+            if d.op in _PTR_CHAIN_OPS and m.consts.get(d.args[1]) != 0:
+                return None                 # an Element that may step out of the member
             top, ptr = d, d.args[0]
-        if top is None or len(top.args) < 2 or top.args[0] not in var_key:
+        first = 2 if top is not None and top.op in _PTR_CHAIN_OPS else 1
+        if top is None or len(top.args) <= first or top.args[0] not in var_key:
             return None
-        c = m.consts.get(top.args[1])
+        c = m.consts.get(top.args[first])
         if not isinstance(c, int):
             return None
         if not spans:

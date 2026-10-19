@@ -67,8 +67,16 @@ COVENANT_VKINC=$VKINC python3 -m pytest -q tests
 ```
 
 `COVENANT_VKINC` is the Vulkan-Headers include directory; the tests that build the
-model driver and the litmus programs use it. With all requirements present, every
-test runs (none is skipped).
+model driver and the litmus programs use it, and the barrier-elision tests read flag
+names from its `vulkan_core.h`. With all requirements present, all 391 tests run and
+pass, none skipped. A test whose tool is missing (libclang, `slangc`, `spirv-val`,
+`glslangValidator`, a C++ compiler, the headers) is skipped rather than failed;
+`pytest -rs` lists each skip and its reason. Only the checker's own tests run with
+Python, `pytest` and `numpy` alone.
+
+The versions the release was tested with: Python 3.13, pytest 9.1, numpy 2.5,
+Vulkan-Headers v1.4.365, glslang 15.1.0, SPIRV-Tools v2025.1 (`spirv-val`), clang 20
+with its Python bindings, Slang 2026.18.
 
 ## Check a trace
 
@@ -122,7 +130,7 @@ recorded execution is reported):
 the first 12 hex digits of a SHA-1 over the file name and bytes of each
 `covenant/*.py` (sorted by name), followed by `bench/run.py`
 (`covenant_version()` in `tools/check_trace.py`). This release is
-**`5fe846eddf3e`**:
+**`fa974bb2d72d`**:
 
 ```sh
 python3 -c "import runpy; print(runpy.run_path('tools/check_trace.py')['covenant_version']())"

@@ -65,8 +65,12 @@ def type_size(m, t, mstride=None, depth=0):
             return None
         n = d.args[1]
         if mstride:
-            # column- or row-major: at most n * stride (+ the last column's size)
-            return max(n * mstride, col)
+            # column-major: n columns MatrixStride apart; row-major: one row per
+            # component of a column, MatrixStride apart. The layout decoration is
+            # not read, so take the larger of the two.
+            cv = m.types.get(d.args[0])
+            rows = cv.args[1] if cv is not None and cv.op == "OpTypeVector" else 1
+            return max(max(n, rows) * mstride, col)
         return col * n
     if op == "OpTypeArray":
         n = m.consts.get(d.args[1])
