@@ -94,8 +94,12 @@ between two Vulkan calls. `COVENANT_HOST_CAPTURE` selects how the checker uses t
 Other switches (all off by default): `COVENANT_HEURISTIC_DISCARD=1` lets an
 execution dependency suffice before a layout transition from `UNDEFINED`
 (not the specification); `COVENANT_LEGACY_SUBPASS_FLAGS=global` reads subpass
-dependencies of traces without recorded dependency flags as framebuffer-global.
-Each one leaves the verified configuration.
+dependencies of traces without recorded dependency flags as framebuffer-global;
+`COVENANT_HEURISTIC_SLOTS=1` takes two shader accesses through indices taken from
+atomics (e.g. `data[atomicAdd(n, 1)]`) as disjoint, which the checker does not
+establish. Each one leaves the verified configuration. Explicit arguments of
+`timing.check` (`discard_relaxed=`, `slots=`) override the environment, and the
+reported configuration is always the one the check ran with.
 
 ### The `eligibility` field
 
@@ -104,9 +108,9 @@ recorded execution is reported):
 
 | Field | Meaning |
 |---|---|
-| `verified_configuration` | the default configuration: spec-strict transitions from `UNDEFINED`, conservative host capture, framebuffer-local reading of unrecorded subpass flags |
+| `verified_configuration` | the default configuration: spec-strict transitions from `UNDEFINED`, conservative host capture, framebuffer-local reading of unrecorded subpass flags, no exemption for accesses through atomically allocated slots |
 | `checking_complete` | every queue ran to its end (no `timing.deadlock`) |
-| `model_gaps` | commands or state the model does not interpret and that may hide memory accesses; must be empty |
+| `model_gaps` | commands or state the model does not interpret and that may hide memory accesses, including a pipeline whose shader code is missing from the SPIR-V directory or cannot be parsed (its storage accesses are then taken as writes); must be empty |
 | `host_domain_premise_pairs` | number of device-write / host-access pairs accepted only under the host-domain premise (a fence or semaphore wait without a barrier to the `HOST` domain); reported as `timing.premise-host-domain` warnings; must be 0 |
 | `guarantee_eligible` | all of the above hold |
 
@@ -116,7 +120,7 @@ recorded execution is reported):
 the first 12 hex digits of a SHA-1 over the file name and bytes of each
 `covenant/*.py` (sorted by name), followed by `bench/run.py`
 (`covenant_version()` in `tools/check_trace.py`). This release is
-**`eb50030d8472`**:
+**`be5d91e015be`**:
 
 ```sh
 python3 -c "import runpy; print(runpy.run_path('tools/check_trace.py')['covenant_version']())"
