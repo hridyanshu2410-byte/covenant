@@ -23,7 +23,7 @@
 \newcommand{\spec}{\ensuremath{\Rightarrow_{\mathit{spec}}}}
 \newcommand{\Haz}{\ensuremath{\mathit{Haz}}}
 \newcommand{\posthoc}{\textsuperscript{\textsf{ph}}}
-\newcommand{\relhash}{\code{5fe846eddf3e}}
+\newcommand{\relhash}{\code{fa974bb2d72d}}
 \DeclareRobustCommand{\circled}[1]{\tikz[baseline=(c.base)]\node[circle,fill=black!35,text=white,inner sep=.6pt,font=\sffamily\scriptsize\bfseries](c){#1};}
 
 \setcopyright{none}
@@ -188,7 +188,10 @@ are lifted from SPIR-V, and the C++ host is read with libclang for struct layout
   every invocation of the device, and an access through an index taken from an atomic is a plain access (exempting
   such ``slot'' accesses is an opt-in heuristic, \code{COVENANT\_HEURISTIC\_SLOTS=1}, outside the verified
   configuration). Atomic-only is decided per byte range of the bound buffer (a block member's offset plus the
-  descriptor's offset), not per member name. A pointer keeps every descriptor it may come from, through helper calls,
+  descriptor's offset), not per member name. A pointer access chain (\code{OpPtrAccessChain}) first steps by whole
+  elements of its base type; only a constant Element of 0 keeps the access inside the member it then names,
+  otherwise the access may touch the whole range. A matrix's size is bounded for both column- and row-major
+  layouts. A pointer keeps every descriptor it may come from, through helper calls,
   returns, \code{OpPhi}, \code{OpSelect} and pointers held in variables. When a pipeline's shader code is missing or
   cannot be parsed, or an access reaches descriptor memory through a value the analysis cannot trace to a descriptor,
   every storage descriptor it binds is taken as written at every stage, and the gap is recorded (``shader code not
@@ -636,7 +639,7 @@ Every study was scored by a checker snapshot frozen, by source hash, before its 
 A checker defect found during a study was not fixed in that study's snapshot; it was fixed before a later snapshot,
 with a unit test. Table~\ref{tab:s-exposed} lists what each study, and each piece of development work between the
 studies, exposed in the checker, and the first snapshot that carries the fix. The release carries every fix in the
-table and passes all 390 tests of its suite (paper, \S\ref{P-sec:eval-sem}).
+table and passes all 391 tests of its suite (paper, \S\ref{P-sec:eval-sem}).
 
 \begin{table*}[t]
 \caption{What each study exposed: checker defects and missing modelling found in triage or by tests, and the first
@@ -664,6 +667,7 @@ model audit after both fresh studies (dev) & subpass-dependency flags not read: 
 external review of the release (dev) & three defects where shader accesses become events: a store through an index taken from an atomic was exempt, although \code{atomicAdd(c, 0)} gives every caller one index; a missing shader module made storage accesses reads; an explicit relaxation was reported as the verified configuration. Fixed (slot exemption opt-in only, atomics exempt only at device scope, missing shader code a write and a model gap, one resolved configuration); findings unchanged on every corpus, and one archived figure trace kept without its shader module is now outside the domain & the release \\
 second external review of the release (dev) & two shader-analysis defects that could accept a race: a helper function called with two buffers kept only one of them, so a write became a read; atomic-only tags compared block members, not buffer bytes, so an atomic at one descriptor offset hid a plain read of the same bytes at another. In the optimizer's split frame, the transition halves of two barriers could chain. Fixed (every possible descriptor kept, unattributed accesses a model gap, byte-range tags, transition halves chain only within one struct); findings unchanged on every corpus & the release \\
 third external review of the release (dev) & the shader analysis read any instruction not in its list of writes as a read: \code{OpCopyMemorySized} (untyped pointers) and cooperative-matrix stores wrote without a write event, and an untyped-pointer access chain was not reported. Fixed: an inventory of memory effects (Table~\ref{tab:s-effects}); any other instruction on descriptor memory is a model gap. On every shader of every corpus (2,129 entry points) the analysis is unchanged & the release \\
+fourth external review of the release (dev) & the byte span of an access through \code{OpPtrAccessChain} took the chain's Element operand for the block member, so a plain read could be placed on other bytes than it touches and escape an atomic it overlaps (a module that passes \code{spirv-val}); the size of a row-major non-square matrix could be underestimated. Fixed (the Element is skipped and must be 0, otherwise the whole range; matrix size bounded for both layouts); unchanged on every corpus shader & the release \\
 \bottomrule
 \end{tabular}
 \end{table*}
