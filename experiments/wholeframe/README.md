@@ -99,7 +99,7 @@ Both scripts write `$WORK/out-<label>/`. The label defaults to the checker's `co
 aborts if they are not reproduced. These stored results were produced by the original prototype
 checker, before and after its bug fixes (`snap`, `fix`).
 
-## Result (as reported in the paper; checker `5fe846eddf3e`)
+## Result (as reported in the paper; checker `fa974bb2d72d`)
 
 - **1,251 programs. Hazard agreement with validation (VVL `0ad67fd`): 97.9%.** This is the verdict "at
   least one hazard", with W2-MQ taken relative to its baseline. All finding classes agree in 95.4% of
