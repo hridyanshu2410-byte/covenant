@@ -148,7 +148,10 @@ def used_bindings(module, entry):
     touches does not need it bound, whatever the SPIR-V version (before 1.4
     the interface lists only Input / Output, so it cannot be used for this)."""
     from . import spirv
-    used = spirv.entry_bindings(module, entry) or {}
+    try:
+        used = spirv.entry_bindings(module, entry) or {}
+    except spirv.AnalysisIncomplete:
+        return {}                   # the timing check records the gap; no structural claim here
     names = {}
     for v, d in module.decos.items():
         if "Binding" in d:

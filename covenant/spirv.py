@@ -19,6 +19,54 @@ GLSLANG = os.environ.get("GLSLANG", "glslangValidator")
 
 
 @lru_cache(None)
+def _operand_kinds():
+    """opname -> [(kind, quantifier)] of the operands after the result type and
+    id; and the kinds that are literals or enumerants without id parameters."""
+    core = json.loads((DATA / "spirv.core.grammar.json").read_text())
+    ops = {}
+    for ins in core["instructions"]:
+        ops[ins["opname"]] = [(o["kind"], o.get("quantifier")) for o in ins.get("operands", [])
+                              if o["kind"] not in ("IdResultType", "IdResult")]
+    plain = {}
+    for k in core["operand_kinds"]:
+        if k["category"] == "Literal":
+            plain[k["kind"]] = "string" if k["kind"] == "LiteralString" else 1
+        elif k["category"] in ("ValueEnum", "BitEnum"):
+            params = any(e.get("parameters") for e in k.get("enumerants", []))
+            plain[k["kind"]] = "enum+" if params else 1
+    return ops, plain
+
+
+def _id_args(i):
+    """The operands of i that can be ids: literal and enumerant words are left
+    out where the grammar fixes their position; after an operand of unknown
+    length (an enumerant with parameters, an unknown opcode) every remaining
+    word counts."""
+    ops, plain = _operand_kinds()
+    kinds = ops.get(i.op)
+    if kinds is None:
+        return list(i.args)
+    out, k = [], 0
+    for kind, q in kinds:
+        if k >= len(i.args):
+            break
+        how = plain.get(kind)
+        if how is None:                     # an id (IdRef, IdScope, ...) or a pair / composite
+            if kind.startswith("Id") and q != "*":
+                out.append(i.args[k])
+                k += 1
+                continue
+            return out + list(i.args[k:])   # a list of ids, pairs, composites: every word may be one
+        if how == "string":
+            k += _string(i.args[k:])[1]
+        elif how == "enum+":
+            return out + list(i.args[k + 1:])
+        else:
+            k += len(i.args) - k if q == "*" else 1
+    return out
+
+
+@lru_cache(None)
 def _grammar():
     core = json.loads((DATA / "spirv.core.grammar.json").read_text())
     ops = {}
@@ -64,6 +112,7 @@ class Module:
     params: dict = field(default_factory=dict)         # func id -> [param ids]
     entries: list = field(default_factory=list)        # (model, func id, name, [iface ids])
     glsl_ext: int = None
+    nonsemantic: set = field(default_factory=set)      # NonSemantic.* extended instruction sets
     meta: dict = field(default_factory=dict)           # reflection / sidecar
     exec_modes: dict = field(default_factory=dict)     # func id -> {mode: [operands]} (e.g. LocalSize)
 
@@ -151,6 +200,8 @@ def parse(path):
                 m.glsl_ext = ins.id
             elif name.startswith("NonSemantic.Shader.DebugInfo"):
                 debug_set = ins.id
+            if name.startswith("NonSemantic."):
+                m.nonsemantic.add(ins.id)
         elif opname in ("OpExecutionMode", "OpExecutionModeId"):
             m.exec_modes.setdefault(body[0], {})[body[1]] = body[2:]
         elif opname == "OpEntryPoint":
@@ -202,12 +253,37 @@ def parse(path):
 # ------------------------------------------------------------------ compile
 _PTR_OPS = {"OpAccessChain", "OpInBoundsAccessChain", "OpPtrAccessChain",
             "OpInBoundsPtrAccessChain", "OpCopyObject", "OpBitcast", "OpLoad",
-            "OpImageTexelPointer"}      # image atomics go through a texel pointer
+            "OpImageTexelPointer",      # image atomics go through a texel pointer
+            "OpSampledImage", "OpImage"}
+# The memory-effect inventory. Every instruction that takes a descriptor
+# pointer or handle as an operand is in exactly one of these classes; any other
+# instruction on one (an extension's load or store, untyped pointers, a pointer
+# converted to an integer, ...) makes the analysis incomplete, so the caller
+# fails closed instead of reading an unknown effect as a read.
 _WRITE_PTR = {"OpStore", "OpAtomicStore", "OpAtomicExchange", "OpAtomicCompareExchange",
-              "OpAtomicIIncrement", "OpAtomicIDecrement", "OpAtomicIAdd", "OpAtomicISub",
-              "OpAtomicSMin", "OpAtomicUMin", "OpAtomicSMax", "OpAtomicUMax", "OpAtomicAnd",
-              "OpAtomicOr", "OpAtomicXor", "OpAtomicFAddEXT", "OpAtomicFMinEXT",
-              "OpAtomicFMaxEXT", "OpCopyMemory"}
+              "OpAtomicCompareExchangeWeak", "OpAtomicIIncrement", "OpAtomicIDecrement",
+              "OpAtomicIAdd", "OpAtomicISub", "OpAtomicSMin", "OpAtomicUMin", "OpAtomicSMax",
+              "OpAtomicUMax", "OpAtomicAnd", "OpAtomicOr", "OpAtomicXor", "OpAtomicFAddEXT",
+              "OpAtomicFMinEXT", "OpAtomicFMaxEXT", "OpAtomicFlagTestAndSet", "OpAtomicFlagClear",
+              "OpCopyMemory", "OpCopyMemorySized", "OpImageWrite",
+              "OpCooperativeMatrixStoreKHR", "OpCooperativeMatrixStoreNV",
+              "OpCooperativeMatrixStoreTensorNV", "OpCooperativeVectorStoreNV",
+              "OpCooperativeVectorReduceSumAccumulateNV",
+              "OpCooperativeVectorOuterProductAccumulateNV"}    # first operand: the target written
+                                                                # (a copy's second, its source, is read)
+_READ_OPS = {"OpLoad", "OpAtomicLoad", "OpArrayLength", "OpImageRead", "OpImageFetch",
+             "OpImageGather", "OpImageDrefGather", "OpCooperativeMatrixLoadKHR",
+             "OpCooperativeMatrixLoadNV", "OpCooperativeMatrixLoadTensorNV",
+             "OpCooperativeVectorLoadNV", "OpCooperativeVectorMatrixMulNV",
+             "OpCooperativeVectorMatrixMulAddNV", "OpTraceRayKHR", "OpTraceNV",
+             "OpTraceRayMotionNV", "OpRayQueryInitializeKHR", "OpHitObjectTraceRayNV",
+             "OpHitObjectTraceRayMotionNV", "OpFragmentFetchAMD", "OpFragmentMaskFetchAMD"}
+_READ_PREFIX = ("OpImageSample", "OpImageSparse", "OpImageQuery", "OpImageBlockMatch",
+                "OpImageBoxFilter")
+_FLOW_OPS = _PTR_OPS | {"OpPhi", "OpSelect", "OpCopyLogical", "OpFunctionCall", "OpReturnValue",
+                        "OpPtrEqual", "OpPtrNotEqual", "OpPtrDiff"}    # pass a pointer on
+_HANDLE_KINDS = ("pointer", "untypedpointerkhr", "image", "sampledimage", "sampler",
+                 "accelerationstructurekhr")
 
 
 class AnalysisIncomplete(ValueError):
@@ -273,27 +349,68 @@ def _descriptor_roots(m, reach, var_key, through_load):
     return root
 
 
+def _effect(m, i):
+    """The memory effect of instruction i on its pointer and handle operands:
+    "write" (the first operand is written; a copy also reads its second),
+    "read", "flow" (passes a pointer or handle on), "none" (debug information)
+    or None (not in the inventory)."""
+    op = i.op
+    if op == "OpExtInst":
+        if i.args and i.args[0] == m.glsl_ext:
+            return "write"                  # Modf / Frexp store through a pointer operand
+        return "none" if i.args and i.args[0] in m.nonsemantic else None
+    if op in _WRITE_PTR or (op.startswith("OpAtomic") and op != "OpAtomicLoad"):
+        return "write"
+    if op in _READ_OPS or op.startswith(_READ_PREFIX):
+        return "read"
+    if op in _FLOW_OPS:
+        return "flow"
+    if op in _NO_ACCESS or op == "OpVariable":
+        return "none"                       # OpVariable: a storage-class literal, an initializer
+    return None
+
+
+def _is_handle(m, a):
+    d = m.defs.get(a)
+    return d is not None and m.tkind(d.type) in _HANDLE_KINDS
+
+
+def _is_descriptor_memory(m, a):
+    """a is a pointer into descriptor memory or a descriptor handle (image,
+    sampled image, acceleration structure)."""
+    d = m.defs.get(a)
+    t = m.types.get(d.type) if d is not None else None
+    if t is None:
+        return False
+    if t.op == "OpTypePointer":
+        return t.args[0] in _DESC_CLASSES
+    return m.tkind(d.type) in ("image", "sampledimage", "accelerationstructurekhr", "untypedpointerkhr")
+
+
 def _check_attributed(m, reach, root):
-    """Raise AnalysisIncomplete if a load, store, atomic or image write reaches
-    descriptor memory through a pointer or image the analysis did not attribute."""
+    """Raise AnalysisIncomplete if an instruction reaches descriptor memory
+    through a pointer or handle the analysis did not attribute, or applies an
+    effect outside the inventory to a descriptor pointer or handle."""
     for f in reach:
         for i in m.functions[f]:
-            if i.op == "OpImageWrite" or i.op in _WRITE_PTR or i.op in ("OpLoad", "OpImageTexelPointer"):
-                tgt = i.args[0] if i.args else None
-                if tgt is None or tgt in root:
-                    continue
-                d = m.defs.get(tgt)
-                t = m.types.get(d.type) if d is not None else None
-                if i.op == "OpImageWrite" or i.op == "OpImageTexelPointer" or \
-                        (t is not None and t.op == "OpTypePointer" and t.args[0] in _DESC_CLASSES):
-                    raise AnalysisIncomplete(f"{i.op} through %{tgt} is not attributed to a descriptor")
+            eff = _effect(m, i)
+            if eff in ("flow", "none"):
+                continue
+            for a in _id_args(i):
+                if a in root:
+                    if eff is None and _is_handle(m, a):
+                        raise AnalysisIncomplete(f"{i.op} on descriptor memory (%{a}) is not modelled")
+                elif _is_descriptor_memory(m, a):
+                    raise AnalysisIncomplete(f"{i.op} through %{a} is not attributed to a descriptor")
 
 
 def entry_bindings(m, entry):
     """{(set, binding): written} for the descriptor resources the entry point
     can reach (through its call graph). Resources it never touches are absent.
-    "written" means some reachable store, atomic or image write targets it.
-    Raises AnalysisIncomplete when an access cannot be attributed."""
+    "written" means some reachable instruction of the inventory's write class
+    (store, atomic, copy target, image write, cooperative store, ...) targets
+    it. Raises AnalysisIncomplete when an access cannot be attributed or an
+    instruction outside the inventory touches descriptor memory."""
     fid = next((f for _, f, n, _ in m.entries if n == entry), None)
     if fid is None:
         return None
@@ -310,9 +427,17 @@ def entry_bindings(m, entry):
             for a in i.args:
                 for v in root.get(a, ()):
                     out.setdefault(var_key[v], False)
-            tgt = i.args[0] if i.args and (i.op in _WRITE_PTR or i.op == "OpImageWrite") else None
-            for v in root.get(tgt, ()):
-                out[var_key[v]] = True
+            tgt = i.args[0] if i.args and _effect(m, i) == "write" else None
+            if i.op == "OpExtInst":         # GLSL.std.450: every pointer operand may be stored to
+                tgts = [a for a in i.args[2:] if a in root and _is_handle(m, a)]
+            elif i.op == "OpStore" and len(i.args) > 1 and i.args[1] in root and _is_handle(m, i.args[1]) \
+                    and i.args[0] not in root:
+                tgts = []                   # a pointer kept in a variable: no memory effect
+            else:
+                tgts = [tgt]
+            for t in tgts:
+                for v in root.get(t, ()):
+                    out[var_key[v]] = True
     return out
 
 

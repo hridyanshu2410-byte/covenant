@@ -33,6 +33,7 @@ This repository accompanies an anonymous paper submission (Anonymous authors).
 - [Vulkan-Headers](https://github.com/KhronosGroup/Vulkan-Headers) at tag **v1.4.365**
   (older system headers, such as 1.3.275, do not build the model driver);
 - `glslangValidator`;
+- optionally `spirv-val` (SPIRV-Tools), which the tests use to validate their SPIR-V fixtures;
 - for the meaning-layer tests: the libclang Python bindings (`clang.cindex`) and `slangc`
   (set `SLANGC` to its path; default `/opt/slang/bin/slangc`). Checking a trace does not need
   libclang; only `--host-src` (reading the C++ host for struct layouts) and the meaning layer do.
@@ -111,7 +112,7 @@ recorded execution is reported):
 |---|---|
 | `verified_configuration` | the default configuration: spec-strict transitions from `UNDEFINED`, conservative host capture, framebuffer-local reading of unrecorded subpass flags, no exemption for accesses through atomically allocated slots |
 | `checking_complete` | every queue ran to its end (no `timing.deadlock`) |
-| `model_gaps` | commands or state the model does not interpret and that may hide memory accesses, including a pipeline whose shader code is missing from the SPIR-V directory or cannot be parsed ("shader code not available") and a shader that reaches descriptor memory through a pointer the analysis cannot trace to a descriptor ("shader accesses not attributed"); in both cases the pipeline's storage accesses are taken as writes; must be empty |
+| `model_gaps` | commands or state the model does not interpret and that may hide memory accesses, including a pipeline whose shader code is missing from the SPIR-V directory or cannot be parsed ("shader code not available") and a shader that reaches descriptor memory through a pointer the analysis cannot trace to a descriptor, or applies to it an instruction outside the analysis's inventory of memory effects, such as an untyped pointer ("shader accesses not attributed"); in both cases the pipeline's storage accesses are taken as writes; must be empty |
 | `host_domain_premise_pairs` | number of device-write / host-access pairs accepted only under the host-domain premise (a fence or semaphore wait without a barrier to the `HOST` domain); reported as `timing.premise-host-domain` warnings; must be 0 |
 | `guarantee_eligible` | all of the above hold |
 
@@ -121,7 +122,7 @@ recorded execution is reported):
 the first 12 hex digits of a SHA-1 over the file name and bytes of each
 `covenant/*.py` (sorted by name), followed by `bench/run.py`
 (`covenant_version()` in `tools/check_trace.py`). This release is
-**`4d0d0f901f56`**:
+**`5fe846eddf3e`**:
 
 ```sh
 python3 -c "import runpy; print(runpy.run_path('tools/check_trace.py')['covenant_version']())"
