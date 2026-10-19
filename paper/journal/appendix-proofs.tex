@@ -584,9 +584,11 @@ For events $a,b$ of $\tau$ and every $\ell$, $\ordl{\ell}(a,b)$ in $F^*(\tau)$ i
 Hence $\Hspec(\tau) \subseteq \Hspec(F^*(\tau))$ under the identification.
 \end{lemma}
 \begin{proof}
-$\mathsf{LT}$ lies in a stage set only if the set names it, so $\top$ does not contain it. $B_1$'s second set
-therefore meets only $B_2$'s first set, and conversely. $B_1 \chainto B_2$ is allowed, because they share their
-struct identity. $D \chainto B_1$ if and only if $D \chainto B$, and $B_2 \chainto D$ if and only if $B \chainto D$.
+$\mathsf{LT}$ lies in a stage set only if the set names it, so $\top$ does not contain it, and a meeting in
+$\mathsf{LT}$ chains two dependencies only when they are one struct of one call (Definition~\ref{def:spec}). $B_1$'s
+second set is $\{\mathsf{LT}\}$, so $B_1$ chains only into $B_2$, and only $B_1$ chains into $B_2$; the halves of two
+different transitions never chain, even when both are in one call. $B_1 \chainto B_2$ is allowed, because they share
+their call and struct identity. $D \chainto B_1$ if and only if $D \chainto B$, and $B_2 \chainto D$ if and only if $B \chainto D$.
 For events other than transitions, $\Sc{1}(B_1) = \Sc{1}(B)$, $\Sc{2}(B_2) = \Sc{2}(B)$, and the same holds for the
 access scopes. Replacing each $B_1 B_2$ in a chain of $F^*(\tau)$ by $B$ gives a chain of $\tau$ with the same end
 scopes. $\lambda_B$ is in the scopes of $B_1$ (second) and $B_2$ (first) only, and $t_B$ is in both scopes of $B$, so
