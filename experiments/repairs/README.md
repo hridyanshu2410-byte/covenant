@@ -129,7 +129,7 @@ The `ONLY` pattern selects the 15 repaired programs. Leave it out to re-check al
 
 `recheck.sh` writes `COMPARE.md` and `compare.json`.
 
-## Result (as reported in the paper; checker `4d0d0f901f56`)
+## Result (as reported in the paper; checker `5fe846eddf3e`)
 
 - **11 source-patch cases cover nine causes.** Every single-cause repair is clean for its own cause and
   adds no new diagnostic code.
