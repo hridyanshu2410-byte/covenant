@@ -4,7 +4,7 @@
 
 This section gives the protocols, triage rules and full results of the two studies of the paper's E3. Every number
 is from the checker snapshot frozen for its study, in the configuration named, except in \S\ref{sup:release-posthoc},
-which re-checks the same recorded traces with the release and is post-hoc. The artifact holds the traces, the
+which re-checks the same recorded traces with the release and is post-hoc. The released repository holds the traces, the
 per-diagnostic classes and the scripts that produce each table.
 
 \subsection{Protocols and disclosures}
@@ -154,7 +154,7 @@ Both studies ran after every fix below landed, and we reported nothing upstream 
 predate the studies, and none was caused by this work. Fixing commits were found with \code{git log -S/-G} on the lines
 that carry each cause, and a commit is listed only when its diff changes the exact pattern. Days: from the commit's
 landing on the default branch to our study. The GTK fixes landed on main before the tested 4.14.5 release but were not
-backported to the 4.14 branch. The full ledger, with release tags and backports, is in the artifact.
+backported to the 4.14 branch. The full ledger, with release tags and backports, is \path{experiments/fresh-studies/UPSTREAM.md} in the repository.
 
 Each commit carries one of three labels. An \emph{initial fix attempt} was re-run under the same commands and leaves
 diagnostics of the cause. A \emph{commit changing the pattern} was read in the source and not re-run. A \emph{verified
@@ -206,7 +206,7 @@ presents), checked in conservative and observed capture, with validation (lavapi
 A repair is \emph{clean for its cause} when the patched run has no diagnostic of that cause and no diagnostic code the
 original lacked; remaining diagnostics are attributed by written rules (code and resource) to the other listed causes.
 The cases were first checked with the snapshot frozen for study~2 and then re-traced from the same sources and patches
-and re-checked with the release (post-hoc; Table~\ref{tab:s-repairs}). The tested vkmark package is source-identical to the commit in Table~\ref{tab:s-software}. Patches, commands, traces and data are in the artifact.
+and re-checked with the release (post-hoc; Table~\ref{tab:s-repairs}). The tested vkmark package is source-identical to the commit in Table~\ref{tab:s-software}. Patches, commands, traces and data are in the released repository.
 
 \begin{table*}[t]
 \caption{The 11 source-patch cases. Diagnostics / groups, conservative capture, summed over the case's programs, with
@@ -235,8 +235,8 @@ VKMARK-ALL & 7 & +135/$-$58 & 1124 / 38 & 0 / 0 & 1,124 $\to$ 0 & yes \\
 \end{table*}
 
 No run had a capture warning, an unmodelled command or an unimplemented command, and no diagnostic was left
-unattributed to a listed cause. With all patches of a project applied, 15 programs have no diagnostic in either capture
-mode under the release and no synchronization message under validation: all seven vkmark scenes, all five GStreamer
+unattributed to a listed cause. With all patches of a project applied, 15 programs have no synchronization diagnostic in
+either capture mode under the release and no synchronization message under validation: all seven vkmark scenes, all five GStreamer
 pipelines, both ImGui examples and SDL's sprite test. Each of the 15 was traced three more times and once with the
 release's own build of the model driver, with the same result. All 152 re-traced runs of the cases (originals,
 single-cause variants, upstream commits and repairs) were checked with the release in both capture modes; every check

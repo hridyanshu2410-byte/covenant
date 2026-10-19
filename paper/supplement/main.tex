@@ -23,7 +23,7 @@
 \newcommand{\spec}{\ensuremath{\Rightarrow_{\mathit{spec}}}}
 \newcommand{\Haz}{\ensuremath{\mathit{Haz}}}
 \newcommand{\posthoc}{\textsuperscript{\textsf{ph}}}
-\newcommand{\relhash}{\code{eb50030d8472}}
+\newcommand{\relhash}{\code{be5d91e015be}}
 \DeclareRobustCommand{\circled}[1]{\tikz[baseline=(c.base)]\node[circle,fill=black!35,text=white,inner sep=.6pt,font=\sffamily\scriptsize\bfseries](c){#1};}
 
 \setcopyright{none}
@@ -139,20 +139,23 @@ flags'': how a trace from a driver that did not record subpass-dependency flags 
 \label{tab:s-configs}
 \small
 \resizebox{\columnwidth}{!}{%
-\begin{tabular}{@{}lllll@{}}
+\begin{tabular}{@{}llllll@{}}
 \toprule
-Configuration & from \code{UNDEFINED} & host-write capture & unrecorded subpass flags & theorems \\
+Configuration & from \code{UNDEFINED} & host-write capture & unrecorded subpass flags & slot accesses & theorems \\
 \midrule
-\textbf{verified} (default) & strict & conservative (pages) & local & \textbf{yes} \\
-observed capture & strict & observed (bytes) & local & no \\
-heuristic \code{UNDEFINED} relaxation (R1, opt-in) & relaxed & conservative & local & no \\
-legacy global subpass flags (opt-in) & strict & conservative & global & no \\
+\textbf{verified} (default) & strict & conservative (pages) & local & plain & \textbf{yes} \\
+observed capture & strict & observed (bytes) & local & plain & no \\
+heuristic \code{UNDEFINED} relaxation (R1, opt-in) & relaxed & conservative & local & plain & no \\
+legacy global subpass flags (opt-in) & strict & conservative & global & plain & no \\
+heuristic slot exemption (opt-in) & strict & conservative & local & exempt & no \\
 \bottomrule
 \end{tabular}}
 \end{table}
 \begin{sloppypar}
 The switches are the environment variables \code{COVENANT\_HOST\_CAPTURE=observed},
-\code{COVENANT\_HEURISTIC\_DISCARD=1} and \code{COVENANT\_LEGACY\_SUBPASS\_FLAGS=global}. The snapshots of
+\code{COVENANT\_HEURISTIC\_DISCARD=1}, \code{COVENANT\_LEGACY\_SUBPASS\_FLAGS=global} and
+\code{COVENANT\_HEURISTIC\_SLOTS=1}; explicit arguments of the checking function override them, and the report
+states the configuration the check actually ran with. The snapshots of
 Table~\ref{tab:s-versions} other than the release read no subpass-dependency flags at all (\S\ref{sup:fblocal}); for
 them, ``verified configuration'' means strict transitions and conservative capture.
 \end{sloppypar}
@@ -181,7 +184,11 @@ are lifted from SPIR-V, and the C++ host is read with libclang for struct layout
 \item \textbf{Draws.} Draws read their bound descriptors and their vertex, index and indirect buffers, and write
   their attachments. Byte ranges come from descriptor ranges, dynamic offsets and index ranges.
 \item \textbf{Shader accesses.} A per-entry-point analysis of the SPIR-V call graph yields each shader's reads and
-  writes and classifies storage bindings as atomic-only, atomically allocated slots, or plain. A descriptor access is
+  writes and classifies storage bindings as atomic-only or plain; an atomic counts only at a scope that holds
+  every invocation of the device, and an access through an index taken from an atomic is a plain access (exempting
+  such ``slot'' accesses is an opt-in heuristic, \code{COVENANT\_HEURISTIC\_SLOTS=1}, outside the verified
+  configuration). When a pipeline's shader code is missing or cannot be parsed, every storage descriptor it binds is
+  taken as written at every stage, and the gap is recorded, so the check is not guarantee-eligible. A descriptor access is
   charged at the stages whose entry point uses the binding; the set layout's stage flags are only the fallback when
   no entry point is known. (The snapshots up to engine study 3 charged every stage the layout granted, which is sound
   but caused a false alarm on \bench case 94.)
@@ -595,7 +602,7 @@ Every study was scored by a checker snapshot frozen, by source hash, before its 
 A checker defect found during a study was not fixed in that study's snapshot; it was fixed before a later snapshot,
 with a unit test. Table~\ref{tab:s-exposed} lists what each study, and each piece of development work between the
 studies, exposed in the checker, and the first snapshot that carries the fix. The release carries every fix in the
-table and passes all 378 tests of its suite (paper, \S\ref{P-sec:eval-sem}).
+table and passes all 383 tests of its suite (paper, \S\ref{P-sec:eval-sem}).
 
 \begin{table*}[t]
 \caption{What each study exposed: checker defects and missing modelling found in triage or by tests, and the first
@@ -620,6 +627,7 @@ post-hoc re-runs with that snapshot (\S D) & final-layout transitions of render 
 fresh study 1 (fresh; \S I) & three checker defects: timeline counter query not treated as a host wait (FA-CQ); whole-image layouts as unbounded ranges (FA-WL); combined depth format \code{X8\_D24} treated as colour (FA-X8). Bring-up of the study's programs found one model-driver defect, fixed before the study's freeze; bring-up of study~2 needed \code{vkCmdClearAttachments} and \code{vkCmdCopyQueryPoolResults} & fresh-study-2 snapshot \\
 fresh study 2 (fresh; \S I) & one precision cause: a descriptor-array read charged to every written element (GTK-DESC, \S B); grouping of the largest program exceeded the memory limit & the release \\
 model audit after both fresh studies (dev) & subpass-dependency flags not read: every dependency given its global meaning (\S\ref{sup:fblocal}); two automatic render-pass transitions on one queue exempt from each other although the specification's ordering sentence does not cover them (\S\ref{sup:ltpairs}); in the epoch mode, the read key ignored the framebuffer position, so a stand-in could be ordered locally where the entry it replaced is not; host writes relying on the host-domain premise not flagged; guarantee eligibility not reported per run & the release \\
+external review of the release (dev) & three defects where shader accesses become events: a store through an index taken from an atomic was exempt, although \code{atomicAdd(c, 0)} gives every caller one index; a missing shader module made storage accesses reads; an explicit relaxation was reported as the verified configuration. Fixed (slot exemption opt-in only, atomics exempt only at device scope, missing shader code a write and a model gap, one resolved configuration); findings unchanged on every corpus, and one archived figure trace kept without its shader module is now outside the domain & the release \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -1168,7 +1176,7 @@ guarantee-eligible (checking complete, no model gap, no pair relying on the host
 results of the checker with the test's six fixes, no verdict changes in any program. The workloads have no
 framebuffer-local flag, no render pass, no descriptor array and no device write followed by a host write, so the
 changes made after both fresh studies have nothing to act on here; the snapshots from the first verified configuration
-to the release give byte-identical diagnostics on these traces. The traces are archived with the artifact.
+to the release give byte-identical diagnostics on these traces. The traces are released with the code.
 
 The 205 host-write races are the same under both capture modes. Validation on the multi-queue baseline reports four
 write-after-write false positives through a timeline round trip that \sys accepts, so that configuration is compared

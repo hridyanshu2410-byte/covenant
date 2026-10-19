@@ -24,7 +24,7 @@
 \newcommand{\Haz}{\ensuremath{\mathit{Haz}}}
 \newcommand{\supp}[1]{Supplement~\S#1}
 \newcommand{\posthoc}{\textsuperscript{\textsf{ph}}}
-\newcommand{\relhash}{\code{eb50030d8472}}
+\newcommand{\relhash}{\code{be5d91e015be}}
 \DeclareRobustCommand{\circled}[1]{\tikz[baseline=(c.base)]\node[circle,fill=black!35,text=white,inner sep=.6pt,font=\sffamily\scriptsize\bfseries](c){#1};}
 %% acmart already defines theorem, corollary, proposition, lemma and definition environments.
 
@@ -166,7 +166,7 @@ Semantic conventions such as color encoding or units are outside the synchroniza
   bugs from 105 projects; six blind rounds with frozen checkers; two pre-registered studies of the proved
   configuration on previously unchecked programs from eight code bases, with every report group triaged by written rules and compared
   with validation; 54 bugs we judge real in public code. For 9 of them we patched the source, rebuilt and re-checked
-  (11 source-patch cases); 15 programs become clean.
+  (11 source-patch cases); 15 programs become free of synchronization diagnostics.
 \end{enumerate}
 Section~\ref{sec:motivation} gives motivating examples, \S\ref{sec:overview} an overview, \S\ref{sec:model} the
 semantics and theorems, \S\ref{sec:algo} the algorithm, \S\ref{sec:impl} the implementation and capture,
@@ -342,7 +342,10 @@ outside the theorem.
 \item \textbf{Draws.} Draws read their bound descriptors and their vertex, index and indirect buffers, and they
   write their attachments. Byte ranges come from descriptor ranges, dynamic offsets and index ranges.
 \item \textbf{Shader accesses.} A per-entry-point analysis of the SPIR-V call graph yields each shader's reads and
-  writes and classifies storage bindings as atomic-only, atomically allocated slots, or plain. A descriptor access is
+  writes and classifies storage bindings as atomic-only or plain; an atomic counts only at a scope that holds every
+  invocation of the device, and an access through an index taken from an atomic is a plain access. When a pipeline's
+  shader code is missing or cannot be parsed, every storage descriptor it binds is taken as written at every stage, and
+  the check is not guarantee-eligible. A descriptor access is
   charged at the stages whose entry point uses the binding; the set layout's stage flags are only the fallback when no
   entry point is known. A descriptor-array read is charged to every written element, unless the guard conditions of
   \S\ref{sec:guards} hold and the element is selected by host-written index bytes.
@@ -404,8 +407,8 @@ groups without repairs; no incomplete report counts as clean.}
 \toprule
 Corpus & runs & in domain & Release result \\
 \midrule
-Test suite & 378 & -- & all pass: 2,550 random frames against the reference semantics, 300 with host writes, the
-minimal frames of Appendix~\ref{app:counter}, regression frames \\
+Test suite & 383 & -- & all pass: 2,550 random frames against the reference semantics, 300 with host writes, the
+minimal frames of Appendix~\ref{app:counter}, shader-to-event tests, regression frames \\
 Barrier mutants (\S\ref{sec:eval-sem}) & 750 & 750 & 95.9\% agreement with validation (86 / 633 / 31 / 0); per-mutant
 diagnostics unchanged \\
 Ray tracing and mesh shading & 15 & 15 & 12 of 13 programs agree with validation; codes and counts unchanged \\
@@ -417,8 +420,9 @@ Study 1 traces, observed & 32 & -- & 130 / 10 / 2 / 0 groups, 91.5\% true (outsi
 Study 2 traces, conservative & 25 & 25 & 24 programs complete: 260 / 1 / 8 / 6 groups, 94.5\% of 275 true;
 \code{gtk\_path\_walk} incomplete: 35 site groups, 22 / 0 / 12 / 1 \\
 Study 2 traces, observed & 25 & -- & identical to conservative \\
-Repaired programs & 15 & 15 & no diagnostic in either mode \\
-Archived sample, engine and adjudication traces & 13 & 13 & no diagnostic of the second fresh-study snapshot lost;
+Repaired programs & 15 & 15 & no synchronization diagnostic in either mode \\
+Archived sample, engine and adjudication traces & 13 & 12 & no diagnostic of the second fresh-study snapshot lost;
+one figure trace was kept without its shader module, so it is outside the domain (same findings);
 four minimal traces gain 2 automatic-transition pairs each; one trace recorded without dependency flags gains 172
 framebuffer-local pairs (flags read as local) \\
 \bottomrule
@@ -444,7 +448,10 @@ does. The reference shares the checker's reading of the specification, so this a
 against the transcription, not the transcription itself. The suite also holds the minimal frames of
 Appendix~\ref{app:counter} and one regression frame for each implementation error the reference has exposed, for
 example \code{ALL\_COMMANDS} in a later barrier taken to contain an earlier transition, or a wait with an empty stage
-mask taken to order something. The release passes all 378 tests of its suite.
+mask taken to order something. Since the reference consumes the same events, neither tests the translation from
+shaders to events. Separate tests assemble SPIR-V modules for it: an index taken from \code{atomicAdd(c, 0)} is not
+a fresh slot (both stores race), an atomic is exempt only at device scope, and a missing or malformed shader module
+makes its storage accesses writes and the trace not eligible. The release passes all 383 tests of its suite.
 
 \paragraph{Barrier mutants against synchronization validation}
 \begin{figure*}[t]
@@ -532,7 +539,7 @@ and every program is guarantee-eligible. Of the 116 remaining validation-only fi
 acquire that validation reports as a message of its own while both tools report the resulting race, 23 come from
 lavapipe's surface allowing one fewer held image, and 18 are first uses of a never-presented image, which the release
 reports as an \code{acquire-first-use} warning; scored as a hazard, it leaves no validation-only hazard pair (98.3\%).
-The traces, the per-program results and a script that re-checks them are part of the artifact.
+The traces, the per-program results and a script that re-checks them are released with the code.
 
 \emph{What \sys adds, and what validation adds.} \sys alone reports 205 races between host writes and GPU reads of an
 earlier frame still in flight, and three reads of an exclusive buffer on a queue family that never acquired it;
@@ -764,10 +771,10 @@ are 11 source-patch cases covering nine causes: one per cause, plus one case per
 patches together (vkmark and GStreamer). We re-checked every patched run with the release in conservative capture
 (\supp{I}). For each case, the patched run has no diagnostic of the repaired cause and no diagnostic kind the
 original lacked, and every remaining diagnostic belongs to another listed cause. Applying all patches of a project
-leaves 15 programs with no diagnostic in either capture mode and no synchronization-validation message: all seven
+leaves 15 programs with no synchronization diagnostic in either capture mode and no synchronization-validation message: all seven
 vkmark scenes (1,124 diagnostics before, five causes, 18 files changed), all five GStreamer pipelines (495 before, two
 one-line patches), both ImGui examples (40 before, a 75-line deletion) and SDL's sprite test (166 before). With the
-release, all 15 have no diagnostic in either capture mode, raise no model warning, and are guarantee-eligible in the
+release, all 15 have no synchronization diagnostic in either capture mode, raise no model warning, and are guarantee-eligible in the
 verified configuration; re-tracing each three more times gives the same result.
 These are source repairs in the sense of \S\ref{sec:eval-bugs}: evidence through re-running, not through
 Lemma~\ref{lem:repair}.
@@ -865,11 +872,11 @@ grouping stops at its budget and reports \emph{incomplete}.}
 program, checker & check s & check MB & group s & group MB \\
 \midrule
 \code{gtk\_iconscroll}, frozen & 170 & 2,033 & 571 & 2,489 \\
-\code{gtk\_iconscroll}, release & 118 & 1,685 & 75 & 268 \\
+\code{gtk\_iconscroll}, release & 127 & 1,684 & 80 & 268 \\
 \code{gtk\_widget\_factory}, frozen & 51 & 770 & 37 & 132 \\
-\code{gtk\_widget\_factory}, release & 50 & 752 & 23 & 70 \\
+\code{gtk\_widget\_factory}, release & 53 & 752 & 25 & 71 \\
 \code{gtk\_path\_walk}, frozen & 719 & -- & -- & $>$15,000$^\ast$ \\
-\code{gtk\_path\_walk}, release & 469 & 7,487 & 1,620 & 8,353$^\ast$ \\
+\code{gtk\_path\_walk}, release & 539 & 7,486 & 1,811 & 8,353$^\ast$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1158,7 +1165,7 @@ the specification. Blind, frozen checkers achieved strict paired detection on 21
 cause of 24. On eight code bases not checked before, the frozen checkers found 16 true root causes, one of which
 validation cannot see, with no false alarm on five code bases. On the same traces, the release reports 94.5\% of
 report groups true on the 24 programs of the second study whose grouping completes. Patching nine of the causes makes
-15 programs clean under both \sys and validation. What remains is to narrow sub-page host writes, to settle the open
+15 programs free of synchronization diagnostics under both \sys and validation. What remains is to narrow sub-page host writes, to settle the open
 questions of the specification, to measure recall on real code and to run on GPUs with several concurrent queues.
 
 \bibliographystyle{ACM-Reference-Format}
