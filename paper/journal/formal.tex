@@ -545,7 +545,10 @@ frames; the differential tests above \\
 \section{Verification Algorithm}
 \label{sec:algo}
 
-Figure~\ref{fig:alg} gives the algorithm as \sys implements it. One pass processes every queue in
+Figure~\ref{fig:alg} gives the algorithm as \sys implements it. It consumes the events of
+Definition~\ref{def:events} and their exemption tags; producing them from API calls and shaders is the trusted
+translation T2 of Table~\ref{tab:tcb}, which Theorem~\ref{thm:sound} assumes and the tests of
+\S\ref{sec:eval-sem} check separately. One pass processes every queue in
 turn, as far as its next unsatisfied wait, until no queue can progress. Each queue has a vector clock
 $\mathit{VC}[q]$~\cite{mattern1989virtual}. A signal records a copy of its queue's clock, and a wait joins the
 recorded clock into its own and keeps a \emph{wait record}. A signal also records a \emph{relay}: for each queue,

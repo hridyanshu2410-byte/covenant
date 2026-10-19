@@ -24,7 +24,7 @@
 \newcommand{\Haz}{\ensuremath{\mathit{Haz}}}
 \newcommand{\supp}[1]{Supplement~\S#1}
 \newcommand{\posthoc}{\textsuperscript{\textsf{ph}}}
-\newcommand{\relhash}{\code{5fe846eddf3e}}
+\newcommand{\relhash}{\code{fa974bb2d72d}}
 \DeclareRobustCommand{\circled}[1]{\tikz[baseline=(c.base)]\node[circle,fill=black!35,text=white,inner sep=.6pt,font=\sffamily\scriptsize\bfseries](c){#1};}
 %% acmart already defines theorem, corollary, proposition, lemma and definition environments.
 
@@ -425,7 +425,7 @@ groups without repairs; no incomplete report counts as clean.}
 \toprule
 Corpus & runs & in domain & Release result \\
 \midrule
-Test suite & 390 & -- & all pass: 2,550 random frames against the reference semantics, 300 with host writes, the
+Test suite & 391 & -- & all pass: 2,550 random frames against the reference semantics, 300 with host writes, the
 minimal frames of Appendix~\ref{app:counter}, shader-to-event tests, regression frames \\
 Barrier mutants (\S\ref{sec:eval-sem}) & 750 & 750 & 95.9\% agreement with validation (86 / 633 / 31 / 0); per-mutant
 diagnostics unchanged \\
@@ -473,7 +473,9 @@ bytes, a helper called with two buffers writes both, an access the analysis cann
 or malformed shader module makes its storage accesses writes and the trace not eligible, and two transitions never
 chain two barriers. Further modules, checked with \code{spirv-val} for Vulkan~1.3, write through
 \code{OpCopyMemorySized} and a cooperative-matrix store (both writes, so the copy races) and through an untyped
-pointer (outside the inventory, so the trace is not eligible). The release passes all 390 tests of its suite.
+pointer (outside the inventory, so the trace is not eligible), and read one member through \code{OpAccessChain}
+and through \code{OpPtrAccessChain}, whose leading Element operand is not a member: both give the same bytes and
+the same race. The release passes all 391 tests of its suite.
 
 \paragraph{Barrier mutants against synchronization validation}
 \begin{figure*}[t]
