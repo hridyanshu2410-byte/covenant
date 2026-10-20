@@ -24,7 +24,8 @@
 \newcommand{\Haz}{\ensuremath{\mathit{Haz}}}
 \newcommand{\supp}[1]{Supplement~\S#1}
 \newcommand{\posthoc}{\textsuperscript{\textsf{ph}}}
-\newcommand{\relhash}{\code{fa974bb2d72d}}
+\newcommand{\relhash}{\code{f28a96b8b6fb}}
+\newcommand{\prevhash}{\code{fa974bb2d72d}}
 \DeclareRobustCommand{\circled}[1]{\tikz[baseline=(c.base)]\node[circle,fill=black!35,text=white,inner sep=.6pt,font=\sffamily\scriptsize\bfseries](c){#1};}
 %% acmart already defines theorem, corollary, proposition, lemma and definition environments.
 
@@ -292,7 +293,8 @@ When it runs & C++ compile time & after one GPU-free run \\
   \emph{Bottom:} what a clean, eligible report rests on (Table~\ref{tab:chain}). Capture is a premise; turning the
   trace and shaders into events is trusted code, tested but not proved (Table~\ref{tab:tcb}); the checking algorithm
   is proved sound for the defined order; eligibility is checked and reported for every run. Each box in the pipeline
-  carries the kind of its link.}
+  carries the kind of its link. The green conclusion holds only together with the premises of links 1 and 2, which a
+  run cannot check.}
   \label{fig:overview}
 \end{figure*}
 
@@ -414,7 +416,10 @@ Every study below was run with a checker snapshot frozen, by source hash, before
 results \emph{fresh} and report them as scored; a checker defect found during a study was fixed only after it. A result
 of a later checker on code already seen is \emph{post-hoc} and is marked \posthoc{} in tables. The checker that the
 theorems of \S\ref{sec:model} describe is the release (fingerprint \relhash, a hash of its source that it prints in every report); Table~\ref{tab:release}
-gives its results on every corpus of this section, re-run on the recorded traces. The snapshot of each study is
+gives its results on every corpus of this section, re-run on the recorded traces. Those re-runs used the release's
+immediate predecessor (\prevhash), which differs only in reading specialization constants (\S\ref{sec:limits}); on
+all 259 distinct shader modules of the recorded traces both give the same access classification, so the results are
+the release's. The snapshot of each study is
 listed in \supp{E}. All comparisons use the Khronos validation layer at one fixed commit, run on lavapipe (Mesa's
 software Vulkan driver); \supp{A} lists the exact version of it and of every program we tested.
 
@@ -430,7 +435,7 @@ groups without repairs; no incomplete report counts as clean.}
 \toprule
 Corpus & runs & in domain & Release result \\
 \midrule
-Test suite & 391 & -- & all pass: 2,550 random frames against the reference semantics, 300 with host writes, the
+Test suite & 392 & -- & all pass: 2,550 random frames against the reference semantics, 300 with host writes, the
 minimal frames of Appendix~\ref{app:counter}, shader-to-event tests, regression frames \\
 Barrier mutants (\S\ref{sec:eval-sem}) & 750 & 750 & 95.9\% agreement with validation (86 / 633 / 31 / 0); per-mutant
 diagnostics unchanged \\
@@ -480,7 +485,7 @@ chain two barriers. Further modules, checked with \code{spirv-val} for Vulkan~1.
 \code{OpCopyMemorySized} and a cooperative-matrix store (both writes, so the copy races) and through an untyped
 pointer (outside the inventory, so the trace is not eligible), and read one member through \code{OpAccessChain}
 and through \code{OpPtrAccessChain}, whose leading Element operand is not a member: both give the same bytes and
-the same race. The release passes all 391 tests of its suite.
+the same race. The release passes all 392 tests of its suite.
 
 \paragraph{Barrier mutants against synchronization validation}
 \begin{figure*}[t]
@@ -757,10 +762,11 @@ Study & family & conservative & true & observed & true \\
 
 \begin{figure*}[t]
   \includegraphics[width=\textwidth]{fig-precision.pdf}
-  \caption{\textbf{The proved configuration on previously unchecked code}, by code base. Each card shows frames that
-  the code base's programs render (the same commands, unmodified, on lavapipe), the share of timing report groups
-  that are true bugs, technicalities, unresolved and false alarms, and the true root causes with their upstream
-  status (\supp{I}). \emph{frozen}: the checker frozen before the study's first run, in conservative capture, the
+  \caption{\textbf{The proved configuration on previously unchecked code}, one row per code base. Each row shows
+  frames that the code base's programs render (the same commands, unmodified, on lavapipe), the number of true root
+  causes ($\uparrow$: changed upstream before the study; \textbullet: still present; named in \supp{I}), and three
+  bars giving the share of its timing report groups that are true bugs, technicalities, unresolved and false alarms
+  (hatched), with the counts beside them. Notes under a row name the source of its false alarms. \emph{frozen}: the checker frozen before the study's first run, in conservative capture, the
   theorem's configuration; this is the fresh result. \emph{observed}: the same checker in observed capture.
   \emph{release}: the released checker on the same traces, post-hoc (\S\ref{sec:eval-release}). GTK~4 shows eight
   programs; \code{gtk\_path\_walk} was checked but not grouped when frozen, and its grouping is incomplete in the
@@ -799,10 +805,11 @@ not something the tool shows; we did not measure how long diagnosis takes.
 
 \begin{figure*}[t]
   \includegraphics[width=\textwidth]{fig-repairs.pdf}
-  \caption{\textbf{From report to clean run: the 15 source-repaired programs.} Each tile is a frame the unmodified
-  program renders (the same command, on lavapipe). Bars: the timing diagnostics of the original run in conservative
-  capture, coloured by the root cause each is attributed to; numbers: diagnostics before and after the project's
-  patch. Two causes, VKMARK-UBO and SDL-1, are host-write races that synchronization validation does not track. After
+  \caption{\textbf{From report to clean run: the 15 source-repaired programs.} Top: one tile per vkmark scene; below:
+  one card per project for SDL3, GStreamer and Dear ImGui, totalled over its programs. Each image is a frame the
+  unmodified program renders (the same command, on lavapipe). Large numbers: timing diagnostics of the original run
+  in conservative capture, and after the project's patch. Bars: the original diagnostics split by the root cause each
+  is attributed to. Two causes, VKMARK-UBO and SDL-1, are host-write races that synchronization validation does not track. After
   the patches every program is clean in both capture modes and guarantee-eligible when re-checked with the release.}
   \label{fig:repairs}
 \end{figure*}
@@ -1112,13 +1119,12 @@ allows, and Granite and vkQuake trigger its warning in every program, so their c
 Host reads of mapped memory are not events, aliasing of distinct resources is not modelled, and shader device-address
 accesses, query results, the inputs of host acceleration-structure builds, descriptor update templates, push
 descriptors and unmodelled commands are outside the model; unmodelled commands are reported. Specialization constants are recorded but not applied: every shader-analysis decision that depends on a
-constant (array sizes, descriptor indices, workgroup size) accepts only \code{OpConstant}, takes a specialization
-constant as unknown, and no branch is pruned. Two decisions read a constant without that check, an atomic's memory
-scope and a pointer chain's Element; valid Vulkan SPIR-V keeps both independent of specialization (a scope must be an
-\code{OpConstant} unless the NV cooperative-matrix capability is declared, and a nonzero Element is invalid on a pointer to
-a block), so a module that declares that capability and specializes an atomic's scope is outside the domain, and the
-checker does not yet report it. In the studies, GTK and mpv specialize 24 shader modules; their specialization
-constants size descriptor arrays and feed branches and arithmetic only. A host write whose
+constant (array sizes, descriptor indices, workgroup size, an atomic's memory scope, a pointer chain's Element and
+member index) accepts only \code{OpConstant} and takes a specialization constant as unknown, and no branch is pruned.
+So an atomic whose scope is a specialization constant, which the KHR and NV cooperative-matrix extensions allow, is
+checked as an ordinary access, never exempted as device-scoped: a pipeline may override its default. In the studies,
+GTK and mpv specialize 24 shader modules; their specialization constants size descriptor arrays and feed branches and
+arithmetic only. A host write whose
 ordering after device work relies on the host-domain premise (A-HOST) draws a warning and takes the run out of the
 domain; the model driver exposes only host-coherent memory, so non-coherent memory, which needs explicit flushes and
 invalidations, is not covered.

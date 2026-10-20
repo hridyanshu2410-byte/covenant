@@ -21,3 +21,8 @@ validation layer (named in each README).
 The earlier studies (blind rounds, tutorials, the three engine studies) were checked with the snapshot frozen
 before each of them; their per-program results are tables of the supplement (§E, §F, §H). Of their traces, those
 re-checked with the release are in `archived-traces/` and `repairs/`.
+
+Figures. `paper/figures/src/prep_data.py` derives the data of Figures 7 and 8 (`precision.json`, `repairs.json`)
+from `fresh-studies/data/classes-*.json` and `repairs/data/traces.tar.xz`; `--check` confirms the committed files
+match. The build scripts beside it (`build_*.py`, then `render.js`) draw the figures from those files and assert
+the totals reported in the tables; Figure 6 reads the per-round counts of the blind rounds from `heldout.json`.

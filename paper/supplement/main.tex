@@ -23,7 +23,8 @@
 \newcommand{\spec}{\ensuremath{\Rightarrow_{\mathit{spec}}}}
 \newcommand{\Haz}{\ensuremath{\mathit{Haz}}}
 \newcommand{\posthoc}{\textsuperscript{\textsf{ph}}}
-\newcommand{\relhash}{\code{fa974bb2d72d}}
+\newcommand{\relhash}{\code{f28a96b8b6fb}}
+\newcommand{\prevhash}{\code{fa974bb2d72d}}
 \DeclareRobustCommand{\circled}[1]{\tikz[baseline=(c.base)]\node[circle,fill=black!35,text=white,inner sep=.6pt,font=\sffamily\scriptsize\bfseries](c){#1};}
 
 \setcopyright{none}
@@ -92,7 +93,8 @@ engine-study-3 snapshot & \code{2f74a46b1341} & engine study 3 (fresh); the doss
 first snapshot of the verified configuration & \code{45f2ce1a5046} & post-hoc re-runs of the earlier corpora \\
 fresh-study-1 snapshot & \code{7cb216ed5753} & fresh study 1 (32 programs); barrier mutants on the pinned validation commit (post-hoc) \\
 fresh-study-2 snapshot & \code{76e393826ae9} & fresh study 2 (25 programs); the source-patch cases \\
-\textbf{the release} & \relhash & the configuration the paper's theorems describe; all post-hoc re-runs in the paper's release table; the regenerated whole-frame test \\
+release predecessor & \prevhash & all post-hoc re-runs in the paper's release table; the regenerated whole-frame test \\
+\textbf{the release} & \relhash & the configuration the paper's theorems describe; differs from its predecessor only in reading specialization constants, with the same access classification on every corpus shader module, so the re-runs above are its results \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -189,7 +191,7 @@ are lifted from SPIR-V, and the C++ host is read with libclang for struct layout
   such ``slot'' accesses is an opt-in heuristic, \code{COVENANT\_HEURISTIC\_SLOTS=1}, outside the verified
   configuration). Atomic-only is decided per byte range of the bound buffer (a block member's offset plus the
   descriptor's offset), not per member name. A pointer access chain (\code{OpPtrAccessChain}) first steps by whole
-  elements of its base type; only a constant Element of 0 keeps the access inside the member it then names,
+  elements of its base type; only an \code{OpConstant} Element of 0 keeps the access inside the member it then names (a specialization constant may be overridden),
   otherwise the access may touch the whole range. (A nonzero Element on a pointer directly to a block is not valid
   SPIR-V, so a nonzero Element occurs only on pointers into arrays, where the conservative range is sound.) A matrix's size is bounded for both column- and row-major
   layouts. A pointer keeps every descriptor it may come from, through helper calls,
@@ -640,7 +642,7 @@ Every study was scored by a checker snapshot frozen, by source hash, before its 
 A checker defect found during a study was not fixed in that study's snapshot; it was fixed before a later snapshot,
 with a unit test. Table~\ref{tab:s-exposed} lists what each study, and each piece of development work between the
 studies, exposed in the checker, and the first snapshot that carries the fix. The release carries every fix in the
-table and passes all 391 tests of its suite (paper, \S\ref{P-sec:eval-sem}).
+table and passes all 392 tests of its suite (paper, \S\ref{P-sec:eval-sem}).
 
 \begin{table*}[t]
 \caption{What each study exposed: checker defects and missing modelling found in triage or by tests, and the first
@@ -669,6 +671,7 @@ external review of the release (dev) & three defects where shader accesses becom
 second external review of the release (dev) & two shader-analysis defects that could accept a race: a helper function called with two buffers kept only one of them, so a write became a read; atomic-only tags compared block members, not buffer bytes, so an atomic at one descriptor offset hid a plain read of the same bytes at another. In the optimizer's split frame, the transition halves of two barriers could chain. Fixed (every possible descriptor kept, unattributed accesses a model gap, byte-range tags, transition halves chain only within one struct); findings unchanged on every corpus & the release \\
 third external review of the release (dev) & the shader analysis read any instruction not in its list of writes as a read: \code{OpCopyMemorySized} (untyped pointers) and cooperative-matrix stores wrote without a write event, and an untyped-pointer access chain was not reported. Fixed: an inventory of memory effects (Table~\ref{tab:s-effects}); any other instruction on descriptor memory is a model gap. On every shader of every corpus (2,129 entry points) the analysis is unchanged & the release \\
 fourth external review of the release (dev) & the byte span of an access through \code{OpPtrAccessChain} took the chain's Element operand for the block member, so a plain read could be placed on other bytes than it touches and escape an atomic it overlaps (a module that passes \code{spirv-val}); the size of a row-major non-square matrix could be underestimated. Fixed (the Element is skipped and must be 0, otherwise the whole range; matrix size bounded for both layouts); unchanged on every corpus shader & the release \\
+fifth external review of the release (dev) & an atomic whose memory scope is a specialization constant, which the KHR and NV cooperative-matrix extensions allow, was classified by the constant's default, so a pipeline that specializes Device to Workgroup kept the device-scope exemption; a specialized pointer-chain Element or member index was likewise read by its default. Fixed (only \code{OpConstant} values are read; otherwise an ordinary access or the whole range), with a regression whose NV form passes \code{spirv-val}; the access classification is unchanged on all 259 distinct shader modules of the corpora & the release \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -1209,7 +1212,7 @@ KS mesh shading, 2 samples & 10 (10) & 0 / 10 / 0 & 0 \\
 \label{sec:eval-wholeframe}
 The checker frozen before the test agreed with validation on 88.4\% of the 1,251 programs on hazards and 84.3\% on
 all finding classes (fresh). The disagreements exposed six checker defects (\S E). After they were fixed, we
-regenerated all 1,251 programs on the model driver and re-checked them with the release (\relhash),
+regenerated all 1,251 programs on the model driver and re-checked them with the release's predecessor (\prevhash; its results are the release's, Table~\ref{tab:s-versions}),
 reusing validation's stored verdicts (Table~\ref{tab:s-wholeframe}): agreement is 97.9\% on hazards and 95.4\% on all
 classes; hazard pairs are 1,440 / 32 / 14 and all finding pairs 2,353 / 478 / 116 (both / \sys only / validation only).
 With the \code{acquire-first-use} warning scored as a hazard, agreement is 98.3\% / 95.8\%. All 1,251 programs are
