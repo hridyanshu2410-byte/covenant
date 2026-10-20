@@ -1,0 +1,118 @@
+baseline: 0 diagnostic(s) on the strengthened frame
+deferred.jsonl: 26 barrier calls -> {'narrow': 10, 'remove': 15, 'required': 1}; structs {'total': 49, 'removed': 16, 'narrowed': 32, 'kept': 1}; chain entries 9 (merged conservatively over all instances of each key; re-verified on the whole trace (epoch and pairwise, by event identity)); oracle runs 54, 0.33 s
+  rec  0 idx  0 seq   70 narrow   image[0]:gbuf_albedo narrow NONE->COLOR_ATTACHMENT_OUTPUT, image[1]:gbuf_normal narrow NONE->COLOR_ATTACHMENT_OUTPUT, image[2]:gbuf_material narrow NONE->COLOR_ATTACHMENT_OUTPUT, image[3]:hdr narrow NONE->COLOR_ATTACHMENT_OUTPUT, image[4]:ldr narrow NONE->COLOR_ATTACHMENT_OUTPUT
+  rec  0 idx  1 seq   78 remove   memory[0] remove
+  rec  0 idx  2 seq   86 remove   memory[0] remove
+  rec  0 idx  3 seq   94 remove   memory[0] remove
+  rec  0 idx  4 seq   95 narrow   image[0]:gbuf_albedo narrow COLOR_ATTACHMENT_OUTPUT->FRAGMENT_SHADER, image[1]:gbuf_normal narrow COLOR_ATTACHMENT_OUTPUT->FRAGMENT_SHADER, image[2]:gbuf_material narrow COLOR_ATTACHMENT_OUTPUT->FRAGMENT_SHADER
+  rec  0 idx  5 seq  103 remove   memory[0] remove
+  rec  0 idx  6 seq  104 narrow   image[0]:hdr narrow COLOR_ATTACHMENT_OUTPUT->FRAGMENT_SHADER
+  rec  0 idx  7 seq  112 remove   memory[0] remove
+  rec  1 idx  0 seq  123 narrow   image[0]:gbuf_albedo narrow NONE->COLOR_ATTACHMENT_OUTPUT, image[1]:gbuf_normal narrow NONE->COLOR_ATTACHMENT_OUTPUT, image[2]:gbuf_material narrow NONE->COLOR_ATTACHMENT_OUTPUT, image[3]:hdr narrow NONE->COLOR_ATTACHMENT_OUTPUT, image[4]:ldr narrow NONE->COLOR_ATTACHMENT_OUTPUT
+  rec  1 idx  1 seq  131 remove   memory[0] remove
+  rec  1 idx  2 seq  139 remove   memory[0] remove
+  rec  1 idx  3 seq  147 remove   memory[0] remove
+  rec  1 idx  4 seq  148 narrow   image[0]:gbuf_albedo narrow COLOR_ATTACHMENT_OUTPUT->FRAGMENT_SHADER, image[1]:gbuf_normal narrow COLOR_ATTACHMENT_OUTPUT->FRAGMENT_SHADER, image[2]:gbuf_material narrow COLOR_ATTACHMENT_OUTPUT->FRAGMENT_SHADER
+  rec  1 idx  5 seq  156 remove   memory[0] remove
+  rec  1 idx  6 seq  157 narrow   image[0]:hdr narrow COLOR_ATTACHMENT_OUTPUT->FRAGMENT_SHADER
+  rec  1 idx  7 seq  165 remove   memory[0] remove
+  rec  2 idx  0 seq  176 narrow   image[0]:gbuf_albedo narrow NONE->COLOR_ATTACHMENT_OUTPUT, image[1]:gbuf_normal narrow NONE->COLOR_ATTACHMENT_OUTPUT, image[2]:gbuf_material narrow NONE->COLOR_ATTACHMENT_OUTPUT, image[3]:hdr narrow NONE->COLOR_ATTACHMENT_OUTPUT, image[4]:ldr narrow NONE->COLOR_ATTACHMENT_OUTPUT
+  rec  2 idx  1 seq  184 remove   memory[0] remove
+  rec  2 idx  2 seq  192 remove   memory[0] remove
+  rec  2 idx  3 seq  200 remove   memory[0] remove
+  rec  2 idx  4 seq  201 narrow   image[0]:gbuf_albedo narrow COLOR_ATTACHMENT_OUTPUT->FRAGMENT_SHADER, image[1]:gbuf_normal narrow COLOR_ATTACHMENT_OUTPUT->FRAGMENT_SHADER, image[2]:gbuf_material narrow COLOR_ATTACHMENT_OUTPUT->FRAGMENT_SHADER
+  rec  2 idx  5 seq  209 remove   memory[0] remove
+  rec  2 idx  6 seq  210 narrow   image[0]:hdr narrow COLOR_ATTACHMENT_OUTPUT->FRAGMENT_SHADER
+  rec  2 idx  7 seq  218 remove   memory[0] remove
+  rec  3 idx  0 seq  252 narrow   memory[0] remove, image[0]:ldr narrow NONE->COPY, image[1]:hdr narrow NONE->COPY, image[2]:gbuf_albedo narrow NONE->COPY, image[3]:gbuf_normal narrow NONE->COPY, image[4]:gbuf_material narrow NONE->COPY
+  rec  3 idx  1 seq  258 required memory[0] keep
+baseline: 0 diagnostic(s) on the strengthened frame
+particles.jsonl: 38 barrier calls -> {'narrow': 10, 'remove': 27, 'required': 1}; structs {'total': 39, 'removed': 28, 'narrowed': 10, 'kept': 1}; chain entries 13 (merged conservatively over all instances of each key; re-verified on the whole trace (epoch and pairwise, by event identity)); oracle runs 50, 0.17 s
+  rec  0 idx  0 seq  103 narrow   image[0]:particles_out narrow NONE->COMPUTE_SHADER
+  rec  0 idx  1 seq  105 remove   memory[0] remove
+  rec  0 idx  2 seq  110 remove   memory[0] remove
+  rec  0 idx  3 seq  114 remove   memory[0] remove
+  rec  0 idx  4 seq  118 remove   memory[0] remove
+  rec  0 idx  5 seq  122 remove   memory[0] remove
+  rec  0 idx  6 seq  126 remove   memory[0] remove
+  rec  0 idx  7 seq  130 remove   memory[0] remove
+  rec  0 idx  8 seq  134 remove   memory[0] remove
+  rec  0 idx  9 seq  138 narrow   memory[0] narrow CLEAR/COMPUTE_SHADER->COMPUTE_SHADER   [needed: timing.missing-barrier at vkCmdDispatch @seq 142 (frame_cb, submitted @seq 150 on grap]
+  rec  0 idx 10 seq  143 narrow   memory[0] narrow COMPUTE_SHADER->ALL_COMMANDS   [needed: timing.missing-barrier at vkCmdDispatch @seq 146 (frame_cb, submitted @seq 150 on grap]
+  rec  0 idx 11 seq  147 remove   memory[0] remove
+  rec  1 idx  0 seq  158 narrow   image[0]:particles_out narrow NONE->COMPUTE_SHADER
+  rec  1 idx  1 seq  160 remove   memory[0] remove
+  rec  1 idx  2 seq  165 remove   memory[0] remove
+  rec  1 idx  3 seq  169 remove   memory[0] remove
+  rec  1 idx  4 seq  173 remove   memory[0] remove
+  rec  1 idx  5 seq  177 remove   memory[0] remove
+  rec  1 idx  6 seq  181 remove   memory[0] remove
+  rec  1 idx  7 seq  185 remove   memory[0] remove
+  rec  1 idx  8 seq  189 remove   memory[0] remove
+  rec  1 idx  9 seq  193 narrow   memory[0] narrow CLEAR/COMPUTE_SHADER->COMPUTE_SHADER   [needed: timing.missing-barrier at vkCmdDispatch @seq 197 (frame_cb, submitted @seq 205 on grap]
+  rec  1 idx 10 seq  198 narrow   memory[0] narrow COMPUTE_SHADER->ALL_COMMANDS   [needed: timing.missing-barrier at vkCmdDispatch @seq 201 (frame_cb, submitted @seq 205 on grap]
+  rec  1 idx 11 seq  202 remove   memory[0] remove
+  rec  2 idx  0 seq  213 narrow   image[0]:particles_out narrow NONE->COMPUTE_SHADER
+  rec  2 idx  1 seq  215 remove   memory[0] remove
+  rec  2 idx  2 seq  220 remove   memory[0] remove
+  rec  2 idx  3 seq  224 remove   memory[0] remove
+  rec  2 idx  4 seq  228 remove   memory[0] remove
+  rec  2 idx  5 seq  232 remove   memory[0] remove
+  rec  2 idx  6 seq  236 remove   memory[0] remove
+  rec  2 idx  7 seq  240 remove   memory[0] remove
+  rec  2 idx  8 seq  244 remove   memory[0] remove
+  rec  2 idx  9 seq  248 narrow   memory[0] narrow CLEAR/COMPUTE_SHADER->COMPUTE_SHADER   [needed: timing.missing-barrier at vkCmdDispatch @seq 252 (frame_cb, submitted @seq 260 on grap]
+  rec  2 idx 10 seq  253 narrow   memory[0] narrow COMPUTE_SHADER->ALL_COMMANDS   [needed: timing.missing-barrier at vkCmdDispatch @seq 256 (frame_cb, submitted @seq 260 on grap]
+  rec  2 idx 11 seq  257 remove   memory[0] remove
+  rec  3 idx  0 seq  316 narrow   memory[0] remove, image[0]:particles_out narrow NONE->COPY
+  rec  3 idx  1 seq  327 required memory[0] keep
+baseline: 0 diagnostic(s) on the strengthened frame
+postchain.jsonl: 47 barrier calls -> {'narrow': 25, 'remove': 21, 'required': 1}; structs {'total': 96, 'removed': 22, 'narrowed': 73, 'kept': 1}; chain entries 16 (merged conservatively over all instances of each key; re-verified on the whole trace (epoch and pairwise, by event identity)); oracle runs 122, 1.71 s
+  rec  0 idx  0 seq  152 narrow   image[0]:bloom0 narrow NONE->COMPUTE_SHADER, image[1]:lum0 narrow NONE->COMPUTE_SHADER, image[2]:bloom1 narrow NONE->COMPUTE_SHADER, image[3]:lum1 narrow NONE->COMPUTE_SHADER, image[4]:bloom2 narrow NONE->COMPUTE_SHADER, image[5]:lum2 narrow NONE->COMPUTE_SHADER, image[6]:bloom3 narrow NONE->COMPUTE_SHADER, image[7]:lum3 narrow NONE->COMPUTE_SHADER, image[8]:bloom4 narrow NONE->COMPUTE_SHADER, image[9]:lum4 narrow NONE->COMPUTE_SHADER, image[10]:bloom5 narrow NONE->COMPUTE_SHADER, image[11]:lum5 narrow NONE->COMPUTE_SHADER, image[12]:post_out narrow NONE->COMPUTE_SHADER
+  rec  0 idx  1 seq  154 narrow   memory[0] narrow CLEAR->COMPUTE_SHADER   [needed: timing.missing-barrier at vkCmdDispatch @seq 158 (frame_cb, submitted @seq 211 on grap]
+  rec  0 idx  2 seq  159 remove   memory[0] remove
+  rec  0 idx  3 seq  163 narrow   memory[0] narrow COMPUTE_SHADER->COMPUTE_SHADER   [needed: timing.missing-barrier at vkCmdDispatch @seq 167 (frame_cb, submitted @seq 211 on grap]
+  rec  0 idx  4 seq  168 remove   memory[0] remove
+  rec  0 idx  5 seq  172 narrow   memory[0] narrow COMPUTE_SHADER->COMPUTE_SHADER   [needed: timing.missing-barrier at vkCmdDispatch @seq 175 (frame_cb, submitted @seq 211 on grap]
+  rec  0 idx  6 seq  176 remove   memory[0] remove
+  rec  0 idx  7 seq  180 narrow   memory[0] narrow COMPUTE_SHADER->COMPUTE_SHADER   [needed: timing.missing-barrier at vkCmdDispatch @seq 183 (frame_cb, submitted @seq 211 on grap]
+  rec  0 idx  8 seq  184 remove   memory[0] remove
+  rec  0 idx  9 seq  188 narrow   memory[0] narrow COMPUTE_SHADER->COMPUTE_SHADER   [needed: timing.missing-barrier at vkCmdDispatch @seq 191 (frame_cb, submitted @seq 211 on grap]
+  rec  0 idx 10 seq  192 remove   memory[0] remove
+  rec  0 idx 11 seq  196 narrow   memory[0] narrow COMPUTE_SHADER->COMPUTE_SHADER   [needed: timing.missing-barrier at vkCmdDispatch @seq 199 (frame_cb, submitted @seq 211 on grap]
+  rec  0 idx 12 seq  200 remove   memory[0] remove
+  rec  0 idx 13 seq  204 narrow   memory[0] narrow COMPUTE_SHADER->ALL_COMMANDS   [needed: timing.missing-barrier at vkCmdDispatch @seq 207 (frame_cb, submitted @seq 211 on grap]
+  rec  0 idx 14 seq  208 remove   memory[0] remove
+  rec  1 idx  0 seq  219 narrow   image[0]:bloom0 narrow NONE->COMPUTE_SHADER, image[1]:lum0 narrow NONE->COMPUTE_SHADER, image[2]:bloom1 narrow NONE->COMPUTE_SHADER, image[3]:lum1 narrow NONE->COMPUTE_SHADER, image[4]:bloom2 narrow NONE->COMPUTE_SHADER, image[5]:lum2 narrow NONE->COMPUTE_SHADER, image[6]:bloom3 narrow NONE->COMPUTE_SHADER, image[7]:lum3 narrow NONE->COMPUTE_SHADER, image[8]:bloom4 narrow NONE->COMPUTE_SHADER, image[9]:lum4 narrow NONE->COMPUTE_SHADER, image[10]:bloom5 narrow NONE->COMPUTE_SHADER, image[11]:lum5 narrow NONE->COMPUTE_SHADER, image[12]:post_out narrow NONE->COMPUTE_SHADER
+  rec  1 idx  1 seq  221 narrow   memory[0] narrow CLEAR->COMPUTE_SHADER   [needed: timing.missing-barrier at vkCmdDispatch @seq 225 (frame_cb, submitted @seq 278 on grap]
+  rec  1 idx  2 seq  226 remove   memory[0] remove
+  rec  1 idx  3 seq  230 narrow   memory[0] narrow COMPUTE_SHADER->COMPUTE_SHADER   [needed: timing.missing-barrier at vkCmdDispatch @seq 234 (frame_cb, submitted @seq 278 on grap]
+  rec  1 idx  4 seq  235 remove   memory[0] remove
+  rec  1 idx  5 seq  239 narrow   memory[0] narrow COMPUTE_SHADER->COMPUTE_SHADER   [needed: timing.missing-barrier at vkCmdDispatch @seq 242 (frame_cb, submitted @seq 278 on grap]
+  rec  1 idx  6 seq  243 remove   memory[0] remove
+  rec  1 idx  7 seq  247 narrow   memory[0] narrow COMPUTE_SHADER->COMPUTE_SHADER   [needed: timing.missing-barrier at vkCmdDispatch @seq 250 (frame_cb, submitted @seq 278 on grap]
+  rec  1 idx  8 seq  251 remove   memory[0] remove
+  rec  1 idx  9 seq  255 narrow   memory[0] narrow COMPUTE_SHADER->COMPUTE_SHADER   [needed: timing.missing-barrier at vkCmdDispatch @seq 258 (frame_cb, submitted @seq 278 on grap]
+  rec  1 idx 10 seq  259 remove   memory[0] remove
+  rec  1 idx 11 seq  263 narrow   memory[0] narrow COMPUTE_SHADER->COMPUTE_SHADER   [needed: timing.missing-barrier at vkCmdDispatch @seq 266 (frame_cb, submitted @seq 278 on grap]
+  rec  1 idx 12 seq  267 remove   memory[0] remove
+  rec  1 idx 13 seq  271 narrow   memory[0] narrow COMPUTE_SHADER->ALL_COMMANDS   [needed: timing.missing-barrier at vkCmdDispatch @seq 274 (frame_cb, submitted @seq 278 on grap]
+  rec  1 idx 14 seq  275 remove   memory[0] remove
+  rec  2 idx  0 seq  286 narrow   image[0]:bloom0 narrow NONE->COMPUTE_SHADER, image[1]:lum0 narrow NONE->COMPUTE_SHADER, image[2]:bloom1 narrow NONE->COMPUTE_SHADER, image[3]:lum1 narrow NONE->COMPUTE_SHADER, image[4]:bloom2 narrow NONE->COMPUTE_SHADER, image[5]:lum2 narrow NONE->COMPUTE_SHADER, image[6]:bloom3 narrow NONE->COMPUTE_SHADER, image[7]:lum3 narrow NONE->COMPUTE_SHADER, image[8]:bloom4 narrow NONE->COMPUTE_SHADER, image[9]:lum4 narrow NONE->COMPUTE_SHADER, image[10]:bloom5 narrow NONE->COMPUTE_SHADER, image[11]:lum5 narrow NONE->COMPUTE_SHADER, image[12]:post_out narrow NONE->COMPUTE_SHADER
+  rec  2 idx  1 seq  288 narrow   memory[0] narrow CLEAR->COMPUTE_SHADER   [needed: timing.missing-barrier at vkCmdDispatch @seq 292 (frame_cb, submitted @seq 345 on grap]
+  rec  2 idx  2 seq  293 remove   memory[0] remove
+  rec  2 idx  3 seq  297 narrow   memory[0] narrow COMPUTE_SHADER->COMPUTE_SHADER   [needed: timing.missing-barrier at vkCmdDispatch @seq 301 (frame_cb, submitted @seq 345 on grap]
+  rec  2 idx  4 seq  302 remove   memory[0] remove
+  rec  2 idx  5 seq  306 narrow   memory[0] narrow COMPUTE_SHADER->COMPUTE_SHADER   [needed: timing.missing-barrier at vkCmdDispatch @seq 309 (frame_cb, submitted @seq 345 on grap]
+  rec  2 idx  6 seq  310 remove   memory[0] remove
+  rec  2 idx  7 seq  314 narrow   memory[0] narrow COMPUTE_SHADER->COMPUTE_SHADER   [needed: timing.missing-barrier at vkCmdDispatch @seq 317 (frame_cb, submitted @seq 345 on grap]
+  rec  2 idx  8 seq  318 remove   memory[0] remove
+  rec  2 idx  9 seq  322 narrow   memory[0] narrow COMPUTE_SHADER->COMPUTE_SHADER   [needed: timing.missing-barrier at vkCmdDispatch @seq 325 (frame_cb, submitted @seq 345 on grap]
+  rec  2 idx 10 seq  326 remove   memory[0] remove
+  rec  2 idx 11 seq  330 narrow   memory[0] narrow COMPUTE_SHADER->COMPUTE_SHADER   [needed: timing.missing-barrier at vkCmdDispatch @seq 333 (frame_cb, submitted @seq 345 on grap]
+  rec  2 idx 12 seq  334 remove   memory[0] remove
+  rec  2 idx 13 seq  338 narrow   memory[0] narrow COMPUTE_SHADER->ALL_COMMANDS   [needed: timing.missing-barrier at vkCmdDispatch @seq 341 (frame_cb, submitted @seq 345 on grap]
+  rec  2 idx 14 seq  342 remove   memory[0] remove
+  rec  3 idx  0 seq  416 narrow   memory[0] remove, image[0]:post_out narrow NONE->COPY, image[1]:bloom0 narrow NONE->COPY, image[2]:lum0 narrow NONE->COPY, image[3]:bloom1 narrow NONE->COPY, image[4]:lum1 narrow NONE->COPY, image[5]:bloom2 narrow NONE->COPY, image[6]:lum2 narrow NONE->COPY, image[7]:bloom3 narrow NONE->COPY, image[8]:lum3 narrow NONE->COPY, image[9]:bloom4 narrow NONE->COPY, image[10]:lum4 narrow NONE->COPY, image[11]:bloom5 narrow NONE->COPY, image[12]:lum5 narrow NONE->COPY
+  rec  3 idx  1 seq  430 required memory[0] keep
+elision plans: 111 barrier calls, 111 with the archived decision; decisions {'narrow': 45, 'remove': 63, 'required': 3}; 15 calls whose narrowed masks differ from the archived plans

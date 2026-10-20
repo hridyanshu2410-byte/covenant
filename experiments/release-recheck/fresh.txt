@@ -1,0 +1,7 @@
+fresh studies: 114 program/mode runs re-checked and re-grouped, 0 differ
+  study 1, conservative, complete grouping: 130 / 10 / 2 / 1026 (true / tech / unresolved / FA), 11.1% true
+  study 1, observed, complete grouping: 130 / 10 / 2 / 0 (true / tech / unresolved / FA), 91.5% true
+  study 2, conservative, complete grouping: 260 / 1 / 8 / 6 (true / tech / unresolved / FA), 94.5% true
+  study 2, conservative, incomplete grouping: 22 / 0 / 12 / 1 (true / tech / unresolved / FA), 62.9% true
+  study 2, observed, complete grouping: 260 / 1 / 8 / 6 (true / tech / unresolved / FA), 94.5% true
+  study 2, observed, incomplete grouping: 22 / 0 / 12 / 1 (true / tech / unresolved / FA), 62.9% true
