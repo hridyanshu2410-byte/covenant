@@ -2,7 +2,10 @@
 (syncval verdicts are reused from raw_results.jsonl; the layer applies the same
 plans, so they do not change).
 
-    python3 bench/elide/difftest/recheck.py --traces T --mutants M --results R --out OUT.json
+    python3 bench/elide/difftest/recheck.py --traces T --mutants M --results R --out OUT.json [--per-mutant P.jsonl]
+
+--per-mutant writes one row per mutant: id, checker (any new hazard), syncval (any SYNC-* message) and the
+checker's diagnostics as [code, where, message] (the format of experiments/mutants/data/per-mutant-release.jsonl).
 """
 import argparse
 import json
@@ -23,7 +26,9 @@ def main():
     ap = argparse.ArgumentParser()
     for k in ("traces", "mutants", "results", "out"):
         ap.add_argument("--" + k, required=True)
+    ap.add_argument("--per-mutant")
     a = ap.parse_args()
+    per = []
     rows = [json.loads(l) for l in open(a.results)]
     els, man = {}, {}
     for w in WORKLOADS:
@@ -44,6 +49,7 @@ def main():
         c = {(True, True): "both", (False, False): "neither", (True, False): "checker_only",
              (False, True): "syncval_only"}[(ck, sv)]
         cells[(w, c)] += 1
+        per.append({"id": r["id"], "checker": ck, "syncval": sv, "diags": [[d.code, d.where, d.message] for d in bad]})
         cres = {d.where and __import__("re").search(r"'([^']+)'", d.message).group(1)
                 for d in bad if __import__("re").search(r"'([^']+)'", d.message)}
         sres = {sv_res(h)[0] for h in r["syncval"].get("sync", [])}
@@ -55,6 +61,8 @@ def main():
     out = {"per_mutant": {f"{w}:{c}": n for (w, c), n in sorted(cells.items())},
            "per_resource": dict(res_cells), "syncval_only_mutants": disagree}
     Path(a.out).write_text(json.dumps(out, indent=1))
+    if a.per_mutant:
+        Path(a.per_mutant).write_text("".join(json.dumps(x) + "\n" for x in per))
     print(json.dumps(out, indent=1)[:3000])
 
 

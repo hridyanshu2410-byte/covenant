@@ -7,6 +7,7 @@ validation layer (named in each README).
 
 | Paper result | Inputs and outputs | Re-check |
 |---|---|---|
+| Every corpus below, re-checked with the release in one run | the archives below | `WORK=<dir> bash experiments/recheck-release.sh` writes `<dir>/SUMMARY.md`: checker fingerprint, tool versions and, per corpus, whether every result equals the archived one; the run of the paper is `release-recheck/SUMMARY.md` |
 | Test suite (392 tests) | `tests/` | `python3 -m pytest -q tests` (see the top-level README) |
 | Barrier mutants, 95.9% agreement with validation | `mutants/` | `bench/elide/difftest/recheck.py`, see `mutants/README.md` |
 | Ray tracing and mesh shading, 15 runs | `archived-traces/` (`rtmesh/*`), `tests/test_rt_mesh.py` | `archived-traces/README.md` |
@@ -26,3 +27,6 @@ Figures. `paper/figures/src/prep_data.py` derives the data of Figures 7 and 8 (`
 from `fresh-studies/data/classes-*.json` and `repairs/data/traces.tar.xz`; `--check` confirms the committed files
 match. The build scripts beside it (`build_*.py`, then `render.js`) draw the figures from those files and assert
 the totals reported in the tables; Figure 6 reads the per-round counts of the blind rounds from `heldout.json`.
+
+Checker history. `CHECKER-HISTORY.md` lists, per study and audit, every checker defect or missing piece of modelling it
+exposed and the first snapshot that fixed it (the supplement's Table of what each study exposed summarizes it by area).

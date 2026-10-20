@@ -1,6 +1,6 @@
 """Write fig-heldout.pdf (blind detection on GPUBugBench): timing cases per blind round with the strict paired and
-root-cause counts, and the pooled rates with Wilson 95% intervals; structure and meaning in grey, as categories outside
-the synchronization guarantee. Counts: heldout.json (the stored per-round results of rounds R1-R6).
+root-cause counts, and the pooled rates with Wilson 95% intervals; structure in grey, outside the synchronization
+guarantee (the meaning cases are reported in the supplement only). Counts: heldout.json (the stored per-round results of rounds R1-R6).
 All text prints at 6 pt or larger: the PDF is exactly \\columnwidth wide, so LaTeX does not rescale it.
 Run: python3 build_heldout.py [outdir]   (needs matplotlib and the Libertinus Sans font)"""
 import json
@@ -58,10 +58,9 @@ ax.legend(handles=[Patch(facecolor=TIMING, label="strict paired"),
           columnspacing=0.8, fontsize=6.8, borderaxespad=0.2)
 
 root = sum(r["root_cause"] for r in R)
-rows = [("timing, strict paired", (T["timing"]["detected"], 35), 3.3, TIMING, True),
-        ("timing, root cause", (root, 35), 2.25, TIMING, True),
-        ("structure, strict", (T["structure"]["detected"], T["structure"]["cases"]), 0.95, GREY, False),
-        ("meaning, strict", (T["meaning"]["detected"], T["meaning"]["cases"]), 0.0, GREY, False)]
+rows = [("timing, strict paired", (T["timing"]["detected"], 35), 2.75, TIMING, True),
+        ("timing, root cause", (root, 35), 1.55, TIMING, True),
+        ("structure, strict", (T["structure"]["detected"], T["structure"]["cases"]), 0.0, GREY, False)]
 for name, (k, n), y, col, main in rows:
     lo, hi = wilson(k, n)
     bx.plot([lo * 100, hi * 100], [y, y], color=col, lw=1.6 if main else 1.1, solid_capstyle="butt")
@@ -70,8 +69,8 @@ for name, (k, n), y, col, main in rows:
             color=INK if main else MUTED, fontweight="bold" if main else "normal")
     bx.text(hi * 100 + 3, y, f"{k}/{n}", ha="left", va="center", fontsize=6.8 if main else 6.6,
             color=INK if main else MUTED)
-bx.text(1, 1.76, "outside the sync. guarantee:", ha="left", va="center", fontsize=6.4, color=MUTED, style="italic")
-bx.set_xlim(0, 100); bx.set_xticks([0, 50, 100]); bx.set_ylim(-0.45, 3.95); bx.set_yticks([])
+bx.text(1, 0.86, "outside the sync. guarantee:", ha="left", va="center", fontsize=6.4, color=MUTED, style="italic")
+bx.set_xlim(0, 100); bx.set_xticks([0, 50, 100]); bx.set_ylim(-0.5, 3.5); bx.set_yticks([])
 bx.xaxis.grid(True, color=GRID, linewidth=0.5); bx.set_axisbelow(True)
 bx.spines["left"].set_visible(False)
 bx.set_xlabel("blind, as run (%), Wilson 95%", labelpad=1.5)

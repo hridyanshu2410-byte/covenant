@@ -24,7 +24,6 @@
 \newcommand{\Haz}{\ensuremath{\mathit{Haz}}}
 \newcommand{\posthoc}{\textsuperscript{\textsf{ph}}}
 \newcommand{\relhash}{\code{f28a96b8b6fb}}
-\newcommand{\prevhash}{\code{fa974bb2d72d}}
 \DeclareRobustCommand{\circled}[1]{\tikz[baseline=(c.base)]\node[circle,fill=black!35,text=white,inner sep=.6pt,font=\sffamily\scriptsize\bfseries](c){#1};}
 
 \setcopyright{none}
@@ -93,8 +92,7 @@ engine-study-3 snapshot & \code{2f74a46b1341} & engine study 3 (fresh); the doss
 first snapshot of the verified configuration & \code{45f2ce1a5046} & post-hoc re-runs of the earlier corpora \\
 fresh-study-1 snapshot & \code{7cb216ed5753} & fresh study 1 (32 programs); barrier mutants on the pinned validation commit (post-hoc) \\
 fresh-study-2 snapshot & \code{76e393826ae9} & fresh study 2 (25 programs); the source-patch cases \\
-release predecessor & \prevhash & all post-hoc re-runs in the paper's release table; the regenerated whole-frame test \\
-\textbf{the release} & \relhash & the configuration the paper's theorems describe; differs from its predecessor only in reading specialization constants, with the same access classification on every corpus shader module, so the re-runs above are its results \\
+\textbf{the release} & \relhash & the configuration the paper's theorems describe; every post-hoc re-run in the paper's release table, re-checked on the archived traces by \code{experiments/recheck-release.sh} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -640,38 +638,49 @@ direction.
 \subsection{What each study exposed}
 Every study was scored by a checker snapshot frozen, by source hash, before its first run (Table~\ref{tab:s-versions}).
 A checker defect found during a study was not fixed in that study's snapshot; it was fixed before a later snapshot,
-with a unit test. Table~\ref{tab:s-exposed} lists what each study, and each piece of development work between the
-studies, exposed in the checker, and the first snapshot that carries the fix. The release carries every fix in the
-table and passes all 392 tests of its suite (paper, \S\ref{P-sec:eval-sem}).
+with a regression test. Table~\ref{tab:s-exposed} summarizes what the studies, the test campaigns and the audits
+between them exposed, by technical area; the full ledger, one row per study or audit with every defect and the
+snapshot that fixed it, is \code{experiments/CHECKER-HISTORY.md} in the artifact. The release carries every fix and
+passes all 392 tests of its suite (paper, \S\ref{P-sec:eval-sem}). Fixes never change a fresh result: each study's
+numbers are those of its frozen snapshot, and the release's results on seen data are post-hoc.
 
 \begin{table*}[t]
-\caption{What each study exposed: checker defects and missing modelling found in triage or by tests, and the first
-snapshot that carries the fix. Cause codes are those of \S F and \S I.}
+\caption{What the studies and audits exposed in the checker, by area. \emph{Found by}: fresh studies (scored by the
+snapshot frozen before them) and development work (dev). The full ledger is \code{experiments/CHECKER-HISTORY.md}.}
 \label{tab:s-exposed}
-\scriptsize
-\begin{tabular}{@{}p{0.2\textwidth}p{0.56\textwidth}p{0.18\textwidth}@{}}
+\small
+\begin{tabular}{@{}p{0.17\textwidth}p{0.5\textwidth}p{0.27\textwidth}@{}}
 \toprule
-Study & defects found in triage & fixed before \\
+Area & what was found & found by \\
 \midrule
-reference semantics (dev) & eight checker defects, each with a minimal frame on which the checker was silent or wrong, e.g.\ a layout transition not checked against later accesses; a semaphore wait chained through a barrier on another resource ignored, although execution dependencies are global; a wait with an empty stage mask taken to order something; \code{SHADER\_READ} taken to include \code{UNIFORM\_READ}; \code{ALL\_COMMANDS} in a later barrier taken to contain an earlier transition. Load/store operations became accesses, and external subpass dependencies are handled one at a time & tutorial-study snapshot \\
-barrier mutants (dev; \S\ref{sec:eval-sem}) & two checker defects: access scopes stage-expanded like execution scopes; structs of one barrier call allowed to chain into each other & tutorial-study snapshot \\
-sample collections and vuk (dev; \S F) & 11 systematic false-alarm causes (bindings declared but not used in an entry point, no array-layer tracking, page-granular host writes in sub-allocated memory, atomics treated as races, among others); ray tracing, mesh shading, events, rule R-LT and per-range ownership not yet modelled & during development (page granularity is again the default under conservative capture, \S C); modelling by blind round 6 \\
-blind rounds 1--6 (fresh; \S\ref{sup:rounds}) & 11 timing cases missed entirely: synchronization not yet modelled (semaphore stage masks, ownership pairs, object lifetime, stencil-only aspects) and rules that did not fire; each miss became a general rule & the next round's snapshot \\
-tutorials (fresh) & one false-alarm cause (FA-M: per-thread dispatches write disjoint ranges of one buffer; validation reports the same) & engine-study-2 snapshot \\
-whole-frame differential test (fresh; \S\ref{sec:eval-wholeframe}) & six checker defects: a binary semaphore signalled again while a signal was pending not reported; a timeline signal whose value did not increase not reported; the sync2 stages \code{COPY}, \code{BLIT} and \code{CLEAR} merged into \code{TRANSFER}; a sync2 semaphore-signal stage mask ignored; command buffers, fences and acquire semaphores reused while pending not reported; grouping split one over-acquire site & engine-study-2 snapshot \\
-engine study 1: vkQuake, Diligent (fresh) & false alarms from: shader index ranges not following push constants and dynamic offsets; depth accesses not following the depth-test state; inexact byte spans of truncated host-write records; late attribution of host writes; grouping split per recording command buffer. Missed (validation only): the first use of a never-presented swapchain image not ordered after its acquire (VD-2; rule \code{timing.acquire-first-use}) & engine-study-2 snapshot \\
-engine study 2: SDL3, bgfx (fresh) & one checker defect behind all 13 false alarms (FA-WA): a semaphore wait with stage mask \code{ALL\_COMMANDS} not allowed to order a layout transition in the same batch, although the specification puts every command of the batch in the wait's second scope. Fixed, it removes exactly these 13 groups and two on one Khronos sample, and changes nothing on \bench, the tutorials, the whole-frame programs, vkQuake or Diligent. The same snapshot lets a \code{BOTTOM\_OF\_PIPE} semaphore signal cover an ownership release & engine-study-3 snapshot \\
-engine study 3: Granite, VulkanSceneGraph (fresh) & one checker defect: push constants declared for \code{VK\_SHADER\_STAGE\_ALL} abort the check (CHK-PS; 3 programs unchecked). Missed (validation only): 16 write-after-write hazards on storage images bound through descriptor update templates, which are not modelled (a model limit, not fixed) & first snapshot of the verified configuration \\
-formal model and re-examination of the earlier results (dev) & relaxed transitions from \code{UNDEFINED} by default (R1, \S D); observed host capture misses same-value stores (\S C); a sync2 signal stage mask did not limit every hop of a relay (third queue, host), in the checker and in the reference; a host-signalled timeline wait lost its stage mask; an atomic access could stand in for what it is ordered after; a shadow entry did not outlive a signal (found by a random frame); a binding charged at every stage its layout grants (\bench case 94); diagnostics did not name the failed scope test; elision compared diagnostic keys rather than event pairs & first snapshot of the verified configuration \\
-post-hoc re-runs with that snapshot (\S D) & final-layout transitions of render passes started from \code{UNDEFINED} (in the verified configuration only messages and technicality reasons; under the heuristic, hidden hazards); repairs verified by diagnostic keys, so an existing witness could hide a new race & fresh-study-1 snapshot \\
-fresh study 1 (fresh; \S I) & three checker defects: timeline counter query not treated as a host wait (FA-CQ); whole-image layouts as unbounded ranges (FA-WL); combined depth format \code{X8\_D24} treated as colour (FA-X8). Bring-up of the study's programs found one model-driver defect, fixed before the study's freeze; bring-up of study~2 needed \code{vkCmdClearAttachments} and \code{vkCmdCopyQueryPoolResults} & fresh-study-2 snapshot \\
-fresh study 2 (fresh; \S I) & one precision cause: a descriptor-array read charged to every written element (GTK-DESC, \S B); grouping of the largest program exceeded the memory limit & the release \\
-model audit after both fresh studies (dev) & subpass-dependency flags not read: every dependency given its global meaning (\S\ref{sup:fblocal}); two automatic render-pass transitions on one queue exempt from each other although the specification's ordering sentence does not cover them (\S\ref{sup:ltpairs}); in the epoch mode, the read key ignored the framebuffer position, so a stand-in could be ordered locally where the entry it replaced is not; host writes relying on the host-domain premise not flagged; guarantee eligibility not reported per run & the release \\
-external review of the release (dev) & three defects where shader accesses become events: a store through an index taken from an atomic was exempt, although \code{atomicAdd(c, 0)} gives every caller one index; a missing shader module made storage accesses reads; an explicit relaxation was reported as the verified configuration. Fixed (slot exemption opt-in only, atomics exempt only at device scope, missing shader code a write and a model gap, one resolved configuration); findings unchanged on every corpus, and one archived figure trace kept without its shader module is now outside the domain & the release \\
-second external review of the release (dev) & two shader-analysis defects that could accept a race: a helper function called with two buffers kept only one of them, so a write became a read; atomic-only tags compared block members, not buffer bytes, so an atomic at one descriptor offset hid a plain read of the same bytes at another. In the optimizer's split frame, the transition halves of two barriers could chain. Fixed (every possible descriptor kept, unattributed accesses a model gap, byte-range tags, transition halves chain only within one struct); findings unchanged on every corpus & the release \\
-third external review of the release (dev) & the shader analysis read any instruction not in its list of writes as a read: \code{OpCopyMemorySized} (untyped pointers) and cooperative-matrix stores wrote without a write event, and an untyped-pointer access chain was not reported. Fixed: an inventory of memory effects (Table~\ref{tab:s-effects}); any other instruction on descriptor memory is a model gap. On every shader of every corpus (2,129 entry points) the analysis is unchanged & the release \\
-fourth external review of the release (dev) & the byte span of an access through \code{OpPtrAccessChain} took the chain's Element operand for the block member, so a plain read could be placed on other bytes than it touches and escape an atomic it overlaps (a module that passes \code{spirv-val}); the size of a row-major non-square matrix could be underestimated. Fixed (the Element is skipped and must be 0, otherwise the whole range; matrix size bounded for both layouts); unchanged on every corpus shader & the release \\
-fifth external review of the release (dev) & an atomic whose memory scope is a specialization constant, which the KHR and NV cooperative-matrix extensions allow, was classified by the constant's default, so a pipeline that specializes Device to Workgroup kept the device-scope exemption; a specialized pointer-chain Element or member index was likewise read by its default. Fixed (only \code{OpConstant} values are read; otherwise an ordinary access or the whole range), with a regression whose NV form passes \code{spirv-val}; the access classification is unchanged on all 259 distinct shader modules of the corpora & the release \\
+synchronization semantics & scope and chain errors (a transition not checked against later accesses, access scopes
+stage-expanded, an empty wait mask ordering something, \code{ALL\_COMMANDS} containing an earlier transition, a relay
+ignoring a signal stage mask); semaphore, fence and command-buffer reuse not reported; sync2 sub-stages merged into
+\code{TRANSFER}; a wait not allowed to order a transition in its batch (13 false alarms) & reference semantics,
+barrier mutants, formal model (dev); whole-frame test, engine study 2 (fresh) \\
+modelled commands & ray tracing, mesh shading, events, ownership ranges, the first use of an acquired image, clear
+attachments and query copies; descriptor update templates remain unmodelled & sample collections (dev); blind rounds,
+engine studies 1 and 3, study bring-up (fresh) \\
+host-write capture & page granularity in sub-allocated memory; inexact spans and late attribution of host writes;
+observed capture missing same-value stores; a timeline counter query not taken as a host wait; host writes relying on
+the host-domain premise not flagged & samples, formal model, audit (dev); engine study 1, fresh study 1 (fresh) \\
+resource and access abstraction & unused bindings, array layers, bindings charged at every stage, index ranges under
+push constants, depth-test state, whole-image layouts, a combined depth format taken as colour, descriptor arrays
+charged to every element, a crash on stage-\code{ALL} push constants & samples, formal model (dev); tutorials, engine
+studies 1 and 3, fresh studies 1 and 2 (fresh) \\
+render passes and layout transitions & transitions from \code{UNDEFINED} relaxed by default; final-layout transitions;
+subpass-dependency flags not read; automatic transitions exempt from each other; framebuffer position ignored by the
+epoch mode; transition halves chaining across barriers in the optimizer & formal model, post-hoc re-runs, model audit,
+audits of the release (dev) \\
+shader memory effects (fail closed) & atomics taken as races or exempt beyond device scope and the same bytes; an index
+from an atomic taken as a private slot; a helper's second buffer dropped; instructions outside the write list read as
+reads (memory copies, cooperative-matrix stores, untyped pointers); pointer-chain Element and matrix-size spans;
+specialization constants read by their default. Each now either is modelled or makes the run ineligible &
+samples (dev); audits of the release (dev) \\
+reports and eligibility & diagnostics not naming the failed scope test; groups split per command buffer or site;
+repairs and elision compared by diagnostic keys, not event pairs; grouping memory; eligibility not reported; a missing
+shader module read as reads; a relaxation reported as the verified configuration & formal model, whole-frame test,
+model audit, audits of the release (dev); fresh study 2 (fresh) \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -711,6 +720,29 @@ total & 98 & 35 & 21 (60.0\%, 43.6--74.4) & 24 (68.6\%, 52.0--81.4) & 14 (14.3\%
 \bottomrule
 \end{tabular}
 \end{table*}
+
+\begin{table}[t]
+\caption{Structure and meaning cases of the blind rounds, as run (strict), outside the synchronization guarantee.
+The meaning cases were scored by an earlier component that inferred semantic conventions; it is not part of the
+released checker.}
+\label{tab:s-rounds-other}
+\small
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Round (cases) & structure & meaning \\
+\midrule
+1 (17--29) & 1/2 & 2/4 \\
+2 (30--44) & 2/4 & 0/4 \\
+3 (45--59) & 1/3 & 0/6 \\
+4 (60--74) & 1/3 & 0/7 \\
+5 (75--94) & 0/5 & 0/9 \\
+6 (95--114) & 1/4 & 0/12 \\
+\midrule
+total & 6/21 & 2/42 \\
+Wilson 95\% & 14--50\% & 1--16\% \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 Root cause found but not strict: 28 and 63 (detected, fixed variant not clean) and 98 (the host race on the decoder
 buffer is reported, under another code). Timing cases missed entirely: 17, 19, 20 (known misses) and 32, 36, 38, 45, 47,
@@ -1212,7 +1244,7 @@ KS mesh shading, 2 samples & 10 (10) & 0 / 10 / 0 & 0 \\
 \label{sec:eval-wholeframe}
 The checker frozen before the test agreed with validation on 88.4\% of the 1,251 programs on hazards and 84.3\% on
 all finding classes (fresh). The disagreements exposed six checker defects (\S E). After they were fixed, we
-regenerated all 1,251 programs on the model driver and re-checked them with the release's predecessor (\prevhash; its results are the release's, Table~\ref{tab:s-versions}),
+regenerated all 1,251 programs on the model driver and re-checked them with the release,
 reusing validation's stored verdicts (Table~\ref{tab:s-wholeframe}): agreement is 97.9\% on hazards and 95.4\% on all
 classes; hazard pairs are 1,440 / 32 / 14 and all finding pairs 2,353 / 478 / 116 (both / \sys only / validation only).
 With the \code{acquire-first-use} warning scored as a hazard, agreement is 98.3\% / 95.8\%. All 1,251 programs are
@@ -1425,10 +1457,12 @@ postchain & 1 & 0.140 & 0.141 & 0.107 & 23.6\% (22.6..24.5) \\
 \end{tabular}
 \end{table*}
 
-\paragraph{Real samples: a null result}
-On eight unmodified samples (three Sascha Willems, five Khronos) the prover removes or narrows none of 414 per-frame
-barrier calls: 318 sit between accesses that already race and are pinned, and the other 96 are transitions it proved
-necessary. Only 150 one-time setup barriers are narrowed. On lavapipe the presented-image hashes are identical between
+\paragraph{Conservative behaviour on already-racy samples}
+On eight unmodified samples (three Sascha Willems, five Khronos) that already contain reported hazards, the prover
+(an earlier snapshot; the traces are not archived) removes or narrows none of 414 per-frame barrier calls: 318 sit
+between accesses that already race and are pinned, and for the other 96, layout transitions, no narrower mask it tries
+keeps the frame free of new races; this does not show that they are minimal. Only 150 one-time setup barriers are
+narrowed. On lavapipe the presented-image hashes are identical between
 base and plan, and validation's messages do not change.
 
 \subsection{Cost}
@@ -1442,7 +1476,10 @@ VulkanSceneGraph programs took 78\,s and grouping 79\,s (engine-study-3 snapshot
 samples measured one at a time on a 4-core machine with no GPU (an early checker around the tutorial-study snapshot):
 tracing is cheaper than running the
 same 10 frames on lavapipe in every case, because the model driver executes no GPU work, and the timing check takes at
-most 1.6\,s.
+most 1.6\,s. This compares GPU-free recording with software rendering of the same frames (for example 0.28\,s and
+12\,MB against 2.25\,s and 192\,MB on \code{sw/multithreading}); it is not an end-to-end comparison of \sys with
+validation. On the whole-frame programs, where both were measured end to end, a lavapipe run with validation takes a
+median 0.081\,s and \sys 0.092\,s, and we claim no speed advantage (paper, \S\ref{P-sec:eval-wholeframe}).
 
 \begin{table*}[t]
 \caption{Overhead on eight samples (10 frames, early checker around the tutorial-study snapshot, measured one at a

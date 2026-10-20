@@ -130,11 +130,9 @@ recorded execution is reported):
 the first 12 hex digits of a SHA-1 over the file name and bytes of each
 `covenant/*.py` (sorted by name), followed by `bench/run.py`
 (`covenant_version()` in `tools/check_trace.py`). This release is
-**`f28a96b8b6fb`**. The archived results under `experiments/` were produced with its
-predecessor `fa974bb2d72d`, which differs only in how the shader analysis reads
-specialization constants; `tools/shader_modes_diff.py` shows that both classify every
-shader module of the corpora identically (259 distinct modules), so those results are
-this release's. To print the hash:
+**`f28a96b8b6fb`**. `experiments/recheck-release.sh` re-runs the test suite and
+re-checks every archived trace of the paper with this checker, comparing each result
+with the archived one (see `experiments/README.md`). To print the hash:
 
 ```sh
 python3 -c "import runpy; print(runpy.run_path('tools/check_trace.py')['covenant_version']())"
