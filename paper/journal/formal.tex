@@ -311,7 +311,11 @@ two modelled accesses race. A driver may reorder, overlap or delay the work in a
 fences allow without exposing a race. The statement does not cover paths the run did not take (a resize, swapchain
 recreation, error handling), accesses outside the model (\S\ref{sec:cover}) or a mistaken reading of the
 specification. These are the premises of Table~\ref{tab:assume}, and the report says when a run falls outside the
-domain (\S\ref{sec:eligible}).
+domain (\S\ref{sec:eligible}). The statement is about the model: that its events represent the run's accesses rests on
+the capture premises and on the translation from trace and shaders to events, which is trusted, tested code
+(Table~\ref{tab:tcb}). The checker detects and reports some violations of these premises, such as an unmodelled command
+or a missing shader module, but it cannot establish them, so a clean report on a run with an undetected violation
+carries no guarantee.
 
 The bridge from the run to $E(\tau)$ is an abstraction lemma (Appendix~\ref{app:abstraction}). A2 and A2-H give each
 covered access $\alpha$ of the run a representative event $a$ whose scopes are subsets of $\alpha$'s. An ordering

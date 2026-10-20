@@ -25,7 +25,6 @@
 \newcommand{\supp}[1]{Supplement~\S#1}
 \newcommand{\posthoc}{\textsuperscript{\textsf{ph}}}
 \newcommand{\relhash}{\code{f28a96b8b6fb}}
-\newcommand{\prevhash}{\code{fa974bb2d72d}}
 \DeclareRobustCommand{\circled}[1]{\tikz[baseline=(c.base)]\node[circle,fill=black!35,text=white,inner sep=.6pt,font=\sffamily\scriptsize\bfseries](c){#1};}
 %% acmart already defines theorem, corollary, proposition, lemma and definition environments.
 
@@ -58,10 +57,10 @@ our transcription of the specification, that an accepted trace in a stated domai
 every run, is race-free under every device schedule consistent with its synchronization. In two studies on 57
 previously unchecked programs from eight code bases, each with the checker frozen before its first run, \sys found 16
 true root causes, including a host-write race that Khronos synchronization validation does not track; five code
-bases drew no false alarm. Re-checked post hoc on the same recorded traces, after fixes they prompted, the released
-checker reports 94.5\% of report groups true on the 24 programs of the second study whose grouping completes (19.7\%
-as frozen). Differential tests against validation and a
-benchmark of real bugs complete the evaluation.
+bases drew no false alarm, and conservative host capture cost most of the first study's precision. Re-checked post
+hoc on the same recorded traces, with checker refinements these studies motivated, the release reports 94.5\% of the
+275 report groups true on the 24 second-study programs whose grouping completes (19.7\% as frozen). Differential tests
+against validation and a benchmark of real bugs complete the evaluation.
 \end{abstract}
 
 \begin{CCSXML}
@@ -148,11 +147,11 @@ established (\S\ref{sec:related}). Concretely, one analysis covers:
 \end{itemize}
 
 \paragraph{What this changes for a renderer}
-A clean, eligible report is a statement about every schedule of the recorded path, not about the one schedule a test
-run happened to take, and it needs no GPU. A developer who edits the synchronization of a frame can re-check the whole
-frame, host writes and presentation included, and get either the scope test that fails or that statement. The same
-decision procedure licenses removing barriers from the recorded execution (\S\ref{sec:elide}). Checking the barriers
-that a render graph derives at its boundaries is a natural further use that we have not evaluated.
+A developer who edits the synchronization of a frame can re-check the whole frame from one GPU-free run, host writes
+and presentation included, and get back either the scope test that fails or a clean, eligible report: a statement
+about every device schedule of the recorded host path under the stated premises, not about the one schedule a test
+run happened to take. The same decision procedure licenses removing barriers from the recorded execution
+(\S\ref{sec:elide}); checking the barriers that render graphs derive is a further use we have not evaluated.
 
 \paragraph{Scope}
 The guarantee is about the recorded host path, in the verified configuration (spec-strict layout transitions,
@@ -241,8 +240,9 @@ on a machine with no GPU:
   but only 2 may be held (3 images, minimum 2); it can block forever.
     at vkAcquireNextImageKHR @seq 115 (swapchain[2])
 \end{lstlisting}
-This is not independent evidence for \sys: the rule was written after we saw the freeze. Like the semaphore reuse
-above, it is a protocol check, justified by a valid-usage rule rather than by the race theorem (\S\ref{sec:protocol}).
+Like the semaphore reuse above, it is a protocol check, justified by a valid-usage rule rather than by the race
+theorem (\S\ref{sec:protocol}).\footnote{The rule was written after we observed the freeze, so this case motivates the
+check and is not independent evidence for it; it is not counted in any blind result.}
 
 \subsection{What existing tools see}
 \label{sec:rcgp}
@@ -415,11 +415,12 @@ does it detect blind (E2, \S\ref{sec:eval-bench}); how precise is the proved con
 Every study below was run with a checker snapshot frozen, by source hash, before the study's first run. We call such
 results \emph{fresh} and report them as scored; a checker defect found during a study was fixed only after it. A result
 of a later checker on code already seen is \emph{post-hoc} and is marked \posthoc{} in tables. The checker that the
-theorems of \S\ref{sec:model} describe is the release (fingerprint \relhash, a hash of its source that it prints in every report); Table~\ref{tab:release}
-gives its results on every corpus of this section, re-run on the recorded traces. Those re-runs used the release's
-immediate predecessor (\prevhash), which differs only in reading specialization constants (\S\ref{sec:limits}); on
-all 259 distinct shader modules of the recorded traces both give the same access classification, so the results are
-the release's. The snapshot of each study is
+theorems of \S\ref{sec:model} describe is the release (fingerprint \relhash, a hash of its source that it prints in every report). Table~\ref{tab:release}
+gives its results on every corpus of this section, re-checked on the recorded traces: one script re-runs the test
+suite and re-checks and re-groups every archived trace with the release, and compares each result with the archived
+one (\code{experiments/recheck-release.sh}). Validation's stored verdicts are reused, so validation and the programs
+are not re-run. A change that a study prompted does not make the release's result on that study independent
+evidence. The snapshot of each study is
 listed in \supp{E}. All comparisons use the Khronos validation layer at one fixed commit, run on lavapipe (Mesa's
 software Vulkan driver); \supp{A} lists the exact version of it and of every program we tested.
 
@@ -435,10 +436,11 @@ groups without repairs; no incomplete report counts as clean.}
 \toprule
 Corpus & runs & in domain & Release result \\
 \midrule
-Test suite & 392 & -- & all pass: 2,550 random frames against the reference semantics, 300 with host writes, the
+Test suite & 392 & -- & all pass, none skipped: 2,550 random frames against the reference semantics, 300 with host writes, the
 minimal frames of Appendix~\ref{app:counter}, shader-to-event tests, regression frames \\
 Barrier mutants (\S\ref{sec:eval-sem}) & 750 & 750 & 95.9\% agreement with validation (86 / 633 / 31 / 0); per-mutant
 diagnostics unchanged \\
+Barrier-elision plans (\S\ref{sec:elide}) & 3 & -- & re-derived: the same decision for all 111 barrier calls \\
 Ray tracing and mesh shading & 15 & 15 & 12 of 13 programs agree with validation; codes and counts unchanged \\
 Whole-frame suite, regenerated & 1,251 & 1,251 & 97.9\% hazard agreement; 0 verdict changes \\
 \bench reproductions & 228 & -- & blind timing: strict 29 / 35, root cause 33 / 35; 8 of 98 blind fixed variants
@@ -587,7 +589,9 @@ mined, there is one swapchain per program and no recreation, events or ray traci
 never executed concurrently. The programs use dynamic rendering, no framebuffer-local dependency, no descriptor
 array and no host write after a device write, so they do not exercise those parts of the model. The key mapping can misattribute a disagreement within a class: 201 pairs are the same
 root cause under another object or code. We claim no speed advantage: on these programs a lavapipe run with validation
-takes a median 0.081\,s and \sys 0.092\,s. What \sys adds here is coverage.
+takes a median 0.081\,s and \sys 0.092\,s, end to end. Recording without a GPU is cheaper than rendering the same
+frames on lavapipe (0.28\,s and 12\,MB against 2.25\,s and 192\,MB on one sample, \supp{H}), but that compares
+recording with software rendering, not \sys with validation. What \sys adds here is coverage.
 
 \paragraph{Window measurements}
 Of the 187 stored sample traces, 138 are periodic with a fence bound ($N = 1$ for 26, 2 for 85, 3 for 27). On them,
@@ -640,27 +644,27 @@ variant reports at least one timing diagnostic on the case's root-cause resource
 
 \begin{table}[t]
 \caption{Blind detection on \bench, as run: each round scored by the checker frozen for it (fresh). Timing: strict
-paired-detection success and root-cause detection. Structure and meaning are outside the synchronization guarantee and
-are given for completeness (strict). Fixed: fixed variants (all categories) with any diagnostic / with a timing
-diagnostic. Pred.: predictions that held.}
+paired-detection success and root-cause detection. Structure is outside the synchronization guarantee and is given
+for context (strict); the meaning cases, also outside it, are in \supp{H}. Fixed: fixed variants (all categories) with
+any diagnostic / with a timing diagnostic. Pred.: predictions that held.}
 \label{tab:blind}
 \small
 \resizebox{\columnwidth}{!}{%
-\begin{tabular}{@{}lrrrrrr@{}}
+\begin{tabular}{@{}lrrrrr@{}}
 \toprule
-& \multicolumn{2}{c}{timing} & & & & \\
+& \multicolumn{2}{c}{timing} & & & \\
 \cmidrule(lr){2-3}
-Round (cases) & strict & root cause & struct. & meaning & fixed & pred. \\
+Round (cases) & strict & root cause & struct. & fixed & pred. \\
 \midrule
-1 (17--29) & 3/7 & 4/7 & 1/2 & 2/4 & 1 / 1 & 13/13 \\
-2 (30--44) & 4/7 & 4/7 & 2/4 & 0/4 & 2 / 0 & 13/15 \\
-3 (45--59) & 3/6 & 3/6 & 1/3 & 0/6 & 0 / 0 & 14/15 \\
-4 (60--74) & 3/5 & 4/5 & 1/3 & 0/7 & 8 / 5 & 13/15 \\
-5 (75--94) & 5/6 & 5/6 & 0/5 & 0/9 & 2 / 1 & 17/20 \\
-6 (95--114) & 3/4 & 4/4 & 1/4 & 0/12 & 1 / 0 & 14/20 \\
+1 (17--29) & 3/7 & 4/7 & 1/2 & 1 / 1 & 13/13 \\
+2 (30--44) & 4/7 & 4/7 & 2/4 & 2 / 0 & 13/15 \\
+3 (45--59) & 3/6 & 3/6 & 1/3 & 0 / 0 & 14/15 \\
+4 (60--74) & 3/5 & 4/5 & 1/3 & 8 / 5 & 13/15 \\
+5 (75--94) & 5/6 & 5/6 & 0/5 & 2 / 1 & 17/20 \\
+6 (95--114) & 3/4 & 4/4 & 1/4 & 1 / 0 & 14/20 \\
 \midrule
-total & \textbf{21/35} & 24/35 & 6/21 & 2/42 & 14 / 7 & 84/98 \\
-Wilson 95\% & \textbf{44--74\%} & 52--81\% & 14--50\% & 1--16\% & & \\
+total & \textbf{21/35} & 24/35 & 6/21 & 14 / 7 & 84/98 \\
+Wilson 95\% & \textbf{44--74\%} & 52--81\% & 14--50\% & & \\
 \bottomrule
 \end{tabular}}
 \end{table}
@@ -668,8 +672,8 @@ Wilson 95\% & \textbf{44--74\%} & 52--81\% & 14--50\% & 1--16\% & & \\
 \begin{figure}[t]
   \includegraphics[width=\columnwidth]{fig-heldout.pdf}
   \caption{\textbf{Blind detection, as run.} Left: timing cases per blind round; strict paired-detection successes
-  (dark), cases whose root cause was reported (light), all timing cases (outline). Right: pooled rates with Wilson
-  95\% intervals. Structure and meaning are outside the synchronization guarantee (grey).}
+  (dark), cases whose root cause was reported (light), all timing cases (outline). Right: pooled timing rates with
+  Wilson 95\% intervals, and structure (grey), which is outside the synchronization guarantee.}
   \label{fig:heldout}
 \end{figure}
 
@@ -690,7 +694,8 @@ cases, a statement about predictability, not coverage.
 
 Outside the synchronization guarantee, the structure checks detected 6 of 21 structure bugs. An earlier component
 that tried to infer semantic conventions detected 2 of 42 meaning bugs blind, and none of 21 in the last two rounds,
-after two redesigns; we make no claim about conventions and keep those bugs in the benchmark (\S\ref{sec:limits}).
+after two redesigns (per round in \supp{H}); it is not a measure of the synchronization checker, we make no claim
+about conventions, and we keep those bugs in the benchmark (\S\ref{sec:limits}).
 
 \paragraph{The release on \bench (post-hoc)}
 After round 6, all 114 reproductions are development data. Re-run with the release, strict paired detection succeeds
@@ -827,7 +832,8 @@ one-line patches), both ImGui examples (40 before, a 75-line deletion) and SDL's
 release, all 15 have no synchronization diagnostic in either capture mode, raise no model warning, and are guarantee-eligible in the
 verified configuration; re-tracing each three more times gives the same result.
 These are source repairs in the sense of \S\ref{sec:eval-bugs}: evidence through re-running, not through
-Lemma~\ref{lem:repair}.
+Lemma~\ref{lem:repair}, and they establish synchronization-clean runs for the tested revisions and host paths, not for
+every later execution.
 
 The same check tests upstream repairs. For each of the nine causes already changed upstream we distinguish an
 \emph{initial fix attempt} (a commit that changes the implicated pattern but, re-run, leaves diagnostics of the
@@ -851,13 +857,14 @@ resources). The release reports, for each run, whether it is in the guarantee's 
 (Table~\ref{tab:release}).
 
 \paragraph{What validation sees}
-Validation found the same root causes as \sys in study~1 (5 shared, none unique to either tool). In study~2 the tools
-share 10 true causes, and one is unique to \sys: vkmark rewrites its uniform buffer with \code{memcpy} every frame
+On the matched runs of the two studies, validation found the same root causes as \sys in study~1 (5 shared, none
+unique to either tool). In study~2 the tools share 10 device-side true causes, and one is unique to \sys: vkmark rewrites its uniform buffer with \code{memcpy} every frame
 without waiting for the frame that reads it, a host-write race that validation does not track. Validation is unique
 on none, and it reported no synchronization false alarm in either study; it is silent on every false-alarm and
 unresolved cause of \sys. Both tools report potential hazards implied by the declared synchronization without
 needing them to manifest. On this evidence, \sys adds host-write capture and an explicit correctness argument for
-its stated domain, not a larger set of findings on device work.
+its stated domain, not a larger set of findings on device work. The barrier mutants, the ray-tracing programs and the
+whole-frame test (\S\ref{sec:eval-sem}) compare the tools on other workloads and are reported there.
 
 \paragraph{The bugs}
 The 16 true causes of the two studies are listed in \supp{I}. For nine of them the project's current source has a
@@ -1029,8 +1036,10 @@ first synchronization scope of such a dependency includes the commands submitted
 first access scope is limited by the source stage and access masks only, not to the pass's attachments (render-pass
 chapter, external dependencies); with these clauses the chain exists. Validation itself accepts the same pair when the
 window pass's dependency is replaced by a pipeline barrier with identical masks (minimal reproduction in \supp{F}),
-which suggests that it applies an external subpass dependency only to the pass's own attachments. Since the cited text
-decides the case, no accepted ordering in our results rests on an unresolved reading (\S\ref{sec:limits}).
+which suggests that it applies an external subpass dependency only to the pass's own attachments. On our reading the
+cited text decides the case, so no accepted ordering in our results rests on a question we leave open
+(\S\ref{sec:limits}); the reading is ours, not confirmed by Khronos, and we do not count validation's 19 pairs as
+false alarms.
 
 \paragraph{The bugs}
 \label{sec:eval-bugs}
@@ -1102,9 +1111,17 @@ premise is checked on.
 \paragraph{Measurements}
 \label{sec:eval-elide}
 On three headless microbenchmarks we wrote with a full barrier after every pass, the plans remove 63 of 111 recorded
-barrier calls and narrow 45 (Figure~\ref{fig:barriers}a); GPU-time measurements on one consumer GPU are in
-\supp{H} and are not a claim of this paper. On eight unmodified samples the prover removes none of 414 per-frame barrier calls:
-318 sit between accesses that already race and are pinned, and the other 96 are transitions it proved necessary.
+barrier calls and narrow 45 (Figure~\ref{fig:barriers}a). The plans were proved with an earlier checker snapshot;
+re-derived with the release, every call gets the same decision, and 15 narrowed calls name the synchronization2
+sub-stages \code{COPY} or \code{CLEAR} where the earlier plans name \code{TRANSFER}. GPU-time measurements of the
+earlier plans on one consumer GPU are in \supp{H} and are not a claim of this paper.
+
+\paragraph{Conservative behaviour on already-racy samples}
+On eight unmodified samples that already contain reported hazards, the optimizer (earlier snapshot) removes or narrows
+none of 414 per-frame barrier calls: it pins 318 that sit between accesses that already race, and for the other 96,
+layout transitions, no narrower mask it tries keeps the frame free of new races. It narrows 150 one-time setup
+barriers. This shows that the procedure refuses risky transformations on difficult executions; it is not evidence of
+a speedup on these programs, and it does not show that the remaining barriers are minimal.
 
 %% ===================================================================
 \section{Limitations}
@@ -1156,15 +1173,18 @@ stage is \code{COLOR\_ATTACHMENT\_OUTPUT}, or by the transitions of a later rend
 specification. \sys reads the text literally and reports these pairs; validation accepts them. Both readings lie in
 the report direction for \sys: they can only add reports, never remove one, so no clean verdict depends on them. The
 unresolved GTK and Qt groups and \code{vsg\_depthpeel} depend on this question, and we count none of them as bugs.
-The one disagreement in the accept direction, VSG-5, is decided by the cited text (\S\ref{sec:eval-real}).
+The one disagreement in the accept direction, VSG-5, is decided by the cited text on our reading, which Khronos has
+not confirmed (\S\ref{sec:eval-real}).
 
 \paragraph{Evidence}
 The evidence for the verified configuration is two studies of eight code bases, 20 frames each, on the paths a GPU-free
 run takes. Each study is fresh only for the checker frozen before it; the release's results on the same traces are
 post-hoc. The triage is ours, by written rules that we wrote. The blind \bench result pools six checkers, developed
-between rounds. Recall on real code was not measured. The 54 bugs are our triage; 11 have historical dossiers, 8 of
-them corroborated by validation, and nine causes had already been changed upstream before our analysis. The
-barrier-removal measurements come from three microbenchmarks we wrote.
+between rounds. Recall on real code was not measured. The 54 bugs are our triage, under written rules; 11 have
+historical dossiers, 8 of them corroborated by validation, and nine causes had already been changed upstream before our
+analysis, by commits that change the implicated pattern (two of them, re-run, are initial fix attempts). No maintainer
+has confirmed the causes still present. These kinds of corroboration are not interchangeable. The barrier-removal
+measurements come from three microbenchmarks we wrote, with plans from an earlier checker snapshot.
 
 \paragraph{Semantic conventions}
 An earlier component of \sys tried to infer conventions such as color encoding and units, and failed blind (2 of 42).
@@ -1218,10 +1238,12 @@ queue and the presentation engine across overlapping frames in one specified mod
 which the checker reports, an accepted trace is race-free under every device schedule consistent with its
 synchronization, for the modelled accesses on the recorded host path, by a complete proof written by hand and relative
 to our transcription of the specification. The same procedure names the scope test that each race fails, re-checks
-repairs on the whole frame and licenses barrier removal. On eight code bases not checked before, the frozen checkers
-found 16 true root causes, one of which validation cannot see, and patching nine of the causes makes 15 programs free
-of synchronization diagnostics under both \sys and validation. What remains is to narrow sub-page host writes, to settle the open
-questions of the specification, to measure recall on real code and to run on GPUs with several concurrent queues.
+repairs on the whole frame and licenses barrier removal. The evaluation shows both sides of this design: host-write
+coverage finds races that validation cannot observe, and source patches guided by the reports make the affected
+programs clean, while the conservative access abstractions that the proof needs cost precision on some code bases. The
+boundary is explicit: the theorem is proved for the model, and capture and the translation to events are premises and
+trusted code on which it depends. What remains is to narrow sub-page host writes, to settle the open questions of the
+specification, to measure recall on real code and to run on GPUs with several concurrent queues.
 
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{refs}
