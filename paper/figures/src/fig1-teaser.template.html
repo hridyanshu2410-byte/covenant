@@ -1,0 +1,168 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Fig. 1 teaser</title>
+<!-- GENERATED INPUT: build_teaser.py fills {{...}} with verbatim checker output and writes fig1-teaser.html.
+     Edit this template, not fig1-teaser.html. A host-write race that synchronization validation cannot
+     see, in SDL3's Vulkan renderer (SDL-1), checked by the checker frozen for the fresh studies. -->
+<link rel="stylesheet" href="style.css">
+<style>
+  .rows { flex: 1; display: flex; flex-direction: column; gap: 6px; padding: 6px; }
+  .row { display: grid; gap: 6px; }
+  .r1 { grid-template-columns: 214px 1fr; }
+  .r2 { grid-template-columns: 1fr 224px; }
+  .panel h3 { text-align: left; padding-left: 7px; }
+  .panel pre.code { font-size: 7.7px; line-height: 1.36; }
+  .diagtext { font-family: 'Inconsolata', monospace; white-space: pre-wrap; word-break: normal; overflow-wrap: anywhere;
+              font-size: 8px; line-height: 1.38; padding: 5px 8px 4px; }
+  .src { font-family: 'Libertinus Sans', sans-serif; font-size: 7px; color: var(--muted); padding: 0 7px 5px; }
+  .foot { font-size: 8px; padding: 3px 8px 6px; color: var(--ink); font-family: 'Libertinus Sans', sans-serif; line-height: 1.36; }
+  .foot b { font-weight: 700; }
+  .okline { font-family: 'Inconsolata', monospace; font-size: 8px; color: var(--ok); font-weight: 600; padding: 0 8px 2px; }
+  .svline { font-family: 'Libertinus Sans', sans-serif; font-size: 8px; color: var(--muted); padding: 0 8px 6px; }
+  .svline b { color: var(--ink); }
+  svg text { font-family: 'Libertinus Sans', sans-serif; }
+  svg .m { font-family: 'Inconsolata', monospace; }
+  .rf0 { color: var(--bad); font-weight: 600; }
+  .fixk { color: var(--ok); font-weight: 600; }
+  .apps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; padding: 5px 6px; flex: 1; }
+  .app { background: #fff; border: 1px solid var(--panel-border); border-radius: 4px; overflow: hidden; display: flex; flex-direction: column; }
+  .app .im { position: relative; }
+  .app img { width: 100%; display: block; aspect-ratio: 2.25/1; object-fit: cover; }
+  .app .nm { position: absolute; left: 0; top: 0; right: 0; font: 600 7.4px 'Libertinus Sans', sans-serif; color: #fff;
+             background: linear-gradient(rgba(25,32,42,.85), rgba(25,32,42,.0)); padding: 2px 5px 6px; }
+  .app .st { font: 600 6.9px 'Libertinus Sans', sans-serif; padding: 2.5px 5px 3px; white-space: nowrap; }
+  .st .ok2 { color: var(--ok); } .st .up { color: #3f6c86; } .st .dm { color: var(--muted); font-weight: 400; }
+  .band2 { margin-top: 5px; }
+</style></head>
+<body>
+<div id="fig">
+<div class="band">
+  <div class="band-label"><span>One frame, checked whole</span></div>
+  <div class="rows">
+
+  <div class="row r1">
+    <div class="panel"><h3><span class="n">1</span>Host code, as shipped (SDL3)</h3>
+<pre class="code"><span class="cm">// one set of vertex buffers for all frames</span>
+VULKAN_Buffer <span class="rf">vertexBuffers</span>[<span class="nu">256</span>];
+
+<span class="cm">// every frame (4 swapchain images,</span>
+<span class="cm">// 4 command buffers, 4 fences)</span>
+cur = (cur + <span class="nu">1</span>) % swapchainImageCount;
+<span class="fn">vkWaitForFences</span>(..., &amp;fences[cur], ...);
+<span class="cm">// waits only for the command buffer</span>
+<span class="cm">// about to be reused, 4 frames back</span>
+<span class="fn">vkAcquireNextImageKHR</span>(...);
+<span class="fn">SDL_memcpy</span>(<span class="rf">vertexBuffers</span>[<span class="nu">0</span>].mapped,
+           vertices, size);   <span class="cm">// BUG</span>
+<span class="cm">// record draws reading vertexBuffers[0]</span>
+<span class="fn">vkQueueSubmit</span>(..., fences[cur]);
+<span class="fn">vkQueuePresentKHR</span>(...);</pre>
+      <div class="src">Abridged from src/render/vulkan/SDL_render_vulkan.c (lines 392, 3785&ndash;3805, 5144&ndash;5147), program test/testsprite.</div>
+    </div>
+
+    <div class="panel"><h3><span class="n">2</span>The recorded run as one happens-before order: CPU and GPU queue</h3>
+      <div class="body" style="padding:2px 4px 3px">
+      <svg width="100%" viewBox="0 0 440 214" id="tl"></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="row r2">
+    <div class="panel"><h3><span class="n">3</span>Diagnostic, verbatim checker output (first of {{NBUG}} in 20 frames)</h3>
+<div class="diagtext">{{DIAG}}</div>
+<div class="svline"><b>Synchronization validation</b> on the same program and frames: {{SVBUG}}. It does not track host writes to mapped memory.</div>
+    </div>
+    <div class="panel"><h3><span class="n">4</span>The fix, re-checked</h3>
+<pre class="code" style="flex:0; padding-bottom:3px"><span class="cm">// one set of vertex buffers per frame in flight</span>
+<span class="fn">SDL_memcpy</span>(<span class="rf">vertexBuffers</span>[<span class="fixk">cur</span>][<span class="nu">0</span>].mapped,
+           vertices, size);</pre>
+<div class="okline">checker: {{FIXED}}</div>
+      <div class="foot">An accepted trace is race-free under <b>every</b> device schedule consistent with its recorded synchronization, for the modelled accesses on the recorded host path, host writes included.</div>
+    </div>
+  </div>
+
+  </div>
+</div>
+<div class="band band2">
+  <div class="band-label"><span>Programs</span></div>
+  <div class="apps">
+{{APPS}}
+  </div>
+</div>
+<div class="caption" id="cap">Fig. 1. (preview; the paper caption is in the paper source)</div>
+</div>
+
+<script>
+const NS = 'http://www.w3.org/2000/svg';
+function el(svg, tag, attrs, text) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; svg.appendChild(e); return e; }
+function defs(s) {
+  const d = el(s, 'defs', {});
+  [['k', '#8a939c'], ['r', '#c0392b'], ['g', '#2c8a55'], ['b', '#2c6aa8']].forEach(([id, c]) => {
+    const m = el(d, 'marker', { id: s.id + id, viewBox: '0 0 8 8', refX: 7, refY: 4, markerWidth: 5.5, markerHeight: 5.5, orient: 'auto-start-reverse' });
+    el(m, 'path', { d: 'M0,0 L8,4 L0,8 z', fill: c });
+  });
+}
+// Timeline of SDL3 testsprite under the model driver. Every seq number is from the recorded trace
+// (teaser-evidence/bug-trace.jsonl.gz): submits @1227 (command buffer 1, fence 1) @1332 (cb 2)
+// @1437 (cb 3) @1542 (cb 4); host fence waits @1229 (fence 2) @1334 (fence 3) @1439 (fence 4) @1544 (fence 1);
+// host writes to vertexBuffers[0] (memory#1) recorded at @1336, @1441, @1546. The draw @1139 in command buffer 1
+// reads vertexBuffers[0]; fence 1 is first waited at @1544.
+(function () {
+  const s = document.getElementById('tl'); defs(s);
+  const X = q => 64 + (q - 1205) * 1.04;
+  const L = { host: 46, q: 128 };
+  const RED = '#c0392b', BLUE = '#2c6aa8', GREEN = '#2c8a55', GREY = '#8a939c', INK = '#2b2f36', MUTE = '#6b7480';
+  [[1205, 1228.5, ''], [1228.5, 1333.5, 'frame k+1'], [1333.5, 1438.5, 'frame k+2'], [1438.5, 1543.5, 'frame k+3'], [1543.5, 1564, 'k+4']].forEach(([a, b, t], i) => {
+    el(s, 'rect', { x: X(a), y: 14, width: X(b) - X(a), height: 160, fill: i % 2 ? '#f7fafc' : '#eaf0f5' });
+    el(s, 'text', { x: (X(a) + X(b)) / 2, y: 10, 'text-anchor': 'middle', 'font-size': 7.6, fill: MUTE }, t);
+  });
+  el(s, 'text', { x: X(1216), y: 10, 'text-anchor': 'middle', 'font-size': 7.6, fill: MUTE }, 'k');
+  [['host', 'CPU (host)'], ['q', 'queue graphics0']].forEach(([k, t]) => {
+    el(s, 'line', { x1: 60, y1: L[k], x2: 438, y2: L[k], stroke: '#b9cbd8', 'stroke-width': 0.9 });
+    el(s, 'text', { x: 1, y: L[k] + 2.8, 'font-size': 7.8, fill: INK }, t);
+  });
+  // command buffer 1's execution window: from its submit @1227 until the host first waits its fence (@1544)
+  el(s, 'rect', { x: X(1227), y: L.q + 11, width: X(1544) - X(1227), height: 9, rx: 2, fill: '#fdecea', stroke: RED, 'stroke-width': 0.8, 'stroke-dasharray': '2.5 1.5' });
+  el(s, 'text', { x: X(1240), y: L.q + 18.2, 'font-size': 7, fill: RED }, 'command buffer 1 may still be drawing from vertexBuffers[0] (draw @1139)');
+  // submits
+  [[1227, 1], [1332, 2], [1437, 3], [1542, 4]].forEach(([q, cb]) => {
+    const x = X(q), hot = cb === 1;
+    el(s, 'rect', { x: x - 8, y: L.q - 8, width: 16, height: 16, rx: 2.5, fill: hot ? '#fdecea' : '#dbe8f4', stroke: hot ? RED : BLUE, 'stroke-width': hot ? 1.4 : 1 });
+    el(s, 'text', { x, y: L.q + 3, 'text-anchor': 'middle', 'font-size': 8, fill: INK, 'font-weight': 700 }, 'S');
+    el(s, 'text', { x, y: L.q - 11, 'text-anchor': 'middle', 'font-size': 7, fill: hot ? RED : MUTE, class: 'm', 'font-weight': hot ? 700 : 400 }, '@' + q + ' cb' + cb);
+  });
+  // host: fence waits (diamonds, fence index) and host writes (W)
+  [[1229, 2], [1334, 3], [1439, 4], [1544, 1]].forEach(([q, f]) => {
+    const x = X(q), y = L.host, ok = f === 1;
+    el(s, 'path', { d: `M${x},${y - 5} L${x + 5},${y} L${x},${y + 5} L${x - 5},${y} z`, fill: ok ? GREEN : GREY });
+    el(s, 'text', { x, y: y - 8, 'text-anchor': 'middle', 'font-size': 7, fill: ok ? GREEN : MUTE, class: 'm', 'font-weight': ok ? 700 : 400 }, 'wait f' + f);
+  });
+  [[1336, false], [1441, true], [1546, false]].forEach(([q, hot]) => {
+    const x = X(q) + 13, y = L.host;
+    el(s, 'rect', { x: x - 7, y: y - 7, width: 14, height: 14, rx: 2, fill: hot ? '#fdecea' : '#fff', stroke: hot ? RED : '#5d7f93', 'stroke-width': hot ? 1.4 : 1 });
+    el(s, 'text', { x, y: y + 2.8, 'text-anchor': 'middle', 'font-size': 7.6, fill: INK, 'font-weight': 700 }, 'W');
+  });
+  el(s, 'text', { x: X(1441) + 22, y: L.host + 3, 'font-size': 7, fill: RED, class: 'm halo', 'font-weight': 700 }, 'memcpy, before @1442');
+  // the race: host write vs. command buffer 1's draws
+  el(s, 'path', { d: `M${X(1441) + 13},${L.host + 8} C${X(1441) + 10},${L.host + 45} ${X(1395)},${L.q - 20} ${X(1392)},${L.q + 10}`, fill: 'none', stroke: RED, 'stroke-width': 1.4, 'stroke-dasharray': '3.5 2', 'marker-start': 'url(#tlr)', 'marker-end': 'url(#tlr)' });
+  el(s, 'text', { x: X(1405), y: L.host + 44, 'text-anchor': 'end', 'font-size': 8, fill: RED, 'font-weight': 700, class: 'halo' }, 'unordered');
+  // fence wait @1439 orders only command buffer 4's previous use
+  el(s, 'text', { x: X(1439) - 7, y: L.host + 18, 'text-anchor': 'end', 'font-size': 7, fill: MUTE, class: 'halo' }, 'f4: command buffer 4, 4 frames back');
+  // first ordering of command buffer 1 before the host: the wait on fence 1 @1544
+  el(s, 'path', { d: `M${X(1544) - 2},${L.q + 11} C${X(1544) + 4},${L.q - 20} ${X(1544) + 4},${L.host + 30} ${X(1544)},${L.host + 7}`, fill: 'none', stroke: GREEN, 'stroke-width': 1.1, 'marker-end': 'url(#tlg)' });
+  el(s, 'text', { x: X(1544) - 6, y: L.host + 62, 'text-anchor': 'end', 'font-size': 7, fill: GREEN, class: 'halo' }, 'first wait on fence 1');
+  el(s, 'text', { x: 248, y: 190, 'text-anchor': 'middle', 'font-size': 7.4, fill: RED, 'font-weight': 700 }, 'the host rewrites vertexBuffers[0] while command buffer 1 (fence not yet waited) may still read it');
+  // legend
+  el(s, 'path', { d: `M64,202 L68,206 L64,210 L60,206 z`, fill: GREY });
+  el(s, 'text', { x: 71, y: 209, 'font-size': 6.8, fill: MUTE }, 'fence wait');
+  el(s, 'text', { x: 116, y: 209, 'font-size': 6.8, fill: MUTE }, 'S submit (cb = command buffer)    W host write to vertexBuffers[0]');
+})();
+document.fonts.ready.then(() => {
+  document.querySelectorAll('svg text.halo').forEach(tx => {
+    const b = tx.getBBox();
+    const r = document.createElementNS(NS, 'rect');
+    for (const [k, v] of Object.entries({ x: b.x - 1.5, y: b.y - 0.5, width: b.width + 3, height: b.height + 1, rx: 1.5, fill: '#fff', 'fill-opacity': 1 })) r.setAttribute(k, v);
+    tx.parentNode.insertBefore(r, tx);
+  });
+});
+</script>
+</body></html>

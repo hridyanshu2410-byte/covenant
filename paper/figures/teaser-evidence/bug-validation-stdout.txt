@@ -1,0 +1,3 @@
+[presentlimit] 20 presents, exiting
+Validation Layer Info - Logging validation error to /dev/shm/v32/teaser/sv/vvl.txt
+[presentlimit] presents=20

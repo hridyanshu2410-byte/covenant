@@ -1,0 +1,156 @@
+{
+ "vkmark_clear": {
+  "case": "VKMARK-ALL",
+  "before": 108,
+  "groups": 9,
+  "after": 0,
+  "causes": {
+   "VKMARK-CLR": 60,
+   "VKMARK-ACQ": 29,
+   "VKMARK-PSR": 19
+  }
+ },
+ "vkmark_cube": {
+  "case": "VKMARK-ALL",
+  "before": 57,
+  "groups": 4,
+  "after": 0,
+  "causes": {
+   "VKMARK-ACQ": 19,
+   "VKMARK-UBO": 19,
+   "VKMARK-PSR": 19
+  }
+ },
+ "vkmark_desktop": {
+  "case": "VKMARK-ALL",
+  "before": 114,
+  "groups": 7,
+  "after": 0,
+  "causes": {
+   "VKMARK-ACQ": 19,
+   "VKMARK-UBO": 76,
+   "VKMARK-PSR": 19
+  }
+ },
+ "vkmark_effect2d": {
+  "case": "VKMARK-ALL",
+  "before": 38,
+  "groups": 3,
+  "after": 0,
+  "causes": {
+   "VKMARK-ACQ": 19,
+   "VKMARK-PSR": 19
+  }
+ },
+ "vkmark_shading": {
+  "case": "VKMARK-ALL",
+  "before": 269,
+  "groups": 5,
+  "after": 0,
+  "causes": {
+   "VKMARK-ACQ": 19,
+   "VKMARK-DEPTH": 212,
+   "VKMARK-UBO": 19,
+   "VKMARK-PSR": 19
+  }
+ },
+ "vkmark_texture": {
+  "case": "VKMARK-ALL",
+  "before": 269,
+  "groups": 5,
+  "after": 0,
+  "causes": {
+   "VKMARK-ACQ": 19,
+   "VKMARK-DEPTH": 212,
+   "VKMARK-UBO": 19,
+   "VKMARK-PSR": 19
+  }
+ },
+ "vkmark_vertex": {
+  "case": "VKMARK-ALL",
+  "before": 269,
+  "groups": 5,
+  "after": 0,
+  "causes": {
+   "VKMARK-ACQ": 19,
+   "VKMARK-DEPTH": 212,
+   "VKMARK-UBO": 19,
+   "VKMARK-PSR": 19
+  }
+ },
+ "gst_sink": {
+  "case": "GST-ALL",
+  "before": 80,
+  "groups": 6,
+  "after": 0,
+  "causes": {
+   "GST-WAIT": 80
+  }
+ },
+ "gst_colorconvert": {
+  "case": "GST-ALL",
+  "before": 119,
+  "groups": 7,
+  "after": 0,
+  "causes": {
+   "GST-WAIT": 80,
+   "GST-IA": 38
+  }
+ },
+ "gst_overlay": {
+  "case": "GST-ALL",
+  "before": 80,
+  "groups": 6,
+  "after": 0,
+  "causes": {
+   "GST-WAIT": 80
+  }
+ },
+ "gst_viewconvert": {
+  "case": "GST-ALL",
+  "before": 118,
+  "groups": 7,
+  "after": 0,
+  "causes": {
+   "GST-WAIT": 80,
+   "GST-IA": 38
+  }
+ },
+ "gst_shaderspv": {
+  "case": "GST-ALL",
+  "before": 99,
+  "groups": 7,
+  "after": 0,
+  "causes": {
+   "GST-WAIT": 80,
+   "GST-IA": 19
+  }
+ },
+ "imgui_glfw": {
+  "case": "IMGUI-PRE",
+  "before": 20,
+  "groups": 20,
+  "after": 0,
+  "causes": {
+   "IMGUI-PRE": 20
+  }
+ },
+ "imgui_sdl2": {
+  "case": "IMGUI-PRE",
+  "before": 20,
+  "groups": 20,
+  "after": 0,
+  "causes": {
+   "IMGUI-PRE": 20
+  }
+ },
+ "sdl_testsprite": {
+  "case": "SDL-1",
+  "before": 166,
+  "groups": 2,
+  "after": 0,
+  "causes": {
+   "SDL-1": 166
+  }
+ }
+}

@@ -5,7 +5,7 @@ const { chromium } = require('playwright');
 const path = require('path');
 (async () => {
   const browser = await chromium.launch({ executablePath: process.env.CHROMIUM || undefined });
-  const out = path.resolve(__dirname, '..');
+  const out = process.env.FIGOUT || path.resolve(__dirname, '..');
   for (const name of process.argv.slice(2)) {
     const page = await browser.newPage({ deviceScaleFactor: 4, viewport: { width: 672, height: 1200 } });
     await page.goto('file://' + path.join(__dirname, name + '.html'));

@@ -57,8 +57,9 @@ our transcription of the specification, that an accepted trace in a stated domai
 every run, is race-free under every device schedule consistent with its synchronization. In two studies on 57
 previously unchecked programs from eight code bases, each with the checker frozen before its first run, \sys found 16
 true root causes, including a host-write race that Khronos synchronization validation does not track; five code
-bases drew no false alarm. On the same recorded traces, the released checker reports 94.5\% of report groups true
-on the 24 programs of the second study whose grouping completes. Differential tests against validation and a
+bases drew no false alarm. Re-checked post hoc on the same recorded traces, after fixes they prompted, the released
+checker reports 94.5\% of report groups true on the 24 programs of the second study whose grouping completes (19.7\%
+as frozen). Differential tests against validation and a
 benchmark of real bugs complete the evaluation.
 \end{abstract}
 
@@ -77,18 +78,18 @@ benchmark of real bugs complete the evaluation.
   \includegraphics[width=\textwidth]{fig1-teaser.pdf}
   \caption{\textbf{One frame, checked whole: a host-write race in SDL3 that synchronization validation does not
   see.} \circled{1}~SDL3's Vulkan renderer, unmodified (\code{test/testsprite}), runs once against a GPU-free model
-  driver that records every call and traps every CPU store to mapped memory. Each frame it waits for the fence of
-  the command buffer it is about to reuse, four frames back, and then copies the new vertices into
-  \code{vertexBuffers[0]}, of which there is one set for all frames. \circled{2}~\sys orders the recorded run as one
-  happens-before relation over the CPU and the GPU queue. The store before call @1442 is ordered after the fence
-  wait for command buffer~4 only; command buffer~1, whose draw @1139 reads the same buffer, is waited for only in the
-  next frame, so the store and the draw are unordered. \circled{3}~The checker's verbatim diagnostic (the first of
-  166 in 20 frames). Synchronization validation, run on the same program and frames on lavapipe, reports nothing: it
-  does not track host writes to mapped memory. \circled{4}~With one set of vertex buffers per frame in flight the
-  checker reports nothing, and Corollary~\ref{cor:sched} gives race freedom under every device schedule consistent
-  with the recorded synchronization, for the modelled accesses on the recorded host path. Diagnostic from the
-  checker frozen for the studies of \S\ref{sec:eval-fresh}, unchanged in the release; bug SDL-1 of
-  Table~\ref{tab:bugs}; sequence numbers are from the recorded trace.}
+  driver that records every call and traps every CPU store to mapped memory. Each frame it waits on the fence of the
+  command buffer it will reuse, four frames back, then copies new vertices into \code{vertexBuffers[0]}, one set for
+  all frames. \circled{2}~\sys orders the run as one happens-before relation over the CPU and the GPU queue: the
+  store before call @1442 follows the wait for command buffer~4 only, while the draw @1139 of command buffer~1 reads
+  the same buffer, so the two are unordered. \circled{3}~The verbatim diagnostic (first of 166 in 20 frames; checker
+  frozen for \S\ref{sec:eval-fresh}, unchanged in the release; bug SDL-1 of Table~\ref{tab:bugs}). Synchronization
+  validation on the same frames reports nothing: it does not track host writes to mapped memory. \circled{4}~With one
+  set of vertex buffers per frame in flight the checker reports nothing, and Corollary~\ref{cor:sched} gives race
+  freedom under every device schedule consistent with the recorded synchronization, for the modelled accesses on the
+  recorded host path. \emph{Bottom:} five unmodified programs \sys checked, each shown by a frame it renders on
+  lavapipe. SDL3 and vkmark re-check clean after source repairs (Figure~\ref{fig:repairs}); Qt Quick~3D, GTK~4 and
+  mpv are from the fresh studies, checked by a checker frozen before their first run (Figure~\ref{fig:precision}).}
   \label{fig:teaser}
 \end{teaserfigure}
 
@@ -287,7 +288,11 @@ When it runs & C++ compile time & after one GPU-free run \\
   premises of \S\ref{sec:premises}. It covers graphics, compute, mesh-shading and ray-tracing work, and reports any
   command it does not model. Secondary structure checks share the trace. Raw diagnostics are grouped by site, and each
   group gets the narrowest barrier or mask repair, kept only if re-checking the whole frame removes the group's
-  hazards and adds none. Barrier removal is an application of the same order (\S\ref{sec:elide}).}
+  hazards and adds none. Barrier removal is an application of the same order (\S\ref{sec:elide}).
+  \emph{Bottom:} what a clean, eligible report rests on (Table~\ref{tab:chain}). Capture is a premise; turning the
+  trace and shaders into events is trusted code, tested but not proved (Table~\ref{tab:tcb}); the checking algorithm
+  is proved sound for the defined order; eligibility is checked and reported for every run. Each box in the pipeline
+  carries the kind of its link.}
   \label{fig:overview}
 \end{figure*}
 
@@ -750,15 +755,19 @@ Study & family & conservative & true & observed & true \\
 \end{tabular}}
 \end{table}
 
-\begin{figure}[t]
-  \includegraphics[width=\columnwidth]{fig-precision.pdf}
-  \caption{\textbf{The proved configuration on previously unchecked code}, by code base: share of timing report groups
-  that are true bugs, technicalities, unresolved and false alarms, with conservative capture (solid, the theorem's
-  configuration) and observed capture (dotted). Each study's checker was frozen before the study's first run.
-  \dag: programs outside the premises (an unmodelled command; one wgpu program, all four mpv programs).
-  \ddag: \code{gtk\_path\_walk}, checked but not grouped (memory), not in the bar.}
+\begin{figure*}[t]
+  \includegraphics[width=\textwidth]{fig-precision.pdf}
+  \caption{\textbf{The proved configuration on previously unchecked code}, by code base. Each card shows frames that
+  the code base's programs render (the same commands, unmodified, on lavapipe), the share of timing report groups
+  that are true bugs, technicalities, unresolved and false alarms, and the true root causes with their upstream
+  status (\supp{I}). \emph{frozen}: the checker frozen before the study's first run, in conservative capture, the
+  theorem's configuration; this is the fresh result. \emph{observed}: the same checker in observed capture.
+  \emph{release}: the released checker on the same traces, post-hoc (\S\ref{sec:eval-release}). GTK~4 shows eight
+  programs; \code{gtk\_path\_walk} was checked but not grouped when frozen, and its grouping is incomplete in the
+  release. Five programs were outside the premises when frozen (an unmodelled command: one wgpu program and the four
+  mpv configurations).}
   \label{fig:precision}
-\end{figure}
+\end{figure*}
 
 \paragraph{Precision}
 Table~\ref{tab:fresh} and Figure~\ref{fig:precision} give the results as frozen. They are not uniformly good, and we
@@ -788,12 +797,22 @@ GTK's missing render-before-present ordering appears in 15 groups per program. F
 more (the descriptor-array over-approximation: up to 927 groups in one program). Cause-level numbers in this section are our manual consolidation,
 not something the tool shows; we did not measure how long diagnosis takes.
 
+\begin{figure*}[t]
+  \includegraphics[width=\textwidth]{fig-repairs.pdf}
+  \caption{\textbf{From report to clean run: the 15 source-repaired programs.} Each tile is a frame the unmodified
+  program renders (the same command, on lavapipe). Bars: the timing diagnostics of the original run in conservative
+  capture, coloured by the root cause each is attributed to; numbers: diagnostics before and after the project's
+  patch. Two causes, VKMARK-UBO and SDL-1, are host-write races that synchronization validation does not track. After
+  the patches every program is clean in both capture modes and guarantee-eligible when re-checked with the release.}
+  \label{fig:repairs}
+\end{figure*}
+
 \paragraph{From report to clean run}
 To show the workflow end to end, we patched the source of every true cause in four projects (vkmark, GStreamer,
 Dear ImGui, and SDL3 from E4), rebuilt each program with its original flags and re-ran it with the same command. There
 are 11 source-patch cases covering nine causes: one per cause, plus one case per project that applies all of its
 patches together (vkmark and GStreamer). We re-checked every patched run with the release in conservative capture
-(\supp{I}). For each case, the patched run has no diagnostic of the repaired cause and no diagnostic kind the
+(\supp{I}; Figure~\ref{fig:repairs}). For each case, the patched run has no diagnostic of the repaired cause and no diagnostic kind the
 original lacked, and every remaining diagnostic belongs to another listed cause. Applying all patches of a project
 leaves 15 programs with no synchronization diagnostic in either capture mode and no synchronization-validation message: all seven
 vkmark scenes (1,124 diagnostics before, five causes, 18 files changed), all five GStreamer pipelines (495 before, two
@@ -1092,7 +1111,14 @@ Multithreaded host code is modelled as one host queue; capture precondition P3 i
 allows, and Granite and vkQuake trigger its warning in every program, so their clean pairs are outside the premise.
 Host reads of mapped memory are not events, aliasing of distinct resources is not modelled, and shader device-address
 accesses, query results, the inputs of host acceleration-structure builds, descriptor update templates, push
-descriptors and unmodelled commands are outside the model; unmodelled commands are reported. A host write whose
+descriptors and unmodelled commands are outside the model; unmodelled commands are reported. Specialization constants are recorded but not applied: every shader-analysis decision that depends on a
+constant (array sizes, descriptor indices, workgroup size) accepts only \code{OpConstant}, takes a specialization
+constant as unknown, and no branch is pruned. Two decisions read a constant without that check, an atomic's memory
+scope and a pointer chain's Element; valid Vulkan SPIR-V keeps both independent of specialization (a scope must be an
+\code{OpConstant} unless the NV cooperative-matrix capability is declared, and a nonzero Element is invalid on a pointer to
+a block), so a module that declares that capability and specializes an atomic's scope is outside the domain, and the
+checker does not yet report it. In the studies, GTK and mpv specialize 24 shader modules; their specialization
+constants size descriptor arrays and feed branches and arithmetic only. A host write whose
 ordering after device work relies on the host-domain premise (A-HOST) draws a warning and takes the run out of the
 domain; the model driver exposes only host-coherent memory, so non-coherent memory, which needs explicit flushes and
 invalidations, is not covered.
