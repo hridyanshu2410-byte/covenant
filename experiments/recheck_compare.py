@@ -73,11 +73,14 @@ def fresh(stored, out, classes):
                             f"{eligibility(d / 'check.json')}")
             g = json.loads((d / "groups.json").read_text())
             sig = group_sig(g)
-            want = {c["id"]: (c["diagnostics"], c["what"]) for c in cls.get(f"{prog}/{mode}", [])}
+            ck = f"{prog}/{mode}"
+            if ck not in cls:      # a mode that was not classified separately (its result equals the other mode's)
+                ck = f"{prog}/{'observed' if mode == 'conservative' else 'conservative'}"
+            want = {c["id"]: (c["diagnostics"], c["what"]) for c in cls.get(ck, [])}
             if sig != want:
                 ids = sorted(set(sig) ^ set(want)) + sorted(k for k in set(sig) & set(want) if sig[k] != want[k])
                 diff.append(f"study{study}/{prog}/{mode}: groups differ ({', '.join(ids[:6])})")
-            for c in cls.get(f"{prog}/{mode}", []):
+            for c in cls.get(ck, []):
                 part = "incomplete" if g.get("status") == "incomplete" else "complete"
                 totals[(study, mode, part, c["class"])] += 1
     print(f"fresh studies: {n} program/mode runs re-checked and re-grouped, {len(diff)} differ")
