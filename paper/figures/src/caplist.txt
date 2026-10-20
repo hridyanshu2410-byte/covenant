@@ -1,0 +1,43 @@
+q3d_custommaterial|$FRESH/qtquick3d/examples/quick3d/custommaterial|QSG_RHI_BACKEND=vulkan QT_QPA_PLATFORM=xcb QSG_RHI_PREFER_SOFTWARE_RENDERER=0|/usr/lib/qt6/bin/qml main.qml|30
+q3d_dynamiccreation|$FRESH/qtquick3d/examples/quick3d/dynamiccreation|QSG_RHI_BACKEND=vulkan QT_QPA_PLATFORM=xcb QSG_RHI_PREFER_SOFTWARE_RENDERER=0|/usr/lib/qt6/bin/qml main.qml|30
+q3d_hellocube|$FRESH/qtquick3d/examples/quick3d/hellocube|QSG_RHI_BACKEND=vulkan QT_QPA_PLATFORM=xcb QSG_RHI_PREFER_SOFTWARE_RENDERER=0|/usr/lib/qt6/bin/qml main.qml|30
+q3d_instancing|$FRESH/qtquick3d/examples/quick3d/instancing|QSG_RHI_BACKEND=vulkan QT_QPA_PLATFORM=xcb QSG_RHI_PREFER_SOFTWARE_RENDERER=0|/usr/lib/qt6/bin/qml main.qml|30
+q3d_intro|$FRESH/qtquick3d/examples/quick3d/intro|QSG_RHI_BACKEND=vulkan QT_QPA_PLATFORM=xcb QSG_RHI_PREFER_SOFTWARE_RENDERER=0|/usr/lib/qt6/bin/qml main.qml|30
+q3d_lights|$FRESH/qtquick3d/examples/quick3d/lights|QSG_RHI_BACKEND=vulkan QT_QPA_PLATFORM=xcb QSG_RHI_PREFER_SOFTWARE_RENDERER=0|/usr/lib/qt6/bin/qml main.qml|30
+q3d_morphing|$FRESH/qtquick3d/examples/quick3d/morphing|QSG_RHI_BACKEND=vulkan QT_QPA_PLATFORM=xcb QSG_RHI_PREFER_SOFTWARE_RENDERER=0|/usr/lib/qt6/bin/qml main.qml|30
+q3d_offlineshaders|$FRESH/qtquick3d/examples/quick3d/offlineshaders|QSG_RHI_BACKEND=vulkan QT_QPA_PLATFORM=xcb QSG_RHI_PREFER_SOFTWARE_RENDERER=0|/usr/lib/qt6/bin/qml main.qml|30
+q3d_picking|$FRESH/qtquick3d/examples/quick3d/picking|QSG_RHI_BACKEND=vulkan QT_QPA_PLATFORM=xcb QSG_RHI_PREFER_SOFTWARE_RENDERER=0|/usr/lib/qt6/bin/qml main.qml|30
+q3d_quickball|$FRESH/qtquick3d/examples/quick3d/quickball|QSG_RHI_BACKEND=vulkan QT_QPA_PLATFORM=xcb QSG_RHI_PREFER_SOFTWARE_RENDERER=0|/usr/lib/qt6/bin/qml main.qml|30
+q3d_reflectionprobes|$FRESH/qtquick3d/examples/quick3d/reflectionprobes|QSG_RHI_BACKEND=vulkan QT_QPA_PLATFORM=xcb QSG_RHI_PREFER_SOFTWARE_RENDERER=0|/usr/lib/qt6/bin/qml main.qml|30
+q3d_screenspacereflections|$FRESH/qtquick3d/examples/quick3d/screenspacereflections|QSG_RHI_BACKEND=vulkan QT_QPA_PLATFORM=xcb QSG_RHI_PREFER_SOFTWARE_RENDERER=0|/usr/lib/qt6/bin/qml main.qml|30
+q3d_view3d|$FRESH/qtquick3d/examples/quick3d/view3d|QSG_RHI_BACKEND=vulkan QT_QPA_PLATFORM=xcb QSG_RHI_PREFER_SOFTWARE_RENDERER=0|/usr/lib/qt6/bin/qml main.qml|12
+qq_shadereffects|$FRESH/qtdeclarative/examples/quick/shadereffects|QSG_RHI_BACKEND=vulkan QT_QPA_PLATFORM=xcb QSG_RHI_PREFER_SOFTWARE_RENDERER=0|/usr/lib/qt6/bin/qml shadereffects.qml|10
+vkcube|$FRESH|-|/usr/bin/vkcube|5
+wgpu_boids|$FRESH/wgpu|-|$FRESH/wgpu/target/release/wgpu-examples boids|8
+wgpu_bunnymark|$FRESH/wgpu|-|$FRESH/wgpu/target/release/wgpu-examples bunnymark|8
+wgpu_conservative_raster|$FRESH/wgpu|-|$FRESH/wgpu/target/release/wgpu-examples conservative_raster|8
+wgpu_cube|$FRESH/wgpu|-|$FRESH/wgpu/target/release/wgpu-examples cube|8
+wgpu_mipmap|$FRESH/wgpu|-|$FRESH/wgpu/target/release/wgpu-examples mipmap|8
+wgpu_msaa_line|$FRESH/wgpu|-|$FRESH/wgpu/target/release/wgpu-examples msaa_line|8
+wgpu_multiple_render_targets|$FRESH/wgpu|-|$FRESH/wgpu/target/release/wgpu-examples multiple_render_targets|8
+wgpu_render_to_texture|$FRESH/wgpu|-|$FRESH/wgpu/target/release/wgpu-examples render_to_texture|8
+wgpu_render_with_compute|$FRESH/wgpu|-|$FRESH/wgpu/target/release/wgpu-examples render_with_compute|8
+wgpu_shadow|$FRESH/wgpu|-|$FRESH/wgpu/target/release/wgpu-examples shadow|8
+wgpu_skybox|$FRESH/wgpu|-|$FRESH/wgpu/target/release/wgpu-examples skybox|8
+wgpu_srgb_blend|$FRESH/wgpu|-|$FRESH/wgpu/target/release/wgpu-examples srgb_blend|8
+wgpu_stencil_triangles|$FRESH/wgpu|-|$FRESH/wgpu/target/release/wgpu-examples stencil_triangles|8
+wgpu_storage_texture|$FRESH/wgpu|-|$FRESH/wgpu/target/release/wgpu-examples storage_texture|8
+wgpu_water|$FRESH/wgpu|-|$FRESH/wgpu/target/release/wgpu-examples water|8
+gtk_widget_factory|$FRESH|GTK_MEDIA=none GSK_RENDERER=vulkan|gtk4-widget-factory|15
+gtk_fishbowl|$FRESH|GTK_MEDIA=none GSK_RENDERER=vulkan|gtk4-demo --run=fishbowl|15
+gtk_iconscroll|$FRESH|GTK_MEDIA=none GSK_RENDERER=vulkan|gtk4-demo --run=iconscroll|15
+gtk_paintable_animated|$FRESH|GTK_MEDIA=none GSK_RENDERER=vulkan|gtk4-demo --run=paintable_animated|15
+gtk_listview_clocks|$FRESH|GTK_MEDIA=none GSK_RENDERER=vulkan|gtk4-demo --run=listview_clocks|15
+gtk_path_spinner|$FRESH|GTK_MEDIA=none GSK_RENDERER=vulkan|gtk4-demo --run=path_spinner|15
+gtk_path_walk|$FRESH|GTK_MEDIA=none GSK_RENDERER=vulkan|gtk4-demo --run=path_walk|15
+gtk_spinner|$FRESH|GTK_MEDIA=none GSK_RENDERER=vulkan|gtk4-demo --run=spinner|15
+gtk_mask|$FRESH|GTK_MEDIA=none GSK_RENDERER=vulkan|gtk4-demo --run=mask|15
+mpv_gpunext|$FRESH|-|mpv --no-config --vo=gpu-next --gpu-api=vulkan --gpu-context=x11vk '--vulkan-device=llvmpipe (LLVM 20.1.2, 256 bits)' --frames=100000 $FRESH/testsrc.mp4|8
+mpv_gpu|$FRESH|-|mpv --no-config --vo=gpu --gpu-api=vulkan --gpu-context=x11vk '--vulkan-device=llvmpipe (LLVM 20.1.2, 256 bits)' --frames=100000 $FRESH/testsrc.mp4|8
+mpv_gpunext_hq|$FRESH|-|mpv --no-config --vo=gpu-next --gpu-api=vulkan --gpu-context=x11vk '--vulkan-device=llvmpipe (LLVM 20.1.2, 256 bits)' --profile=high-quality --deband=yes --frames=100000 $FRESH/testsrc.mp4|8
+mpv_gpu_hq|$FRESH|-|mpv --no-config --vo=gpu --gpu-api=vulkan --gpu-context=x11vk '--vulkan-device=llvmpipe (LLVM 20.1.2, 256 bits)' --profile=gpu-hq --deband=yes --frames=100000 $FRESH/testsrc.mp4|8

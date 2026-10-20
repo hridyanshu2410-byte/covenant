@@ -190,7 +190,8 @@ are lifted from SPIR-V, and the C++ host is read with libclang for struct layout
   configuration). Atomic-only is decided per byte range of the bound buffer (a block member's offset plus the
   descriptor's offset), not per member name. A pointer access chain (\code{OpPtrAccessChain}) first steps by whole
   elements of its base type; only a constant Element of 0 keeps the access inside the member it then names,
-  otherwise the access may touch the whole range. A matrix's size is bounded for both column- and row-major
+  otherwise the access may touch the whole range. (A nonzero Element on a pointer directly to a block is not valid
+  SPIR-V, so a nonzero Element occurs only on pointers into arrays, where the conservative range is sound.) A matrix's size is bounded for both column- and row-major
   layouts. A pointer keeps every descriptor it may come from, through helper calls,
   returns, \code{OpPhi}, \code{OpSelect} and pointers held in variables. When a pipeline's shader code is missing or
   cannot be parsed, or an access reaches descriptor memory through a value the analysis cannot trace to a descriptor,

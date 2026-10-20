@@ -1,0 +1,2 @@
+all checks passed
+{"trace_records": 2225, "draws": 220, "pipelines_used": 3, "modules": 7, "load_s": 0.07, "check_s": 1.19, "warnings": 0, "unimplemented": [], "presents": 20, "submits": 20, "host_static": "skipped", "covenant_version": "7cb216ed5753"}

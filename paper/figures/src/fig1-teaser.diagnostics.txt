@@ -1,0 +1,8 @@
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1139 (command_buffer#1, submitted @seq 1227 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1442
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+
+occurrences: 166
+fixed: all checks passed
+validation: no message

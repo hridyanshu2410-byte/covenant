@@ -1,0 +1,665 @@
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1139 (command_buffer#1, submitted @seq 1227 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1442
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1148 (command_buffer#1, submitted @seq 1227 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1442
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1158 (command_buffer#1, submitted @seq 1227 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1442
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1166 (command_buffer#1, submitted @seq 1227 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1442
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1174 (command_buffer#1, submitted @seq 1227 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1442
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1182 (command_buffer#1, submitted @seq 1227 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1442
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1190 (command_buffer#1, submitted @seq 1227 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1442
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1198 (command_buffer#1, submitted @seq 1227 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1442
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1206 (command_buffer#1, submitted @seq 1227 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1442
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1214 (command_buffer#1, submitted @seq 1227 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1442
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1222 (command_buffer#1, submitted @seq 1227 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1442
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1352 (command_buffer#3, submitted @seq 1437 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1547
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1360 (command_buffer#3, submitted @seq 1437 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1547
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1368 (command_buffer#3, submitted @seq 1437 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1547
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1376 (command_buffer#3, submitted @seq 1437 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1547
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1384 (command_buffer#3, submitted @seq 1437 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1547
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1392 (command_buffer#3, submitted @seq 1437 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1547
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1400 (command_buffer#3, submitted @seq 1437 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1547
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1408 (command_buffer#3, submitted @seq 1437 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1547
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1416 (command_buffer#3, submitted @seq 1437 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1547
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1424 (command_buffer#3, submitted @seq 1437 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1547
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1432 (command_buffer#3, submitted @seq 1437 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1547
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1457 (command_buffer#4, submitted @seq 1542 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1547
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1465 (command_buffer#4, submitted @seq 1542 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1547
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1473 (command_buffer#4, submitted @seq 1542 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1547
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1481 (command_buffer#4, submitted @seq 1542 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1547
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1489 (command_buffer#4, submitted @seq 1542 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1547
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1497 (command_buffer#4, submitted @seq 1542 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1547
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1505 (command_buffer#4, submitted @seq 1542 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1547
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1513 (command_buffer#4, submitted @seq 1542 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1547
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1521 (command_buffer#4, submitted @seq 1542 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1547
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1529 (command_buffer#4, submitted @seq 1542 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1547
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1537 (command_buffer#4, submitted @seq 1542 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1547
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is read on 'graphics0' and written on 'host' with nothing ordering the two.
+    at host write to buffer#1 (mapped memory#1 +0x0), before call seq 1656
+    note: other access: vkCmdDraw @seq 1432 (command_buffer#3, submitted @seq 1437 on graphics0): vertex buffer 0
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is read on 'graphics0' and written on 'host' with nothing ordering the two.
+    at host write to buffer#1 (mapped memory#1 +0x0), before call seq 1761
+    note: other access: vkCmdDraw @seq 1537 (command_buffer#4, submitted @seq 1542 on graphics0): vertex buffer 0
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is read on 'graphics0' and written on 'host' with nothing ordering the two.
+    at host write to buffer#1 (mapped memory#1 +0x0), before call seq 1866
+    note: other access: vkCmdDraw @seq 1646 (command_buffer#1, submitted @seq 1651 on graphics0): vertex buffer 0
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1671 (command_buffer#2, submitted @seq 1756 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1679 (command_buffer#2, submitted @seq 1756 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1687 (command_buffer#2, submitted @seq 1756 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1695 (command_buffer#2, submitted @seq 1756 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1703 (command_buffer#2, submitted @seq 1756 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1711 (command_buffer#2, submitted @seq 1756 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1719 (command_buffer#2, submitted @seq 1756 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1727 (command_buffer#2, submitted @seq 1756 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1735 (command_buffer#2, submitted @seq 1756 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1743 (command_buffer#2, submitted @seq 1756 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1751 (command_buffer#2, submitted @seq 1756 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1776 (command_buffer#3, submitted @seq 1861 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1784 (command_buffer#3, submitted @seq 1861 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1792 (command_buffer#3, submitted @seq 1861 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1800 (command_buffer#3, submitted @seq 1861 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1808 (command_buffer#3, submitted @seq 1861 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1816 (command_buffer#3, submitted @seq 1861 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1824 (command_buffer#3, submitted @seq 1861 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1832 (command_buffer#3, submitted @seq 1861 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1840 (command_buffer#3, submitted @seq 1861 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1848 (command_buffer#3, submitted @seq 1861 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1856 (command_buffer#3, submitted @seq 1861 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1881 (command_buffer#4, submitted @seq 1966 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1889 (command_buffer#4, submitted @seq 1966 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1897 (command_buffer#4, submitted @seq 1966 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1905 (command_buffer#4, submitted @seq 1966 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1913 (command_buffer#4, submitted @seq 1966 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1921 (command_buffer#4, submitted @seq 1966 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1929 (command_buffer#4, submitted @seq 1966 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1937 (command_buffer#4, submitted @seq 1966 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1945 (command_buffer#4, submitted @seq 1966 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1953 (command_buffer#4, submitted @seq 1966 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 1961 (command_buffer#4, submitted @seq 1966 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 1971
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is read on 'graphics0' and written on 'host' with nothing ordering the two.
+    at host write to buffer#1 (mapped memory#1 +0x0), before call seq 2076
+    note: other access: vkCmdDraw @seq 1856 (command_buffer#3, submitted @seq 1861 on graphics0): vertex buffer 0
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is read on 'graphics0' and written on 'host' with nothing ordering the two.
+    at host write to buffer#1 (mapped memory#1 +0x0), before call seq 2181
+    note: other access: vkCmdDraw @seq 1961 (command_buffer#4, submitted @seq 1966 on graphics0): vertex buffer 0
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is read on 'graphics0' and written on 'host' with nothing ordering the two.
+    at host write to buffer#1 (mapped memory#1 +0x0), before call seq 2286
+    note: other access: vkCmdDraw @seq 2066 (command_buffer#1, submitted @seq 2071 on graphics0): vertex buffer 0
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2091 (command_buffer#2, submitted @seq 2176 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2099 (command_buffer#2, submitted @seq 2176 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2107 (command_buffer#2, submitted @seq 2176 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2115 (command_buffer#2, submitted @seq 2176 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2123 (command_buffer#2, submitted @seq 2176 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2131 (command_buffer#2, submitted @seq 2176 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2139 (command_buffer#2, submitted @seq 2176 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2147 (command_buffer#2, submitted @seq 2176 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2155 (command_buffer#2, submitted @seq 2176 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2163 (command_buffer#2, submitted @seq 2176 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2171 (command_buffer#2, submitted @seq 2176 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2196 (command_buffer#3, submitted @seq 2281 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2204 (command_buffer#3, submitted @seq 2281 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2212 (command_buffer#3, submitted @seq 2281 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2220 (command_buffer#3, submitted @seq 2281 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2228 (command_buffer#3, submitted @seq 2281 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2236 (command_buffer#3, submitted @seq 2281 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2244 (command_buffer#3, submitted @seq 2281 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2252 (command_buffer#3, submitted @seq 2281 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2260 (command_buffer#3, submitted @seq 2281 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2268 (command_buffer#3, submitted @seq 2281 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2276 (command_buffer#3, submitted @seq 2281 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2301 (command_buffer#4, submitted @seq 2386 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2309 (command_buffer#4, submitted @seq 2386 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2317 (command_buffer#4, submitted @seq 2386 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2325 (command_buffer#4, submitted @seq 2386 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2333 (command_buffer#4, submitted @seq 2386 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2341 (command_buffer#4, submitted @seq 2386 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2349 (command_buffer#4, submitted @seq 2386 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2357 (command_buffer#4, submitted @seq 2386 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2365 (command_buffer#4, submitted @seq 2386 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2373 (command_buffer#4, submitted @seq 2386 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2381 (command_buffer#4, submitted @seq 2386 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2391
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is read on 'graphics0' and written on 'host' with nothing ordering the two.
+    at host write to buffer#1 (mapped memory#1 +0x0), before call seq 2496
+    note: other access: vkCmdDraw @seq 2276 (command_buffer#3, submitted @seq 2281 on graphics0): vertex buffer 0
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is read on 'graphics0' and written on 'host' with nothing ordering the two.
+    at host write to buffer#1 (mapped memory#1 +0x0), before call seq 2601
+    note: other access: vkCmdDraw @seq 2381 (command_buffer#4, submitted @seq 2386 on graphics0): vertex buffer 0
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is read on 'graphics0' and written on 'host' with nothing ordering the two.
+    at host write to buffer#1 (mapped memory#1 +0x0), before call seq 2706
+    note: other access: vkCmdDraw @seq 2486 (command_buffer#1, submitted @seq 2491 on graphics0): vertex buffer 0
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2511 (command_buffer#2, submitted @seq 2596 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2519 (command_buffer#2, submitted @seq 2596 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2527 (command_buffer#2, submitted @seq 2596 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2535 (command_buffer#2, submitted @seq 2596 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2543 (command_buffer#2, submitted @seq 2596 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2551 (command_buffer#2, submitted @seq 2596 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2559 (command_buffer#2, submitted @seq 2596 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2567 (command_buffer#2, submitted @seq 2596 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2575 (command_buffer#2, submitted @seq 2596 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2583 (command_buffer#2, submitted @seq 2596 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2591 (command_buffer#2, submitted @seq 2596 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2616 (command_buffer#3, submitted @seq 2701 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2624 (command_buffer#3, submitted @seq 2701 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2632 (command_buffer#3, submitted @seq 2701 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2640 (command_buffer#3, submitted @seq 2701 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2648 (command_buffer#3, submitted @seq 2701 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2656 (command_buffer#3, submitted @seq 2701 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2664 (command_buffer#3, submitted @seq 2701 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2672 (command_buffer#3, submitted @seq 2701 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2680 (command_buffer#3, submitted @seq 2701 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2688 (command_buffer#3, submitted @seq 2701 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2696 (command_buffer#3, submitted @seq 2701 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2721 (command_buffer#4, submitted @seq 2806 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2729 (command_buffer#4, submitted @seq 2806 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2737 (command_buffer#4, submitted @seq 2806 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2745 (command_buffer#4, submitted @seq 2806 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2753 (command_buffer#4, submitted @seq 2806 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2761 (command_buffer#4, submitted @seq 2806 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2769 (command_buffer#4, submitted @seq 2806 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2777 (command_buffer#4, submitted @seq 2806 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2785 (command_buffer#4, submitted @seq 2806 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2793 (command_buffer#4, submitted @seq 2806 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2801 (command_buffer#4, submitted @seq 2806 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 2811
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is read on 'graphics0' and written on 'host' with nothing ordering the two.
+    at host write to buffer#1 (mapped memory#1 +0x0), before call seq 2916
+    note: other access: vkCmdDraw @seq 2696 (command_buffer#3, submitted @seq 2701 on graphics0): vertex buffer 0
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is read on 'graphics0' and written on 'host' with nothing ordering the two.
+    at host write to buffer#1 (mapped memory#1 +0x0), before call seq 3021
+    note: other access: vkCmdDraw @seq 2801 (command_buffer#4, submitted @seq 2806 on graphics0): vertex buffer 0
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is read on 'graphics0' and written on 'host' with nothing ordering the two.
+    at host write to buffer#1 (mapped memory#1 +0x0), before call seq 3126
+    note: other access: vkCmdDraw @seq 2906 (command_buffer#1, submitted @seq 2911 on graphics0): vertex buffer 0
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2931 (command_buffer#2, submitted @seq 3016 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 3126
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2939 (command_buffer#2, submitted @seq 3016 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 3126
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2947 (command_buffer#2, submitted @seq 3016 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 3126
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2955 (command_buffer#2, submitted @seq 3016 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 3126
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2963 (command_buffer#2, submitted @seq 3016 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 3126
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2971 (command_buffer#2, submitted @seq 3016 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 3126
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2979 (command_buffer#2, submitted @seq 3016 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 3126
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2987 (command_buffer#2, submitted @seq 3016 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 3126
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 2995 (command_buffer#2, submitted @seq 3016 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 3126
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 3003 (command_buffer#2, submitted @seq 3016 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 3126
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 3011 (command_buffer#2, submitted @seq 3016 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 3126
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 3036 (command_buffer#3, submitted @seq 3121 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 3126
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 3044 (command_buffer#3, submitted @seq 3121 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 3126
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 3052 (command_buffer#3, submitted @seq 3121 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 3126
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 3060 (command_buffer#3, submitted @seq 3121 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 3126
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 3068 (command_buffer#3, submitted @seq 3121 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 3126
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 3076 (command_buffer#3, submitted @seq 3121 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 3126
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 3084 (command_buffer#3, submitted @seq 3121 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 3126
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 3092 (command_buffer#3, submitted @seq 3121 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 3126
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 3100 (command_buffer#3, submitted @seq 3121 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 3126
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 3108 (command_buffer#3, submitted @seq 3121 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 3126
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+[timing] timing.cross-queue-race: 'buffer#1' is written on 'host' and read on 'graphics0' with nothing ordering the two.
+    at vkCmdDraw @seq 3116 (command_buffer#3, submitted @seq 3121 on graphics0): vertex buffer 0
+    note: other access: host write to buffer#1 (mapped memory#1 +0x0), before call seq 3126
+    note: add a semaphore (GPU queues) or wait on the frame's fence (host) between them
+{"trace_records": 3229, "draws": 220, "pipelines_used": 3, "modules": 7, "load_s": 0.08, "check_s": 1.1, "warnings": 0, "unimplemented": [], "presents": 20, "submits": 20, "host_static": "skipped", "covenant_version": "7cb216ed5753"}
