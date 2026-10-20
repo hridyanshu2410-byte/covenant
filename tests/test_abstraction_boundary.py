@@ -59,15 +59,21 @@ def _string(s):
     return list(struct.unpack("<%dI" % (len(b) // 4), b))
 
 
-def storage_module(stage="compute", index="atomic", scope=DEVICE, value=123):
+def storage_module(stage="compute", index="atomic", scope=DEVICE, value=123, spec=None):
     """One storage buffer {uint counter; uint data[];} at set 0 binding 0.
     index "atomic": data[atomicAdd(counter, 0)] = value; "zero": data[0] = value;
-    "atomic-only": atomicAdd(counter, 0) and nothing else."""
+    "atomic-only": atomicAdd(counter, 0) and nothing else. spec "nv" / "khr":
+    the atomic's scope is a specialization constant (SpecId 0, default scope),
+    which the NV / KHR cooperative-matrix extension allows (spirv-val accepts
+    the NV form); a pipeline may override it."""
     w = [0x07230203, 0x00010300, 0, 40, 0]
 
     def e(op, *a):
         w.extend([(len(a) + 1) << 16 | OPS[op], *a])
     e("OpCapability", 1)
+    if spec:
+        e("OpCapability", {"nv": 5357, "khr": 6022}[spec])  # CooperativeMatrixNV / KHR
+        e("OpExtension", *_string(f"SPV_{spec.upper()}_cooperative_matrix"))
     e("OpMemoryModel", 0, 1)
     e("OpEntryPoint", 5 if stage == "compute" else 4, 20, *_string("main"))
     e("OpExecutionMode", 20, 17, 1, 1, 1) if stage == "compute" else e("OpExecutionMode", 20, 7)
@@ -77,6 +83,8 @@ def storage_module(stage="compute", index="atomic", scope=DEVICE, value=123):
     e("OpDecorate", 11, 6, 4)                               # ArrayStride 4
     e("OpDecorate", 7, 34, 0)                               # DescriptorSet 0
     e("OpDecorate", 7, 33, 0)                               # Binding 0
+    if spec:
+        e("OpDecorate", 12, 1, 0)                           # SpecId 0
     e("OpTypeVoid", 1)
     e("OpTypeFunction", 2, 1)
     e("OpTypeInt", 3, 32, 0)
@@ -88,7 +96,7 @@ def storage_module(stage="compute", index="atomic", scope=DEVICE, value=123):
     e("OpConstant", 3, 8, 0)
     e("OpConstant", 3, 9, 1)
     e("OpConstant", 3, 10, value)
-    e("OpConstant", 3, 12, scope)
+    e("OpSpecConstant" if spec else "OpConstant", 3, 12, scope)
     e("OpFunction", 1, 20, 0, 2)
     e("OpLabel", 21)
     e("OpAccessChain", 6, 22, 7, 8)
@@ -299,7 +307,8 @@ def counter_module(chain="access"):
     """{uint counter (offset 0); uint source (offset 256);}: atomicAdd(counter, source).
     chain "ptr": source is reached with OpPtrAccessChain(block, Element 0, member 1)
     (variable pointers; the block pointer type has an ArrayStride, as SPIR-V
-    requires); "ptr1": the same with Element 1, the next block in memory."""
+    requires); "ptr1": the same with Element 1, the next block in memory;
+    "ptrspec": Element is a specialization constant with default 0."""
     w = [0x07230203, 0x00010300, 0, 40, 0]
 
     def e(op, *a):
@@ -317,6 +326,8 @@ def counter_module(chain="access"):
     e("OpDecorate", 7, 33, 0)
     if chain != "access":
         e("OpDecorate", 5, 6, 260)                          # ArrayStride of the block pointer
+    if chain == "ptrspec":
+        e("OpDecorate", 10, 1, 0)                           # SpecId 0
     e("OpTypeVoid", 1)
     e("OpTypeFunction", 2, 1)
     e("OpTypeInt", 3, 32, 0)
@@ -326,12 +337,14 @@ def counter_module(chain="access"):
     e("OpVariable", 5, 7, 12)
     e("OpConstant", 3, 8, 0)
     e("OpConstant", 3, 9, 1)
+    if chain == "ptrspec":
+        e("OpSpecConstant", 3, 10, 0)
     e("OpFunction", 1, 20, 0, 2)
     e("OpLabel", 21)
     if chain == "access":
         e("OpAccessChain", 6, 22, 7, 9)
     else:
-        e("OpPtrAccessChain", 6, 22, 7, 8 if chain == "ptr" else 9, 9)
+        e("OpPtrAccessChain", 6, 22, 7, {"ptr": 8, "ptr1": 9, "ptrspec": 10}[chain], 9)
     e("OpLoad", 3, 23, 22)
     e("OpAccessChain", 6, 24, 7, 8)
     e("OpAtomicIAdd", 3, 25, 24, 9, 8, 23)                  # Device scope
@@ -411,6 +424,16 @@ class BoundaryTest(unittest.TestCase):
         self.assertEqual(len(timing_ref.races(m.frame)), 1)
         for codes, _ in self.verdicts(m):
             self.assertEqual(codes, ["timing.missing-barrier"])
+
+    def test_specialized_atomic_scope_gets_no_exemption(self):
+        # default Device, but a pipeline may specialize it to Workgroup: an ordinary access
+        for spec in ("nv", "khr"):
+            ms = storage_module(index="atomic-only", spec=spec)
+            m = self.compute(ms, storage_module(index="atomic-only", spec=spec, value=7))
+            self.assertEqual(len(timing_ref.races(m.frame)), 1, spec)
+            for codes, elig in self.verdicts(m):
+                self.assertEqual(codes, ["timing.missing-barrier"], spec)
+                self.assertTrue(elig["guarantee_eligible"], spec)
 
     def test_missing_or_unreadable_fragment_shader_fails_closed(self):
         frag = storage_module(stage="fragment", index="zero")
@@ -514,6 +537,11 @@ class BoundaryTest(unittest.TestCase):
         self.assertEqual(spans["ptr"], spans["access"])
         # Element 1 reads the next block: no member span, so the read may touch the whole range
         self.assertEqual(spans["ptr1"], {(0, 0): frozenset({("atomic", (0, 256)), ("read", None)})})
+        # a specialization-constant Element may be overridden: no member span either
+        with tempfile.NamedTemporaryFile(suffix=".spv") as f:
+            f.write(counter_module("ptrspec"))
+            f.flush()
+            self.assertEqual(spirv.entry_binding_modes(spirv.parse(f.name), "main", spans=True), spans["ptr1"])
 
     def test_transitions_do_not_chain_two_barriers(self):
         F, B, U = frozenset, timing.Barrier, timing.Use
@@ -584,6 +612,14 @@ class BoundaryTest(unittest.TestCase):
                 r = subprocess.run(["spirv-val", "--target-env", "vulkan1.3", f.name],
                                    capture_output=True, text=True)
             self.assertEqual(r.returncode, 0, f"counter_module({chain}): {r.stderr}")
+        for name, b in (("counter_module(ptrspec)", counter_module("ptrspec")),
+                        ("storage_module(spec nv)", storage_module(index="atomic-only", spec="nv"))):
+            with tempfile.NamedTemporaryFile(suffix=".spv") as f:
+                f.write(b)
+                f.flush()
+                r = subprocess.run(["spirv-val", "--target-env", "vulkan1.3", f.name],
+                                   capture_output=True, text=True)
+            self.assertEqual(r.returncode, 0, f"{name}: {r.stderr}")
 
 if __name__ == "__main__":
     unittest.main()

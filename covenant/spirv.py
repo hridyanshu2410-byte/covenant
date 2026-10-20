@@ -461,7 +461,9 @@ def entry_binding_modes(m, entry, spans=False):
       QueueFamily). Two such atomic operations never form a data race (Vulkan
       memory model), so atomic accesses of two commands on one queue need no
       barrier between them. An atomic with a narrower or unknown scope is an
-      ordinary access;
+      ordinary access, and so is one whose scope is a specialization constant
+      (allowed with the KHR and NV cooperative-matrix capabilities): its
+      default may be overridden at pipeline creation;
     * "slot": a load/store through an access chain with an index
       computed from an atomic's result (a slot allocated with atomicAdd, e.g. an
       order-independent-transparency node list). Distinct slots are assumed, not
@@ -470,11 +472,11 @@ def entry_binding_modes(m, entry, spans=False):
       slots=True, COVENANT_HEURISTIC_SLOTS=1); flow-insensitive: a function
       variable once assigned an atomic's result counts as one.
 
-    member: the constant index of the top-level block member accessed, or with
-    spans=True its byte span (lo, hi) within the block, from the Offset
-    decorations (hi None: to the end of the range). None: unknown, a block
-    array, an image, or a pointer that reaches the access through a helper
-    parameter. The loader turns spans into buffer bytes by adding the
+    member: the index (a plain OpConstant) of the top-level block member
+    accessed, or with spans=True its byte span (lo, hi) within the block, from
+    the Offset decorations (hi None: to the end of the range). None: unknown, a
+    block array, an image, or a pointer that reaches the access through a
+    helper parameter. The loader turns spans into buffer bytes by adding the
     descriptor's offset (physical_modes). Bindings with any other access (plain
     store, image read/write, ...) are absent. See modes_compatible."""
     fid = next((f for _, f, n, _ in m.entries if n == entry), None)
@@ -515,6 +517,12 @@ def entry_binding_modes(m, entry, spans=False):
             ptr = d.args[0]
         return False
 
+    def fixed(i):
+        """The value of a plain OpConstant; None for a specialization constant
+        (its default may be overridden at pipeline creation) or anything else."""
+        d = m.defs.get(i)
+        return m.consts.get(i) if d is not None and d.op == "OpConstant" else None
+
     def member(ptr):
         """First member below the descriptor variable: its index, or with spans
         its byte span (lo, hi) in the block (hi None: to the end of the range).
@@ -527,13 +535,13 @@ def entry_binding_modes(m, entry, spans=False):
             d = m.defs.get(ptr)
             if d is None or d.op not in _CHAIN_OPS:
                 break
-            if d.op in _PTR_CHAIN_OPS and m.consts.get(d.args[1]) != 0:
+            if d.op in _PTR_CHAIN_OPS and fixed(d.args[1]) != 0:
                 return None                 # an Element that may step out of the member
             top, ptr = d, d.args[0]
         first = 2 if top is not None and top.op in _PTR_CHAIN_OPS else 1
         if top is None or len(top.args) <= first or top.args[0] not in var_key:
             return None
-        c = m.consts.get(top.args[first])
+        c = fixed(top.args[first])
         if not isinstance(c, int):
             return None
         if not spans:
@@ -561,7 +569,7 @@ def entry_binding_modes(m, entry, spans=False):
         keys = {var_key[v] for a in refs for v in root[a]}
         ptr = i.args[0]
         if i.op.startswith("OpAtomic") and ptr in root and \
-                len(i.args) > 1 and m.consts.get(i.args[1]) in _DEVICE_SCOPES:
+                len(i.args) > 1 and fixed(i.args[1]) in _DEVICE_SCOPES:
             cls = "atomic"
             if i.op != "OpAtomicLoad":
                 written |= keys

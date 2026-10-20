@@ -68,7 +68,7 @@ COVENANT_VKINC=$VKINC python3 -m pytest -q tests
 
 `COVENANT_VKINC` is the Vulkan-Headers include directory; the tests that build the
 model driver and the litmus programs use it, and the barrier-elision tests read flag
-names from its `vulkan_core.h`. With all requirements present, all 391 tests run and
+names from its `vulkan_core.h`. With all requirements present, all 392 tests run and
 pass, none skipped. A test whose tool is missing (libclang, `slangc`, `spirv-val`,
 `glslangValidator`, a C++ compiler, the headers) is skipped rather than failed;
 `pytest -rs` lists each skip and its reason. Only the checker's own tests run with
@@ -130,7 +130,11 @@ recorded execution is reported):
 the first 12 hex digits of a SHA-1 over the file name and bytes of each
 `covenant/*.py` (sorted by name), followed by `bench/run.py`
 (`covenant_version()` in `tools/check_trace.py`). This release is
-**`fa974bb2d72d`**:
+**`f28a96b8b6fb`**. The archived results under `experiments/` were produced with its
+predecessor `fa974bb2d72d`, which differs only in how the shader analysis reads
+specialization constants; `tools/shader_modes_diff.py` shows that both classify every
+shader module of the corpora identically (259 distinct modules), so those results are
+this release's. To print the hash:
 
 ```sh
 python3 -c "import runpy; print(runpy.run_path('tools/check_trace.py')['covenant_version']())"
