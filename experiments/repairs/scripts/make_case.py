@@ -132,4 +132,5 @@ def main():
     print(json.dumps({f'{p}/{l}': (v['clean_for_case'], v['fully_clean'], v['own_remaining'], v['new_codes']) for (p, l), v in verdicts.items()}))
 
 RULE_CAUSES = {r[3] for r in RULES}
-main()
+if __name__ == "__main__":
+    main()

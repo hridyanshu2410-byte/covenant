@@ -1,0 +1,55 @@
+{
+ "source": "GPUBugBench blind rounds R1-R6 (stored per-round results; root-cause column from the metrics table)",
+ "rounds": [
+  {
+   "round": 1,
+   "timing_cases": 7,
+   "strict": 3,
+   "root_cause": 4
+  },
+  {
+   "round": 2,
+   "timing_cases": 7,
+   "strict": 4,
+   "root_cause": 4
+  },
+  {
+   "round": 3,
+   "timing_cases": 6,
+   "strict": 3,
+   "root_cause": 3
+  },
+  {
+   "round": 4,
+   "timing_cases": 5,
+   "strict": 3,
+   "root_cause": 4
+  },
+  {
+   "round": 5,
+   "timing_cases": 6,
+   "strict": 5,
+   "root_cause": 5
+  },
+  {
+   "round": 6,
+   "timing_cases": 4,
+   "strict": 3,
+   "root_cause": 4
+  }
+ ],
+ "total": {
+  "timing": {
+   "detected": 21,
+   "cases": 35
+  },
+  "meaning": {
+   "detected": 2,
+   "cases": 42
+  },
+  "structure": {
+   "detected": 6,
+   "cases": 21
+  }
+ }
+}
