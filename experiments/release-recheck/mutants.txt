@@ -1,0 +1,18 @@
+{
+ "per_mutant": {
+  "deferred:both": 194,
+  "deferred:checker_only": 1,
+  "deferred:neither": 55,
+  "particles:both": 193,
+  "particles:checker_only": 30,
+  "particles:neither": 27,
+  "postchain:both": 246,
+  "postchain:neither": 4
+ },
+ "per_resource": {
+  "both": 2616,
+  "checker_only": 210
+ },
+ "syncval_only_mutants": []
+}
+barrier mutants: 750 re-checked, 0 differ in verdict or diagnostics
