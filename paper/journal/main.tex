@@ -253,8 +253,10 @@ around them or in their own barrier derivation (VUK-1, \S\ref{sec:eval-bugs}). \
 C++26 embedded language whose resource contracts, typed modules and combinators make programs that misuse its
 abstractions fail to compile, for every execution. By design its guarantees are scoped (Table~\ref{tab:scope}):
 programs are written in its language, effects cover one recording, and swapchain acquire and present, frames in
-flight and multiple queues are outside its effect algebra. \sys starts at these boundaries and gives the weaker,
-executed-path guarantee for existing code. The two are complementary (\S\ref{sec:eval-rcgp}).
+flight and multiple queues are outside its effect algebra. \sys asks a different question and does not build on
+\rcgp's language, types or contracts: it verifies the synchronization of existing programs across the host, queues,
+presentation and overlapping frames, with a weaker, executed-path guarantee. The two address complementary sides of
+graphics-program correctness (\S\ref{sec:eval-rcgp}).
 
 \begin{table}[t]
 \caption{Scope of \rcgp and \sys. The \rcgp column is from its paper, compile-only ports and its source.}
@@ -1243,7 +1245,9 @@ coverage finds races that validation cannot observe, and source patches guided b
 programs clean, while the conservative access abstractions that the proof needs cost precision on some code bases. The
 boundary is explicit: the theorem is proved for the model, and capture and the translation to events are premises and
 trusted code on which it depends. What remains is to narrow sub-page host writes, to settle the open questions of the
-specification, to measure recall on real code and to run on GPUs with several concurrent queues.
+specification, to measure recall on real code and to run on GPUs with several concurrent queues. Beyond these, a
+programming system that constructs programs with resource contracts in the style of \rcgp and verifies their
+synchronization across frames, queues, host memory and presentation would combine the two approaches.
 
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{refs}
